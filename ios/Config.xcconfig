@@ -1,0 +1,12 @@
+//
+//  Config.xcconfig
+//  ReactNativeTemplate
+//
+//  Created by VLAD on 03.03.2025.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+
+#include? "tmp.xcconfig"

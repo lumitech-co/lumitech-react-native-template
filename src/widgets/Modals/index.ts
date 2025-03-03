@@ -1,0 +1,1 @@
+export { modalStack } from './config';

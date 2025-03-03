@@ -2,6 +2,9 @@
 #
 .DS_Store
 
+# VSCode
+.vscode
+
 # Xcode
 #
 build/
@@ -21,6 +24,10 @@ DerivedData
 *.ipa
 *.xcuserstate
 **/.xcode.env.local
+
+# react-native-config codegen
+ios/tmp.xcconfig
+
 
 # Android/IntelliJ
 #
@@ -72,3 +79,17 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Env
+.env.develop
+.env.release
+.env.stage
+
+builder-name-check
+check-generics
+check-unique-types
+compile-all.sh
+merge-query-keys
+query-keys
+server-hooks
+update-index

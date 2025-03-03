@@ -1,0 +1,43 @@
+name: Run Lint on PR
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - edited
+      - reopened
+
+env:
+  NODE_VERSION: 20.13.1
+
+jobs:
+  linting:
+    name: Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable Corepack and Set Yarn Version
+        run: |
+          corepack enable
+          corepack prepare yarn@4.6.0 --activate
+
+      - name: Setup config
+        run: yarn config set -H enableImmutableInstalls false
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Code Linting
+        run: yarn run lint
+
+      - name: Type Linting
+        run: yarn run typescript

@@ -1,3 +1,86 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json"
+  "compilerOptions": {
+    "baseUrl": "./src/",
+    "paths": {
+      "assets": ["assets/index"],
+      "assets/*": ["assets/*"],
+
+      "navigation": ["navigation/index"],
+      "navigation/*": ["navigation/*"],
+
+      "api": ["shared/api/index"],
+      "api/*": ["shared/api/*"],
+
+      "hooks": ["shared/hooks/index"],
+      "hooks/*": ["shared/hooks/*"],
+
+      "lib": ["shared/lib/index"],
+      "lib/*": ["shared/lib/*"],
+
+      "providers": ["shared/providers/index"],
+      "providers/*": ["shared/providers/*"],
+
+      "services": ["shared/services/index"],
+      "services/*": ["shared/services/*"],
+
+      "stores": ["shared/stores/index"],
+      "stores/*": ["shared/stores/*"],
+
+      "themes": ["shared/themes/index"],
+      "themes/*": ["shared/themes/*"],
+
+      "translations": ["shared/translations/index"],
+      "translations/*": ["shared/translations/*"],
+
+      "types": ["shared/types/index"],
+      "types/*": ["shared/types/*"],
+
+      "ui": ["shared/ui/index"],
+      "ui/*": ["shared/ui/*"],
+
+      "screens": ["screens/index"],
+      "screens/*": ["screens/*"],
+
+      "widgets": ["widgets/index"],
+      "widgets/*": ["widgets/*"],
+
+      "shared": ["shared/index"],
+      "shared/*": ["shared/*"]
+    },
+    "target": "esnext",
+    "module": "commonjs",
+    "types": ["react-native"],
+    "lib": [
+      "es2019",
+      "es2020.bigint",
+      "es2020.date",
+      "es2020.number",
+      "es2020.promise",
+      "es2020.string",
+      "es2020.symbol.wellknown",
+      "es2021.promise",
+      "es2021.string",
+      "es2021.weakref",
+      "es2022.array",
+      "es2022.object",
+      "es2022.string"
+    ],
+    "allowJs": true,
+    "jsx": "react-native",
+    "noEmit": true,
+    "isolatedModules": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
+  ]
 }

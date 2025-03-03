@@ -1,0 +1,95 @@
+default_platform(:android)
+
+
+ANDROID_ENVIRONMENT = ENV['ANDROID_ENVIRONMENT']
+ANDROID_KEYSTORE_PASSWORD = ENV['ANDROID_KEYSTORE_PASSWORD']
+ANDROID_KEYSTORE_ALIAS = ENV['ANDROID_KEYSTORE_ALIAS']
+ANDROID_KEY_PASSWORD = ENV['ANDROID_KEY_PASSWORD']
+ANDROID_VERSION_NAME = ENV['ANDROID_VERSION_NAME']
+
+
+platform :android do
+  desc 'Submit a new build to play store'
+  lane :deploy_to_play_store do |options|
+    keystore_path = File.absolute_path('../app/release.keystore')
+
+    # Clean the build
+    gradle(task: 'clean', project_dir: '../android')
+
+    @buildNumber = google_play_track_version_codes(track: 'internal')[0] + 1 || 1
+
+    # Print the build number
+    puts "The new build number is: #{@buildNumber}"
+
+    # Set version code
+    android_set_version_code(
+      gradle_file: "../android/app/build.gradle",
+      version_code: @buildNumber,
+    )
+
+    # Set version name
+    increment_version_name(
+      gradle_file_path: "../android/app/build.gradle",
+      version_name: ANDROID_VERSION_NAME,
+    )
+
+    tag_match_pattern = if ANDROID_ENVIRONMENT == 'Production'
+                          "release/*"
+                        elsif ANDROID_ENVIRONMENT == 'Staging'
+                          "staging/*"
+                        else
+                          "develop/*"
+                        end
+
+    # Changelog
+    @changelog = changelog_from_git_commits(
+      pretty: "- %s",
+      date_format: "short",
+      tag_match_pattern: tag_match_pattern
+    )
+
+    @changelog = @changelog[0..498] if @changelog.length >= 500
+
+    puts "Changelog:\n#{@changelog}"
+
+    puts "Changelog for current branch:\n#{@changelog}"
+
+    @versionTag = if ANDROID_ENVIRONMENT == 'Production'
+                    "release/android/version-#{ANDROID_VERSION_NAME}/build-#{@buildNumber}"
+                  elsif ANDROID_ENVIRONMENT == 'Staging'
+                    "staging/android/version-#{ANDROID_VERSION_NAME}/build-#{@buildNumber}"
+                  else
+                    "develop/android/version-#{ANDROID_VERSION_NAME}/build-#{@buildNumber}"
+                  end
+
+    # Save the changelog to a file
+    changelog_file_path = File.absolute_path('metadata/android/en-US/changelogs/default.txt')
+
+    File.open(changelog_file_path, 'w') do |file|
+      file.puts(@changelog)
+    end
+
+    puts "Changelog saved to #{changelog_file_path}"
+
+    # release .aab
+    gradle(
+        task: 'bundle',
+        build_type: 'Release',
+        project_dir: '../android',
+        properties: {
+            "android.injected.signing.store.file" => keystore_path,
+            "android.injected.signing.store.password" => ANDROID_KEYSTORE_PASSWORD,
+            "android.injected.signing.key.alias" => ANDROID_KEYSTORE_ALIAS,
+            "android.injected.signing.key.password" => ANDROID_KEY_PASSWORD,
+        },
+        flags: "--stacktrace"
+    )
+
+    # Send app to play store
+    upload_to_play_store(
+      track: 'internal',
+      release_status: "draft",
+      aab: File.absolute_path('../app/build/outputs/bundle/release/app-release.aab'),
+    )
+  end
+end

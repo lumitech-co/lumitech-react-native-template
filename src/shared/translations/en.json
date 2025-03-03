@@ -1,0 +1,20 @@
+{
+  "application": {
+    "name": "React Native Template"
+  },
+  "errors": {
+    "server-unable": "An error occurred. Please try again later"
+  },
+  "update-modal": {
+    "title": "New App Version Available",
+    "description": "New features and improvements are now available. Please update your application to the latest version."
+  },
+  "screens": {
+    "forgot-password": "Forgot password",
+    "sign-in": "Log in",
+    "reset-password": "Change password",
+    "create-account": "Registration",
+    "alerts": "Alerts",
+    "account": "Account"
+  }
+}

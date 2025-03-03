@@ -20,13 +20,17 @@ target 'ReactNativeTemplate' do
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    :hermes_enabled => true,
+    :fabric_enabled => true,
+    :new_arch_enabled => true
   )
 
-  target 'ReactNativeTemplateTests' do
-    inherit! :complete
-    # Pods for testing
-  end
+  ENVFILES = {
+    "Develop" => "$(PODS_ROOT)/../../.env.develop",
+    "Stage" => "$(PODS_ROOT)/../../.env.stage",
+    "Release" => "$(PODS_ROOT)/../../.env.release",
+  }
 
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
@@ -36,5 +40,13 @@ target 'ReactNativeTemplate' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if target.name == 'react-native-config'
+          config.build_settings['ENVFILE'] = ENVFILES[config.name]
+        end
+      end
+    end
   end
 end

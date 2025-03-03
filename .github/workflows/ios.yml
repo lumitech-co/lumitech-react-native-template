@@ -1,0 +1,77 @@
+name: Create build for iOS, upload to TestFlight
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  # ----------------------- iOS -----------------------------
+  # -------------------------------------------------------------
+  build-develop-ios:
+    name: Build & ship iOS app
+    runs-on: macos-latest
+    steps:
+      - name: Checkout to git repository
+        uses: actions/checkout@v3
+
+      - name: Set up NODE
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.13.1
+
+      - name: Enable Corepack and Set Yarn Version
+        run: |
+          corepack enable
+          corepack prepare yarn@4.6.0 --activate
+
+      - name: Install node modules
+        run: yarn install
+        env:
+          CI: true
+
+      - uses: akiojin/decode-base64-github-action@v0.1.0
+        id: decode-base64
+        with:
+          base64: ${{ secrets.APPLICATION_ENV }}
+          output-path: ${{ runner.temp }}/.env
+
+      - name: Install pods
+        run: cd ios && pod install --repo-update && cd ..
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0.2
+          bundler-cache: true
+
+      - name: Install Fastlane dependencies
+        run: |
+          cd ios
+          bundle install
+        env:
+          CI: true
+
+      - name: Install Fastlane plugins
+        run: |
+          cd ios
+          bundle exec fastlane install_plugins
+        env:
+          CI: true
+
+      - name: Build and Upload to App Store
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: 'deploy_to_testflight'
+          subdirectory: 'ios'
+        env:
+          APPLE_ISSUER_ID: ${{ secrets.APPLE_ISSUER_ID }}
+          APPLE_KEY_CONTENT: ${{ secrets.APPLE_KEY_CONTENT }}
+          APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
+          APP_STORE_CONNECT_TEAM_ID: ${{ secrets.APP_STORE_CONNECT_TEAM_ID }}
+          DEVELOPER_APP_ID: ${{ secrets.DEVELOPER_APP_ID }}
+          DEVELOPER_APP_IDENTIFIER: ${{ secrets.DEVELOPER_APP_IDENTIFIER }}
+          DEVELOPER_PORTAL_TEAM_ID: ${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          PROVISIONING_PROFILE_SPECIFIER: ${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}
+          GIT_AUTHORIZATION: ${{ secrets.GIT_AUTHORIZATION }}
+          IOS_VERSION_NUMBER: ${{ secrets.IOS_VERSION_NUMBER }}
+          IOS_ENVIRONMENT: ${{ secrets.IOS_ENVIRONMENT }}
