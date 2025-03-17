@@ -1,7 +1,7 @@
 {
   "name": "lumitech-react-native-template",
   "version": "0.75.4",
-  "description": "The template used by `npx @lumitech-co/cli init` to bootstrap a React Native application.",
+  "description": "The Lumitech template for bootstrapping a React Native application.",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -15,6 +15,10 @@
   "dependencies": {},
   "devDependencies": {
     "semver": "^7.6.3"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-native": "^0.75.4"
   },
   "homepage": "https://github.com/lumitech-co/lumitech-react-native-template",
   "repository": {
