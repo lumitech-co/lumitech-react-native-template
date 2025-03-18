@@ -5,7 +5,7 @@ import { CreateAccountResponse, Test } from './models';
 export const AuthService = createApi({
   baseQuery,
   endpoints: builder => ({
-    getUser: builder.get<CreateAccountResponse, Test>({
+    getUser: builder.get<CreateAccountResponse[], Test>({
       query: ({ token }) => ({
         url: `/v2/customer/`,
         params: {

@@ -290,10 +290,17 @@ void updateIndexFile(const std::filesystem::path &serviceDir) {
   std::cout << "✅ Updated index.ts at: " << indexFile << "\n";
 }
 
-bool isSpecialType(const std::string &type) {
-  static const std::regex specialTypePattern(
-      R"(^(void|unknown|any|boolean|string|true|false|Object|\{\}|\[\]|0|1|BigInt)$)");
-  return std::regex_match(type, specialTypePattern);
+bool isSpecialType(std::string type) {
+    type = std::regex_replace(type, std::regex(R"(\[\]$)"), "");
+
+    static const std::regex specialTypePattern(
+        R"(^(void|unknown|any|boolean|string|true|false|Object|\{\}|\[\]|0|1|BigInt)$)");
+
+    return std::regex_match(type, specialTypePattern);
+}
+
+std::string normalizeType(const std::string& type) {
+    return std::regex_replace(type, std::regex(R"(\[\]$)"), "");
 }
 
 void generateQueryHook(
@@ -325,11 +332,11 @@ void generateQueryHook(
           << "';\n\n";
 
   if (!isSpecialType(responseType)) {
-    outFile << "import { " << responseType << " } from '../models';\n";
+    outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
   }
 
   if (!isVoidRequest && !isSpecialType(requestType)) {
-    outFile << "import { " << requestType << " } from '../models';\n";
+    outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
   if (!isVoidRequest) {
@@ -491,11 +498,11 @@ void generatePrefetchQueryHook(
           << "';\n\n";
 
   if (!isSpecialType(responseType)) {
-    outFile << "import { " << responseType << " } from '../models';\n";
+    outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
   }
 
   if (!isVoidRequest && !isSpecialType(requestType)) {
-    outFile << "import { " << requestType << " } from '../models';\n";
+    outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
   if (!isVoidRequest) {
@@ -658,11 +665,11 @@ void generateInfiniteQueryHook(
           << "';\n\n";
 
   if (!isSpecialType(responseType)) {
-    outFile << "import { " << responseType << " } from '../models';\n";
+    outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
   }
 
   if (!isVoidRequest && !isSpecialType(requestType)) {
-    outFile << "import { " << requestType << " } from '../models';\n";
+    outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
   outFile << "\ntype PageParam = string | number | unknown;\n\n";
@@ -815,11 +822,11 @@ void generatePrefetchInfiniteQueryHook(
           << "';\n\n";
 
   if (!isSpecialType(responseType)) {
-    outFile << "import { " << responseType << " } from '../models';\n";
+    outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
   }
 
   if (!isVoidRequest && !isSpecialType(requestType)) {
-    outFile << "import { " << requestType << " } from '../models';\n";
+    outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
   outFile << "\ntype PageParam = string | number | unknown;\n\n";
@@ -971,11 +978,11 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
           << "';\n\n";
 
   if (!isSpecialType(responseType)) {
-    outFile << "import { " << responseType << " } from '../models';\n";
+    outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
   }
 
   if (!isVoidRequest && !isSpecialType(requestType)) {
-    outFile << "import { " << requestType << " } from '../models';\n";
+    outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
   if (!isVoidRequest) {
