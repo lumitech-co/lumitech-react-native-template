@@ -13,7 +13,7 @@ import { CreateAccountResponse, Test } from '../models';
 
 interface HookParams<TData> extends Test {
   options?: UseQueryWithOptionsParams<
-    CreateAccountResponse,
+    CreateAccountResponse[],
     QueryError,
     TData,
     QueryKeyType
@@ -36,16 +36,16 @@ export const getUserQueryFnAuthService = async ({ params }: QueryFnParams) => {
 const getQueryKey = (params: Test) => queryKeys.GET_USER_AUTH_SERVICE(params);
 
 export const getUserQueryAuthService = <
-  TData = CreateAccountResponse,
+  TData = CreateAccountResponse[],
   TError = QueryError,
 >({
   params,
   fetchOptions,
-}: QueryFetchParams<CreateAccountResponse, TError, TData, Test>) => {
+}: QueryFetchParams<CreateAccountResponse[], TError, TData, Test>) => {
   const queryClient = getQueryClient();
 
   return queryClient.fetchQuery<
-    CreateAccountResponse,
+    CreateAccountResponse[],
     TError,
     TData,
     QueryKeyType
@@ -56,12 +56,12 @@ export const getUserQueryAuthService = <
   });
 };
 
-export const useGetUserQueryAuthService = <TData = CreateAccountResponse>({
+export const useGetUserQueryAuthService = <TData = CreateAccountResponse[]>({
   options,
   ...params
 }: HookParams<TData>) => {
   return useQueryWithOptions<
-    CreateAccountResponse,
+    CreateAccountResponse[],
     QueryError,
     TData,
     QueryKeyType

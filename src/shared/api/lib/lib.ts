@@ -1,11 +1,19 @@
-import { queryKeys, queryClient, QueryKeyType } from 'api';
+import { InvalidateQueryFilters } from '@tanstack/react-query';
+import { queryKeys } from 'api/models';
+import { getQueryClient } from 'api/queryClient';
 
-export const refetchQueryWithParam = (queryKeyWithParam: QueryKeyType) => {
-  queryClient.refetchQueries({ queryKey: queryKeyWithParam });
-};
+export const invalidateQueries = <
+  T extends keyof typeof queryKeys,
+  TQueryFnData = unknown,
+>(
+  key: T,
+  params?: Parameters<(typeof queryKeys)[T]>[0],
+  options?: Omit<InvalidateQueryFilters<TQueryFnData>, 'queryKey'>,
+) => {
+  const queryClient = getQueryClient();
 
-export const invalidateQueries = (...keys: (keyof typeof queryKeys)[]) => {
-  keys.forEach(key => {
-    queryClient.invalidateQueries({ queryKey: queryKeys[key] });
+  queryClient.invalidateQueries({
+    queryKey: params ? queryKeys[key](params) : queryKeys[key],
+    ...options,
   });
 };
