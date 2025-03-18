@@ -909,33 +909,29 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
     return;
   }
 
-  std::string inlineResponseType =
-      isSpecialType(responseType) ? responseType : responseType;
-  std::string inlineRequestType =
-      isSpecialType(requestType) ? requestType : requestType;
+  std::string inlineResponseType = responseType;
+  std::string inlineRequestType = requestType;
 
   outFile << "import { useMutation } from '@tanstack/react-query';\n"
           << "import { QueryError, queryKeys } from '../../models';\n"
           << "import { " << serviceName << " } from '../" << serviceName
           << "';\n\n";
 
-  if (!isSpecialType(responseType)) {
-    outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
-  }
-
-  if (!isVoidRequest && !isSpecialType(requestType)) {
+  if (!isVoidRequest && requestType != "void" && requestType.find("void") == std::string::npos) {
     outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
-  if (!isVoidRequest) {
+  if (responseType != "void" && responseType.find("void") == std::string::npos) {
+    outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
+  }
 
+  if (!isVoidRequest) {
     outFile << "\nexport const " << endpointName << "MutationFn" << serviceName
             << " = async (params: " << inlineRequestType << ") => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params);\n"
             << "  return response?.data;\n"
             << "};\n\n";
-
 
     outFile << "const getMutationKey = () => queryKeys." << queryKeyName
             << "();\n\n";
@@ -946,7 +942,7 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
             << inlineRequestType << ">({\n"
             << "    mutationFn: " << endpointName << "MutationFn" << serviceName
             << ",\n"
-            << "mutationKey: getMutationKey(),\n"
+            << "    mutationKey: getMutationKey(),\n"
             << "  });\n"
             << "};\n";
   } else {
@@ -966,7 +962,7 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
             << ", QueryError, void>({\n"
             << "    mutationFn: " << endpointName << "MutationFn" << serviceName
             << ",\n"
-            << "mutationKey: getMutationKey(),\n"
+            << "    mutationKey: getMutationKey(),\n"
             << "  });\n"
             << "};\n";
   }
@@ -985,6 +981,7 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
 
   std::cout << "✅ Mutation hook generated: " << mutationFile << "\n";
 }
+
 
 void removeEmptyFolders(const std::filesystem::path &serviceDir) {
     std::filesystem::path queriesDir = serviceDir / "queries";
