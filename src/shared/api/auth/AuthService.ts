@@ -80,53 +80,5 @@ export const AuthService = createApi({
       }),
       disableGlobalErrorHandler: true,
     }),
-    patchUser: builder.patch<CreateAccountResponse, Test>({
-      query: ({ token }) => ({
-        url: `/v2/customer/`,
-        params: {
-          test: 'test12',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      disableGlobalErrorHandler: true,
-    }),
-    putUser: builder.put<CreateAccountResponse, Test>({
-      query: ({ token }) => ({
-        url: `/v2/customer/`,
-        params: {
-          test: 'test12',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      disableGlobalErrorHandler: true,
-    }),
-    postUser: builder.post<Test, Test>({
-      query: ({ token }) => ({
-        url: `/v2/customer/`,
-        params: {
-          test: 'test12',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      disableGlobalErrorHandler: true,
-    }),
-    postUserAsQuery: builder.postAsQuery<Test, Test>({
-      query: ({ token }) => ({
-        url: `/v2/customer/`,
-        params: {
-          test: 'test12',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      disableGlobalErrorHandler: true,
-    }),
   }),
 });

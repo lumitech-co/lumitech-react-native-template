@@ -38,7 +38,7 @@ void extractEndpoints(
     const std::string &fileContent, std::vector<std::string> &usedInterfaces,
     std::vector<std::pair<std::string, std::string>> &endpointNames) {
   std::regex endpointPattern(
-      R"(([a-zA-Z0-9_]+):\s*builder\.(get|getAsPrefetch|paginate|paginateAsPrefetch|postAsQuery)<([^>]+)>\([^)]*\))");
+      R"(([a-zA-Z0-9_]+):\s*builder\.(get|getAsPrefetch|getAsMutation|post|postAsQuery|delete|put|patch|paginate|paginateAsPrefetch)<([^>]+)>\([^)]*\))");
 
   std::sregex_iterator iter(fileContent.begin(), fileContent.end(),
                             endpointPattern);
@@ -82,19 +82,63 @@ void extractEndpoints(
 void generateQueryKeys(const std::filesystem::path &serviceFile) {
   std::filesystem::path serviceDir = serviceFile.parent_path();
   std::filesystem::path queryKeysFile = serviceDir / "QueryKeys.ts";
-  std::filesystem::path modelsPath = serviceDir / MODELS_SUBDIR;
   std::string serviceName = serviceFile.stem().string();
-  std::filesystem::path queriesDir = serviceDir / "queries";
-
   std::string servicePrefix = toSnakeCase(serviceDir.filename().string());
 
   std::vector<std::string> usedInterfaces;
-  std::vector<std::pair<std::string, std::string>> endpointNames;
+  std::vector<std::pair<std::string, std::string>> queryEndpoints;
+  std::vector<std::string> mutationEndpoints;
 
   std::cout << "⏳ Processing service file: " << serviceFile << "\n";
 
   std::string fileContent = readFileContent(serviceFile);
-  extractEndpoints(fileContent, usedInterfaces, endpointNames);
+
+  std::regex endpointPattern(
+      R"(([a-zA-Z0-9_]+):\s*builder\.(get|getAsPrefetch|paginate|paginateAsPrefetch|getAsMutation|post|postAsQuery|delete|put|patch)<([^>]+)>\([^)]*\))");
+
+  std::sregex_iterator iter(fileContent.begin(), fileContent.end(),
+                            endpointPattern);
+  std::sregex_iterator end;
+
+  while (iter != end) {
+    std::smatch match = *iter;
+    std::string endpointName = match[1].str();
+    std::string method = match[2].str();
+    std::string fullGeneric = match[3].str();
+
+    std::stringstream ss(fullGeneric);
+    std::string responseType, requestType;
+    std::getline(ss, responseType, ',');
+    std::getline(ss, requestType, ',');
+
+    responseType.erase(
+        remove_if(responseType.begin(), responseType.end(), ::isspace),
+        responseType.end());
+    requestType.erase(
+        remove_if(requestType.begin(), requestType.end(), ::isspace),
+        requestType.end());
+
+    if (!requestType.empty() && requestType != "void" &&
+        requestType != "unknown" && requestType != "null" &&
+        requestType != "any" && requestType != "boolean" &&
+        requestType != "string" && requestType != "true" &&
+        requestType != "false" && requestType != "Object" &&
+        requestType != "{}" && requestType != "0" && requestType != "1" &&
+        requestType != "BigInt" && requestType != "[]") {
+      if (std::find(usedInterfaces.begin(), usedInterfaces.end(),
+                    requestType) == usedInterfaces.end()) {
+        usedInterfaces.push_back(requestType);
+      }
+    }
+
+    if (method == "get" || method == "paginate" || method == "paginateAsPrefetch" || method == "getAsPrefetch") {
+      queryEndpoints.push_back({endpointName, requestType});
+    } else {
+      mutationEndpoints.push_back(endpointName);
+    }
+
+    ++iter;
+  }
 
   std::ofstream outFile(queryKeysFile);
   if (!outFile.is_open()) {
@@ -116,7 +160,12 @@ void generateQueryKeys(const std::filesystem::path &serviceFile) {
   }
 
   outFile << "const QUERY_KEYS = {\n";
-  for (const auto &[endpoint, requestType] : endpointNames) {
+  for (const auto &[endpoint, requestType] : queryEndpoints) {
+    std::string keyName =
+        toSnakeCase(endpoint) + "_" + servicePrefix + "_SERVICE";
+    outFile << "  " << keyName << ": '" << keyName << "',\n";
+  }
+  for (const auto &endpoint : mutationEndpoints) {
     std::string keyName =
         toSnakeCase(endpoint) + "_" + servicePrefix + "_SERVICE";
     outFile << "  " << keyName << ": '" << keyName << "',\n";
@@ -124,17 +173,18 @@ void generateQueryKeys(const std::filesystem::path &serviceFile) {
   outFile << "} as const;\n\n";
 
   outFile << "export const " << servicePrefix << "_QUERY_KEYS = {\n";
-  for (const auto &[endpoint, requestType] : endpointNames) {
+  for (const auto &[endpoint, requestType] : queryEndpoints) {
     std::string keyName =
         toSnakeCase(endpoint) + "_" + servicePrefix + "_SERVICE";
 
-    if (requestType.empty() || requestType == "void") {
-      outFile << "  " << keyName << ": () => [QUERY_KEYS." << keyName
-              << "] as const,\n";
-    } else {
-      outFile << "  " << keyName << ": (params: " << requestType
-              << ") => [QUERY_KEYS." << keyName << ", params] as const,\n";
-    }
+    outFile << "  " << keyName << ": (params: " << requestType
+            << ") => [QUERY_KEYS." << keyName << ", params] as const,\n";
+  }
+  for (const auto &endpoint : mutationEndpoints) {
+    std::string keyName =
+        toSnakeCase(endpoint) + "_" + servicePrefix + "_SERVICE";
+    outFile << "  " << keyName << ": () => [QUERY_KEYS." << keyName
+            << "] as const,\n";
   }
   outFile << "};\n";
 

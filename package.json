@@ -26,7 +26,7 @@
     "splash-ios": "yarn react-native generate-bootsplash splash.png --platforms=ios --logo-width=264 --background=#fff --assets-output=src/assets/bootsplash",
     "components-types-schemas": "ts-to-zod ./node_modules/react-native/Libraries/StyleSheet/StyleSheetTypes.d.ts src/shared/themes/ui/lib/stylesheet.ts --skipValidation && scripts/schemas.sh",
     "asset": "npx react-native-asset && scripts/icons.sh",
-    "api-codegen:compile": "rm -f codegen.lock && bash scripts/api-codegen/compile-all.sh",
+    "api-codegen:compile": "bash scripts/api-codegen/compile-all.sh",
     "api-codegen:run": "bash scripts/api-codegen/run-codegen.sh",
     "svgo": "svgo -f ./src/assets/images -o ./src/assets/images",
     "endpoints": "npx openapi-typescript https://paste-your-swagger-link-here/api/docs/json -o src/shared/api/endpoints.ts && ./scripts/modify-endpoints.sh && eslint . --ext .js,.jsx,.ts,.tsx --fix",
