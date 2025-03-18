@@ -30,7 +30,8 @@
     "api-codegen:run": "bash scripts/api-codegen/run-codegen.sh",
     "svgo": "svgo -f ./src/assets/images -o ./src/assets/images",
     "endpoints": "npx openapi-typescript https://paste-your-swagger-link-here/api/docs/json -o src/shared/api/endpoints.ts && ./scripts/modify-endpoints.sh && eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "pods": "cd ios && RCT_NEW_ARCH_ENABLED=1 && pod install"
+    "pods": "cd ios && RCT_NEW_ARCH_ENABLED=1 && pod install",
+    "prepare": "husky"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.1.1",
