@@ -88,7 +88,6 @@ yarn-error.log
 builder-name-check
 check-generics
 check-unique-types
-compile-all.sh
 merge-query-keys
 query-keys
 server-hooks
