@@ -4,6 +4,9 @@
 
 Welcome to the **Lumitech React Native Template (v0.75.4)**! This template is designed to give you a head start on your project by streamlining the setup process and enabling you to focus on building your app faster. 🌟
 
+### About Lumitech
+Lumitech is a custom software development company providing professional services worldwide. We partner with technology businesses globally helping them to build successful engineering teams and create innovative software products. We’re a global team of software engineers, AI and ML specialists, product managers, and technology experts who have achieved a 600% growth rate since 2022. When a rocket launches toward the moon, it doesn’t stop halfway. Neither do we
+
 ### What’s New?
 
 We’ve integrated the latest features from React Native to ensure your project is future-proof and up to date with the latest industry standards.
