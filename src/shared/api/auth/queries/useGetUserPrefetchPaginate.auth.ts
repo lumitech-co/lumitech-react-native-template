@@ -72,7 +72,7 @@ export const getUserPrefetchPaginateQueryFnAuthService = async <
 };
 
 const getQueryKey = (params: Test) =>
-  queryKeys.GET_USER_PREFETCH_PAGINATE_AUTH_SERVICE(params);
+  queryKeys.getUserPrefetchPaginateAuthService(params);
 
 export const getUserPrefetchPaginateInfiniteQueryAuthService = <
   TData = CreateAccountResponse,

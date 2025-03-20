@@ -1040,7 +1040,7 @@ void generateHooks(const std::string &serviceName,
 
     std::string hookName = "use" + capitalizeFirstLetter(endpointName);
     std::string servicePrefix = extractServicePrefix(serviceName);
-    std::string queryKeyName = toSnakeCase(endpointName) + "_" + toSnakeCase(serviceName);
+    std::string queryKeyName = toCamelCase(endpointName) + toCapitalize(serviceName);
 
     bool isVoidRequest = requestType == "void";
 

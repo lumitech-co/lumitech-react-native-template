@@ -69,7 +69,7 @@ export const getUserPaginateQueryFnAuthService = async <
 };
 
 const getQueryKey = (params: Test) =>
-  queryKeys.GET_USER_PAGINATE_AUTH_SERVICE(params);
+  queryKeys.getUserPaginateAuthService(params);
 
 export const getUserPaginateInfiniteQueryAuthService = <
   TData = CreateAccountResponse,

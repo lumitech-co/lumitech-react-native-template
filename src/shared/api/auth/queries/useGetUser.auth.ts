@@ -33,7 +33,7 @@ export const getUserQueryFnAuthService = async ({ params }: QueryFnParams) => {
   return response?.data;
 };
 
-const getQueryKey = (params: Test) => queryKeys.GET_USER_AUTH_SERVICE(params);
+const getQueryKey = (params: Test) => queryKeys.getUserAuthService(params);
 
 export const getUserQueryAuthService = <
   TData = CreateAccountResponse[],
