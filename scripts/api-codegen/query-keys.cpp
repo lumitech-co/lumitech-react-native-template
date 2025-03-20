@@ -22,6 +22,37 @@ std::string toSnakeCase(const std::string &input) {
   return result;
 }
 
+std::string toPascalCase(const std::string &input) {
+  std::stringstream ss(input);
+  std::string word, result;
+
+  while (std::getline(ss, word, '_')) {
+    word[0] = std::toupper(word[0]);
+    result += word;
+  }
+
+  return result;
+}
+
+std::string toCamelCase(const std::string &input) {
+  std::stringstream ss(input);
+  std::string word, result;
+  bool first = true;
+
+  while (std::getline(ss, word, '_')) {
+    if (first) {
+      result += std::tolower(word[0]);
+      result += word.substr(1);
+      first = false;
+    } else {
+      word[0] = std::toupper(word[0]);
+      result += word;
+    }
+  }
+
+  return result;
+}
+
 std::string readFileContent(const std::filesystem::path &filePath) {
   std::ifstream file(filePath);
   if (!file.is_open()) {
@@ -91,7 +122,9 @@ void extractEndpoints(
 void generateQueryKeys(const std::filesystem::path &serviceFile) {
   std::filesystem::path serviceDir = serviceFile.parent_path();
   std::filesystem::path queryKeysFile = serviceDir / "QueryKeys.ts";
-  std::string servicePrefix = toSnakeCase(serviceDir.filename().string());
+  std::string servicePrefix = serviceDir.filename().string();
+  std::string servicePrefixSnakeCase = toSnakeCase(servicePrefix);
+  std::string servicePrefixPascalCase = toPascalCase(servicePrefix);
 
   std::vector<std::string> usedInterfaces;
   std::vector<std::pair<std::string, std::string>> queryEndpoints;
@@ -122,24 +155,26 @@ void generateQueryKeys(const std::filesystem::path &serviceFile) {
 
   outFile << "const QUERY_KEYS = {\n";
   for (const auto &[endpoint, requestType] : queryEndpoints) {
-    std::string keyName = toSnakeCase(endpoint) + "_" + servicePrefix + "_SERVICE";
+    std::string keyName = toSnakeCase(endpoint) + "_" + servicePrefixSnakeCase + "_SERVICE";
     outFile << "  " << keyName << ": '" << keyName << "',\n";
   }
   for (const auto &endpoint : mutationEndpoints) {
-    std::string keyName = toSnakeCase(endpoint) + "_" + servicePrefix + "_SERVICE";
+    std::string keyName = toSnakeCase(endpoint) + "_" + servicePrefixSnakeCase + "_SERVICE";
     outFile << "  " << keyName << ": '" << keyName << "',\n";
   }
   outFile << "} as const;\n\n";
 
-  outFile << "export const " << servicePrefix << "_QUERY_KEYS = {\n";
+  outFile << "export const " << servicePrefixSnakeCase << "_QUERY_KEYS = {\n";
   for (const auto &[endpoint, requestType] : queryEndpoints) {
-    std::string keyName = toSnakeCase(endpoint) + "_" + servicePrefix + "_SERVICE";
-    outFile << "  " << keyName << ": (params: " << requestType
+    std::string queryKeyName = toCamelCase(endpoint) + servicePrefixPascalCase + "Service";
+    std::string keyName = toSnakeCase(endpoint) + "_" + servicePrefixSnakeCase + "_SERVICE";
+    outFile << "  " << queryKeyName << ": (params: " << requestType
             << ") => [QUERY_KEYS." << keyName << ", params] as const,\n";
   }
   for (const auto &endpoint : mutationEndpoints) {
-    std::string keyName = toSnakeCase(endpoint) + "_" + servicePrefix + "_SERVICE";
-    outFile << "  " << keyName << ": () => [QUERY_KEYS." << keyName
+    std::string queryKeyName = toCamelCase(endpoint) + servicePrefixPascalCase + "Service";
+    std::string keyName = toSnakeCase(endpoint) + "_" + servicePrefixSnakeCase + "_SERVICE";
+    outFile << "  " << queryKeyName << ": () => [QUERY_KEYS." << keyName
             << "] as const,\n";
   }
   outFile << "};\n";

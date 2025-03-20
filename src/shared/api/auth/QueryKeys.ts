@@ -11,16 +11,15 @@ const QUERY_KEYS = {
 } as const;
 
 export const AUTH_QUERY_KEYS = {
-  GET_USER_AUTH_SERVICE: (params: Test) =>
+  getUserAuthService: (params: Test) =>
     [QUERY_KEYS.GET_USER_AUTH_SERVICE, params] as const,
-  GET_USER_PREFETCH_AUTH_SERVICE: (params: Test) =>
+  getUserPrefetchAuthService: (params: Test) =>
     [QUERY_KEYS.GET_USER_PREFETCH_AUTH_SERVICE, params] as const,
-  GET_USER_PAGINATE_AUTH_SERVICE: (params: Test) =>
+  getUserPaginateAuthService: (params: Test) =>
     [QUERY_KEYS.GET_USER_PAGINATE_AUTH_SERVICE, params] as const,
-  GET_USER_PREFETCH_PAGINATE_AUTH_SERVICE: (params: Test) =>
+  getUserPrefetchPaginateAuthService: (params: Test) =>
     [QUERY_KEYS.GET_USER_PREFETCH_PAGINATE_AUTH_SERVICE, params] as const,
-  GET_USER_AS_MUTATION_AUTH_SERVICE: () =>
+  getUserAsMutationAuthService: () =>
     [QUERY_KEYS.GET_USER_AS_MUTATION_AUTH_SERVICE] as const,
-  DELETE_USER_AUTH_SERVICE: () =>
-    [QUERY_KEYS.DELETE_USER_AUTH_SERVICE] as const,
+  deleteUserAuthService: () => [QUERY_KEYS.DELETE_USER_AUTH_SERVICE] as const,
 };

@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { QueryError, queryKeys } from '../../models';
 import { AuthService } from '../AuthService';
 
-import { CreateAccountResponse, Test } from '../models';
+import { Test, CreateAccountResponse } from '../models';
 
 export const getUserAsMutationMutationFnAuthService = async (params: Test) => {
   const response = await AuthService.getUserAsMutation(params);
@@ -10,7 +10,7 @@ export const getUserAsMutationMutationFnAuthService = async (params: Test) => {
   return response?.data;
 };
 
-const getMutationKey = () => queryKeys.GET_USER_AS_MUTATION_AUTH_SERVICE();
+const getMutationKey = () => queryKeys.getUserAsMutationAuthService();
 
 export const useGetUserAsMutationMutationAuthService = () => {
   return useMutation<CreateAccountResponse, QueryError, Test>({

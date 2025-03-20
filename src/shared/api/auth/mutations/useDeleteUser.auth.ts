@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { QueryError, queryKeys } from '../../models';
 import { AuthService } from '../AuthService';
 
-import { CreateAccountResponse, Test } from '../models';
+import { Test, CreateAccountResponse } from '../models';
 
 export const deleteUserMutationFnAuthService = async (params: Test) => {
   const response = await AuthService.deleteUser(params);
@@ -10,7 +10,7 @@ export const deleteUserMutationFnAuthService = async (params: Test) => {
   return response?.data;
 };
 
-const getMutationKey = () => queryKeys.DELETE_USER_AUTH_SERVICE();
+const getMutationKey = () => queryKeys.deleteUserAuthService();
 
 export const useDeleteUserMutationAuthService = () => {
   return useMutation<CreateAccountResponse, QueryError, Test>({
