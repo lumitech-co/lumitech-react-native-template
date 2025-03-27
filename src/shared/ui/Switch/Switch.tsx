@@ -1,6 +1,5 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
-/* eslint-disable no-magic-numbers */
 import React, { useCallback, useImperativeHandle, useRef } from 'react';
 import {
   PanGestureHandler,
@@ -11,6 +10,7 @@ import {
 } from 'react-native-gesture-handler';
 import Animated, {
   WithSpringConfig,
+  clamp,
   interpolate,
   interpolateColor,
   runOnJS,
@@ -21,28 +21,13 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { Box, Colors } from 'themes';
-import { Control, useController } from 'react-hook-form';
 
-import { Text } from 'react-native';
-import {
-  constructSwitchBackgroundColor,
-  constructSwitchBorderColor,
-  constructSwitchCircleColor,
-} from './lib';
-
-const clamp = (value: number, lowerBound: number, upperBound: number) => {
-  'worklet';
-
-  return Math.min(Math.max(lowerBound, value), upperBound);
-};
-
-const SWITCH_CONTAINER_WIDTH = 50;
-const SWITCH_CONTAINER_HEIGHT = 32;
-const CIRCLE_WIDTH = 28;
+const SWITCH_CONTAINER_WIDTH = 40;
+const SWITCH_CONTAINER_HEIGHT = 24;
+const CIRCLE_WIDTH = 20;
 const BORDER = 1;
 
-const TRACK_CIRCLE_WIDTH = SWITCH_CONTAINER_WIDTH - CIRCLE_WIDTH - BORDER * 4;
+const TRACK_CIRCLE_WIDTH = SWITCH_CONTAINER_WIDTH - CIRCLE_WIDTH - BORDER * 2;
 
 const config: WithSpringConfig = {
   overshootClamping: true,
@@ -52,23 +37,19 @@ export interface SwitchComponentRefProps {
   outsideAnimationStart: (value: boolean) => void;
 }
 
-interface SwitchComponentProps {
-  name: string;
-  control: Control;
-  label?: string;
+export interface SwitchComponentProps {
+  value: boolean;
+  onChange: (value: boolean) => void;
+  enabled?: boolean;
 }
 
 export const Switch = React.forwardRef<
   SwitchComponentRefProps,
   SwitchComponentProps
->(({ name, control, label = '' }, ref) => {
-  const {
-    field: { value, onChange, disabled },
-  } = useController({ control, name, disabled: false, defaultValue: false });
+>(({ value, onChange, enabled = true }, ref) => {
+  const { styles, theme } = useStyles(stylesheet);
 
   const panRef = useRef<PanGestureHandler>(null);
-
-  const { styles } = useStyles(stylesheet);
 
   const translateX = useSharedValue(value ? TRACK_CIRCLE_WIDTH : 0);
 
@@ -119,18 +100,13 @@ export const Switch = React.forwardRef<
     ),
   }));
 
-  const switchBackgroundColor =
-    Colors[constructSwitchBackgroundColor(value, !!disabled)];
-
-  const animatedContainerStyle = useAnimatedStyle(() => {
-    return {
-      backgroundColor: interpolateColor(
-        translateX.value,
-        [0, TRACK_CIRCLE_WIDTH],
-        [switchBackgroundColor, switchBackgroundColor],
-      ),
-    };
-  });
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      translateX.value,
+      [0, TRACK_CIRCLE_WIDTH],
+      [theme.colors.transparent, theme.colors.success_400],
+    ),
+  }));
 
   const onGestureEvent = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent,
@@ -160,43 +136,29 @@ export const Switch = React.forwardRef<
     <TapGestureHandler
       waitFor={panRef}
       onHandlerStateChange={onPress}
-      enabled={!disabled}>
-      <Box style={styles.switchBox}>
-        <Animated.View
-          style={[
-            animatedContainerStyle,
-            styles.switchContainer(value, disabled),
-          ]}>
-          <PanGestureHandler ref={panRef} onGestureEvent={onGestureEvent}>
-            <Animated.View
-              style={[
-                styles.circle,
-                {
-                  backgroundColor:
-                    Colors[constructSwitchCircleColor(value, !!disabled)],
-                },
-                animatedStyle,
-              ]}
-            />
-          </PanGestureHandler>
-        </Animated.View>
-        {!!label && <Text style={styles.label(disabled)}>{label}</Text>}
-      </Box>
+      enabled={enabled}>
+      <Animated.View style={[animatedContainerStyle, styles.switchContainer]}>
+        <PanGestureHandler ref={panRef} onGestureEvent={onGestureEvent}>
+          <Animated.View
+            style={[
+              styles.circle,
+              { backgroundColor: theme.colors.basic_600 },
+              animatedStyle,
+            ]}
+          />
+        </PanGestureHandler>
+      </Animated.View>
     </TapGestureHandler>
   );
 });
 
 const stylesheet = createStyleSheet(theme => ({
-  switchContainer: (value, disabled) => ({
+  switchContainer: {
     width: SWITCH_CONTAINER_WIDTH,
     height: SWITCH_CONTAINER_HEIGHT,
-    borderRadius: 32,
+    borderRadius: 12,
     flexDirection: 'row',
-    backgroundColor: Colors[constructSwitchBackgroundColor(value, disabled)],
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: Colors[constructSwitchBorderColor(value, disabled)],
-  }),
+  },
   circle: {
     alignSelf: 'center',
     width: CIRCLE_WIDTH,
@@ -208,15 +170,6 @@ const stylesheet = createStyleSheet(theme => ({
     paddingTop: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: 'transparent',
+    borderColor: theme.colors.transparent,
   },
-  switchBox: {
-    gap: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  label: disabled => ({
-    color: disabled ? theme.colors.basic_500 : theme.colors.basic_900,
-    fontSize: 14,
-  }),
 }));

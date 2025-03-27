@@ -7,7 +7,7 @@ import { StatusBar } from 'react-native';
 import { useStyles } from 'react-native-unistyles';
 import { MainNavigator } from './MainNavigator';
 import { AuthNavigator } from './AuthNavigator';
-import { Stack } from './lib';
+import { Stack, navigationTheme } from './lib';
 
 export const RootNavigator: React.FC = () => {
   const { theme } = useStyles();
@@ -17,6 +17,7 @@ export const RootNavigator: React.FC = () => {
   return (
     <NavigationContainer
       ref={RouteService.navigationRef}
+      theme={navigationTheme}
       onReady={() => RNBootSplash.hide({ fade: true })}>
       <StatusBar
         barStyle="dark-content"

@@ -8,7 +8,7 @@ export const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const Tab = createBottomTabNavigator<RootStackParamList>();
 
-export const theme: Theme = {
+export const navigationTheme: Theme = {
   dark: false,
   colors: {
     ...DefaultTheme.colors,
