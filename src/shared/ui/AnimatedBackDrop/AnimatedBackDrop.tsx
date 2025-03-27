@@ -48,6 +48,7 @@ export const AnimatedBackdrop: React.FC<AnimatedBackdropProps> = React.memo(
 const stylesheet = createStyleSheet(theme => ({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: theme.colors.black,
+    backgroundColor: theme.colors.black_50,
+    zIndex: 99999,
   },
 }));

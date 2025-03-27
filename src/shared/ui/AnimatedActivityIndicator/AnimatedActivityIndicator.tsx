@@ -9,8 +9,6 @@ import {
 } from '@shopify/react-native-skia';
 import Animated, {
   Easing,
-  FadeIn,
-  FadeOut,
   interpolate,
   useAnimatedStyle,
   useDerivedValue,
@@ -31,7 +29,7 @@ const CIRCLE_RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
 export const AnimatedActivityIndicator = () => {
   const progress = useSharedValue(0);
 
-  const { styles } = useStyles(stylesheet);
+  const { styles, theme } = useStyles(stylesheet);
 
   useEffect(() => {
     progress.value = withRepeat(
@@ -63,10 +61,7 @@ export const AnimatedActivityIndicator = () => {
   }, []);
 
   return (
-    <Animated.View
-      style={animatedStyle}
-      entering={FadeIn.duration(1000)}
-      exiting={FadeOut.duration(1000)}>
+    <Animated.View style={animatedStyle}>
       <Canvas style={styles.canvas}>
         <Path
           path={circlePath}
@@ -78,7 +73,12 @@ export const AnimatedActivityIndicator = () => {
           strokeCap="round">
           <SweepGradient
             c={{ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 }}
-            colors={['cyan', 'magenta', 'yellow', 'cyan']}
+            colors={[
+              theme.colors.success_400,
+              theme.colors.success_400,
+              theme.colors.success_400,
+              theme.colors.success_400,
+            ]}
           />
           <BlurMask blur={8} style="solid" />
         </Path>
@@ -91,5 +91,8 @@ const stylesheet = createStyleSheet(() => ({
   canvas: {
     width: CANVAS_SIZE,
     height: CANVAS_SIZE,
+  },
+  container: {
+    zIndex: 999,
   },
 }));

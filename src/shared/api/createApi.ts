@@ -33,8 +33,8 @@ export const createApi = <TEndpoints>({
           headers: {
             ...headers,
             'x-disable-global-toast': disableGlobalErrorHandler
-              ? 'true'
-              : 'false',
+              ? 'false'
+              : 'true',
           },
         });
 
@@ -66,8 +66,8 @@ export const createApi = <TEndpoints>({
           headers: {
             ...headers,
             'x-disable-global-toast': disableGlobalErrorHandler
-              ? 'true'
-              : 'false',
+              ? 'false'
+              : 'true',
           },
         });
 
@@ -99,8 +99,8 @@ export const createApi = <TEndpoints>({
           headers: {
             ...headers,
             'x-disable-global-toast': disableGlobalErrorHandler
-              ? 'true'
-              : 'false',
+              ? 'false'
+              : 'true',
           },
         });
 
@@ -132,8 +132,8 @@ export const createApi = <TEndpoints>({
           headers: {
             ...headers,
             'x-disable-global-toast': disableGlobalErrorHandler
-              ? 'true'
-              : 'false',
+              ? 'false'
+              : 'true',
           },
         });
 
@@ -165,8 +165,8 @@ export const createApi = <TEndpoints>({
           headers: {
             ...headers,
             'x-disable-global-toast': disableGlobalErrorHandler
-              ? 'true'
-              : 'false',
+              ? 'false'
+              : 'true',
           },
         });
 
@@ -198,8 +198,8 @@ export const createApi = <TEndpoints>({
           headers: {
             ...headers,
             'x-disable-global-toast': disableGlobalErrorHandler
-              ? 'true'
-              : 'false',
+              ? 'false'
+              : 'true',
           },
         });
 
@@ -232,8 +232,8 @@ export const createApi = <TEndpoints>({
           headers: {
             ...headers,
             'x-disable-global-toast': disableGlobalErrorHandler
-              ? 'true'
-              : 'false',
+              ? 'false'
+              : 'true',
           },
         });
 
@@ -266,8 +266,8 @@ export const createApi = <TEndpoints>({
           headers: {
             ...headers,
             'x-disable-global-toast': disableGlobalErrorHandler
-              ? 'true'
-              : 'false',
+              ? 'false'
+              : 'true',
           },
         });
 
@@ -300,8 +300,8 @@ export const createApi = <TEndpoints>({
           headers: {
             ...headers,
             'x-disable-global-toast': disableGlobalErrorHandler
-              ? 'true'
-              : 'false',
+              ? 'false'
+              : 'true',
           },
         });
 
@@ -334,8 +334,8 @@ export const createApi = <TEndpoints>({
           headers: {
             ...headers,
             'x-disable-global-toast': disableGlobalErrorHandler
-              ? 'true'
-              : 'false',
+              ? 'false'
+              : 'true',
           },
         });
 

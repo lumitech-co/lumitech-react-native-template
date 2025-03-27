@@ -1,1 +1,1 @@
-export * from './Switch';
+export { Switch, type SwitchComponentRefProps } from './Switch';

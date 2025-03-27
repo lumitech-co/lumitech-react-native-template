@@ -1,6 +1,8 @@
 export const Colors = {
   black: '#000',
 
+  black_50: 'rgba(0, 0, 0, 0.5)',
+
   /** BASIC */
 
   basic_100: '#FFFFFF',

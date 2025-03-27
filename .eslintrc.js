@@ -151,11 +151,10 @@ module.exports = {
         rules: [
           {
             from: ['ui'],
-            allow: ['themes', 'types', 'hooks'],
+            allow: ['themes', 'types', 'hooks', 'lib'],
             disallow: [
               'api',
               'services',
-              'lib',
               'stores',
               'translations',
               'features',

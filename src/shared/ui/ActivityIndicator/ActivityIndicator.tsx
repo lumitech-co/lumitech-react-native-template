@@ -1,7 +1,8 @@
 import React from 'react';
-import { ActivityIndicator as Indicator } from 'react-native';
 import { Box } from 'themes';
+import { UnistylesRuntime } from 'react-native-unistyles';
 import { AnimatedBackdrop } from '../AnimatedBackDrop';
+import { AnimatedActivityIndicator } from '../AnimatedActivityIndicator';
 
 interface ActivityIndicatorProps {
   isVisible: boolean;
@@ -15,8 +16,14 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
       <AnimatedBackdrop isVisible={isVisible} />
 
       {isVisible && (
-        <Box flex={1} justifyContent="center" alignItems="center">
-          <Indicator size="large" />
+        <Box
+          flex={1}
+          position="absolute"
+          alignSelf="center"
+          justifyContent="center"
+          zIndex={999}
+          top={UnistylesRuntime.screen.height / 2.5}>
+          <AnimatedActivityIndicator />
         </Box>
       )}
     </>
