@@ -1,0 +1,92 @@
+name: Deploy to Staging (Android)
+
+on:
+  push:
+    branches:
+      - stage
+
+jobs:
+  build-develop-android:
+    name: Build & Upload Android App (Staging)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Set up NODE
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.13.1
+
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Cache Gradle Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-caches-
+
+      - name: Enable Corepack and Set Yarn Version
+        run: |
+          corepack enable
+          corepack prepare yarn@latest --activate
+          yarn set version 4.6.0
+          yarn --version
+
+      - name: Install node modules
+        run: yarn install
+        env:
+          CI: true
+
+      - uses: akiojin/decode-base64-github-action@v0.1.0
+        id: decode-base64
+        with:
+          base64: ${{ secrets.STAGE_APPLICATION_ENV }}
+          output-path: ${{ runner.temp }}/.env
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+          bundler: 2.3.7
+          bundler-cache: true
+
+      - name: Install Fastlane dependencies
+        run: |
+          cd android
+          bundle install
+        env:
+          CI: true
+
+      - name: Decode Android Keystore
+        run: |
+          echo ${{ secrets.ANDROID_KEYSTORE_FILE }} | base64 --decode > android/app/release.keystore
+        env:
+          ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
+
+      - name: Decode Android Service Account File
+        run: |
+          echo ${{ secrets.ANDROID_SERVICE_ACCOUNT_FILE }} | base64 --decode > android/store.json
+        env:
+          ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_SERVICE_ACCOUNT_FILE }}
+
+      - name: Build and Upload to Play Store
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: 'deploy_to_play_store'
+          subdirectory: 'android'
+        env:
+          ANDROID_KEYSTORE_FILE: '${{ github.workspace }}/android/app/release.keystore'
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
+          ANDROID_ENVIRONMENT: ${{ secrets.ANDROID_ENVIRONMENT }}

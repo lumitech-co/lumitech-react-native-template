@@ -14,7 +14,6 @@ APPLE_KEY_CONTENT = ENV["APPLE_KEY_CONTENT"]
 GIT_AUTHORIZATION = ENV["GIT_AUTHORIZATION"]
 
 IOS_VERSION_NUMBER = ENV['IOS_VERSION_NUMBER']
-IOS_ENVIRONMENT= ENV['IOS_ENVIRONMENT']
 
 require_relative 'scripts/util_helper'
 
@@ -51,22 +50,6 @@ platform :ios do
       in_house: false
     )
 
-    tag_match_pattern = if IOS_ENVIRONMENT == 'Production'
-                          "release/*"
-                        elsif IOS_ENVIRONMENT == 'Staging'
-                          "staging/*"
-                        else
-                          "develop/*"
-                        end
-
-    @changelog = changelog_from_git_commits(
-      pretty: "- %s",
-      date_format: "short",
-      tag_match_pattern: tag_match_pattern
-    )
-
-    puts "Changelog for current branch:\n#{@changelog}"
-
     @buildNumber = fetch_build_number(IOS_VERSION_NUMBER)
 
     #Set build number
@@ -84,17 +67,6 @@ platform :ios do
     ios_version_number = get_version_number(
       xcodeproj: xcodeproj
     )
-
-    @versionTag = if IOS_ENVIRONMENT == 'Production'
-                    "release/ios/version-#{ios_version_number}/build-#{@buildNumber}"
-                  elsif IOS_ENVIRONMENT == 'Staging'
-                    "staging/ios/version-#{ios_version_number}/build-#{@buildNumber}"
-                  else
-                    "develop/ios/version-#{ios_version_number}/build-#{@buildNumber}"
-                  end
-
-    puts "Testflight Changelog: #{(@changelog).inspect}"
-    puts "Testflight Version: #{@versionTag}"
 
     # Match appstore file
     sync_code_signing(

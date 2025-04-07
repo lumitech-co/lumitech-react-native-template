@@ -26,12 +26,6 @@ target 'ReactNativeTemplate' do
     :new_arch_enabled => true
   )
 
-  ENVFILES = {
-    "Develop" => "$(PODS_ROOT)/../../.env.develop",
-    "Stage" => "$(PODS_ROOT)/../../.env.stage",
-    "Release" => "$(PODS_ROOT)/../../.env.release",
-  }
-
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
@@ -40,13 +34,5 @@ target 'ReactNativeTemplate' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
-
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        if target.name == 'react-native-config'
-          config.build_settings['ENVFILE'] = ENVFILES[config.name]
-        end
-      end
-    end
   end
 end
