@@ -1,4 +1,4 @@
-import { InfiniteData } from '@tanstack/react-query';
+import { InvalidateQueryFilters, InfiniteData } from '@tanstack/react-query';
 import { getQueryClient } from '../../queryClient';
 import {
   InfiniteQueryFetchParams,
@@ -120,5 +120,17 @@ export const useGetUserPaginateInfiniteQueryAuthService = <
     initialPageParam,
     getNextPageParam,
     options,
+  });
+};
+
+export const invalidateGetUserPaginateInfiniteQueryAuthService = (
+  params: Test,
+  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
+) => {
+  const queryClient = getQueryClient();
+
+  return queryClient.invalidateQueries({
+    queryKey: getQueryKey(params),
+    ...options,
   });
 };

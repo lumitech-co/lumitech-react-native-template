@@ -216,7 +216,8 @@ void generateQueryHook(
     return;
   }
 
-  outFile << "import { getQueryClient } from '../../queryClient';\n"
+  outFile << "import { InvalidateQueryFilters } from '@tanstack/react-query';\n"
+          << "import { getQueryClient } from '../../queryClient';\n"
           << "import {\n"
           << "  QueryError,\n"
           << "  QueryKeyType,\n"
@@ -303,6 +304,17 @@ void generateQueryHook(
             << "    options,\n"
             << "  });\n"
             << "};\n";
+
+    outFile << "\n export const invalidate" << toCapitalize(endpointName) << "Query" << servicePrefixHook << " = (\n"
+            << "  params: " << requestType << ",\n"
+            << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+            << ") => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  return queryClient.invalidateQueries({\n"
+            << "    queryKey: getQueryKey(params),\n"
+            << "    ...options,\n"
+            << "  });\n"
+            << "};\n";
   } else {
     outFile << "\ninterface HookParams<TData> {\n"
             << "  options?: UseQueryWithOptionsParams<\n"
@@ -359,6 +371,16 @@ void generateQueryHook(
             << "    options,\n"
             << "  });\n"
             << "};\n";
+
+    outFile << "\n export const invalidate" << toCapitalize(endpointName) << "Query" << servicePrefixHook << " = (\n"
+            << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+            << ") => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  return queryClient.invalidateQueries({\n"
+            << "    queryKey: getQueryKey(),\n"
+            << "    ...options,\n"
+            << "  });\n"
+            << "};\n";
   }
 
   std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
@@ -394,7 +416,8 @@ void generatePrefetchQueryHook(
     return;
   }
 
-  outFile << "import { getQueryClient } from '../../queryClient';\n"
+  outFile << "import { InvalidateQueryFilters } from '@tanstack/react-query';\n"
+          << "import { getQueryClient } from '../../queryClient';\n"
           << "import {\n"
           << "  QueryError,\n"
           << "  QueryKeyType,\n"
@@ -481,6 +504,17 @@ void generatePrefetchQueryHook(
             << "    options,\n"
             << "  });\n"
             << "};\n";
+
+    outFile << "\n export const invalidate" << toCapitalize(endpointName) << "Query" << servicePrefixHook << " = (\n"
+            << "  params: " << requestType << ",\n"
+            << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+            << ") => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  return queryClient.invalidateQueries({\n"
+            << "    queryKey: getQueryKey(params),\n"
+            << "    ...options,\n"
+            << "  });\n"
+            << "};\n";
   } else {
     outFile << "\ninterface HookParams<TData> {\n"
             << "  options?: UsePrefetchQueryWithOptionsParams<\n"
@@ -537,6 +571,16 @@ void generatePrefetchQueryHook(
             << "    options,\n"
             << "  });\n"
             << "};\n";
+
+    outFile << "\n export const invalidate" << toCapitalize(endpointName) << "Query" << servicePrefixHook << " = (\n"
+            << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+            << ") => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  return queryClient.invalidateQueries({\n"
+            << "    queryKey: getQueryKey(),\n"
+            << "    ...options,\n"
+            << "  });\n"
+            << "};\n";
   }
 
   std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
@@ -571,7 +615,8 @@ void generateInfiniteQueryHook(
     return;
   }
 
-  outFile << "import { getQueryClient } from '../../queryClient';\n"
+  outFile << "import { InvalidateQueryFilters } from '@tanstack/react-query';\n"
+          << "import { getQueryClient } from '../../queryClient';\n"
           << "import { InfiniteData } from '@tanstack/react-query';\n"
           << "import {\n"
           << "  InfiniteQueryFetchParams,\n"
@@ -704,6 +749,17 @@ void generateInfiniteQueryHook(
           << "    initialPageParam,\n"
           << "    getNextPageParam,\n"
           << "    options,\n"
+          << "  });\n"
+          << "};\n";
+
+  outFile << "\n export const invalidate" << toCapitalize(endpointName) << "InfiniteQuery" << servicePrefixHook << " = (\n"
+          << "  params: " << requestType << ",\n"
+          << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+          << ") => {\n"
+          << "  const queryClient = getQueryClient();\n\n"
+          << "  return queryClient.invalidateQueries({\n"
+          << "    queryKey: getQueryKey(params),\n"
+          << "    ...options,\n"
           << "  });\n"
           << "};\n";
 
@@ -871,6 +927,17 @@ void generatePrefetchInfiniteQueryHook(
           << "    initialPageParam,\n"
           << "    getNextPageParam,\n"
           << "    options,\n"
+          << "  });\n"
+          << "};\n";
+
+  outFile << "\n export const invalidate" << toCapitalize(endpointName) << "InfiniteQuery" << servicePrefixHook << " = (\n"
+          << "  params: " << requestType << ",\n"
+          << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+          << ") => {\n"
+          << "  const queryClient = getQueryClient();\n\n"
+          << "  return queryClient.invalidateQueries({\n"
+          << "    queryKey: getQueryKey(params),\n"
+          << "    ...options,\n"
           << "  });\n"
           << "};\n";
 

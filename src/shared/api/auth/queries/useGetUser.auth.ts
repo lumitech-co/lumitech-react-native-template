@@ -1,3 +1,4 @@
+import { InvalidateQueryFilters } from '@tanstack/react-query';
 import { getQueryClient } from '../../queryClient';
 import {
   QueryError,
@@ -69,5 +70,17 @@ export const useGetUserQueryAuthService = <TData = CreateAccountResponse[]>({
     queryFn: () => getUserQueryFnAuthService({ params }),
     queryKey: getQueryKey(params),
     options,
+  });
+};
+
+export const invalidateGetUserQueryAuthService = (
+  params: Test,
+  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
+) => {
+  const queryClient = getQueryClient();
+
+  return queryClient.invalidateQueries({
+    queryKey: getQueryKey(params),
+    ...options,
   });
 };

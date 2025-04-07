@@ -1,13 +1,13 @@
-name: Create build for Android, upload to Google Store
+name: Deploy to Production (Android)
+
 on:
   push:
     branches:
-      - develop
+      - 'release/**'
+
 jobs:
-  # ----------------------- ANDROID -----------------------------
-  # -------------------------------------------------------------
   build-develop-android:
-    name: Build & ship Android app
+    name: Build & Upload Android App (Production)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,12 +23,12 @@ jobs:
           node-version: 20.13.1
 
       - name: Cache Gradle Wrapper
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
       - name: Cache Gradle Dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
@@ -38,7 +38,9 @@ jobs:
       - name: Enable Corepack and Set Yarn Version
         run: |
           corepack enable
-          corepack prepare yarn@4.6.0 --activate
+          corepack prepare yarn@latest --activate
+          yarn set version 4.6.0
+          yarn --version
 
       - name: Install node modules
         run: yarn install
@@ -48,13 +50,14 @@ jobs:
       - uses: akiojin/decode-base64-github-action@v0.1.0
         id: decode-base64
         with:
-          base64: ${{ secrets.APPLICATION_ENV }}
+          base64: ${{ secrets.PROD_APPLICATION_ENV }}
           output-path: ${{ runner.temp }}/.env
 
-      - name: Install Ruby
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.0.2
+          ruby-version: 3.1.2
+          bundler: 2.3.7
           bundler-cache: true
 
       - name: Install Fastlane dependencies

@@ -1,3 +1,4 @@
+import { InvalidateQueryFilters } from '@tanstack/react-query';
 import { getQueryClient } from '../../queryClient';
 import {
   QueryError,
@@ -74,5 +75,17 @@ export const useGetUserPrefetchPrefetchQueryAuthService = <
     queryFn: () => getUserPrefetchQueryFnAuthService({ params }),
     queryKey: getQueryKey(params),
     options,
+  });
+};
+
+export const invalidateGetUserPrefetchQueryAuthService = (
+  params: Test,
+  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
+) => {
+  const queryClient = getQueryClient();
+
+  return queryClient.invalidateQueries({
+    queryKey: getQueryKey(params),
+    ...options,
   });
 };
