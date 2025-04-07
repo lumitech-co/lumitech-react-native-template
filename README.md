@@ -91,85 +91,11 @@ Enable corepack and prepare Yarn 3 for your project:
 
 Before you begin, it’s essential to configure the environment settings for your project. This involves setting up different environment-specific variables for iOS and Android builds, such as API keys, database connections, or other environment-specific configurations.
 
-You will maintain three separate .env files for different environments:
-
-    .env.develop – for development builds
-    .env.stage – for staging builds
-    .env.prod – for production builds
-
 Example Environment Variable Setup:
 
 ```
 API_URL=""
 ```
-
-## 🍎 iOS Setup
-
-For iOS, use the following scripts to manage environment variables:
-
-    xcode:clean: Cleans the iOS build workspace to ensure the environment is set up correctly.
-
-    ios:dev: Runs the iOS app with development environment variables from .env.develop.
-
-    ios:release: Runs the iOS app with production environment variables from .env.prod.
-
-    ios:stage: Runs the iOS app with staging environment variables from .env.stage.
-
-## Podfile linking
-
-You'll notice that `Podfile` includes next steps for different .env:
-
-```
-installer.pods_project.targets.each do |target|
-     target.build_configurations.each do |config|
-       if target.name == 'react-native-config'
-         config.build_settings['ENVFILE'] = ENVFILES[config.name]
-       end
-     end
-   end
-```
-
-## Package.json scripts
-
-```
-"xcode:clean": "xcodebuild clean -workspace ios/project-name.xcworkspace -scheme project-name",
-"ios:dev": "ENVFILE=.env.develop react-native run-ios",
-"ios:release": "ENVFILE=.env.release react-native run-ios",
-"ios:stage": "ENVFILE=.env.stage react-native run-ios",
-```
-
-`Note`: Before running any of the ios:dev, ios:release, or ios:stage commands, you must clean the Xcode workspace by running xcode:clean.
-
-## 🤖 Android Setup
-
-For Android, you will follow a similar approach to run the app with the correct environment variables:
-
-```
-  android:dev: Runs the Android app with development environment variables from .env.develop.
-	android:release: Runs the Android app with production environment variables from .env.prod.
-	android:stage: Runs the Android app with staging environment variables from .env.stage.
-```
-
-## Gradle linking
-
-You'll notice that `android/app/build.gradle` includes next steps for different .env:
-
-```
-project.ext.envConfigFiles = [
-   develop: ".env.develop",
-   release: ".env.release",
-   stage: ".env.stage",
-]
-```
-
-## Package.json scripts
-
-```
-"android:dev": "ENVFILE=.env.develop react-native run-android",
-"android:release": "ENVFILE=.env.release react-native run-android",
-"android:stage": "ENVFILE=.env.stage react-native run-android",
-```
-
 
 ## 📌 API hooks generation
 
@@ -177,9 +103,9 @@ This template contains C++ scripts for **API code generation**. These scripts ge
 
 🔹 Supported Platforms
 ```
-•	macOS ✅
-•	Linux ✅
-•	Windows 🛠️ (WIP - Requires additional C++ setup)
+• Macos ✅
+• Linux ✅
+• Windows 🛠️ (WIP - Requires additional C++ setup)
 ```
 
 🔹 Compile Codegen
