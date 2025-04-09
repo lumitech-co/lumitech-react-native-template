@@ -6,6 +6,7 @@ import {
   getBundleId,
   getBuildNumber,
 } from 'react-native-device-info';
+import { UnistylesRuntime } from 'react-native-unistyles';
 
 export const hasNotch = hasTopOffset();
 
@@ -36,3 +37,14 @@ export const setDefaultProps = <T extends ReactComponent>(
 };
 
 export const platformOS = Platform.OS;
+
+const DEFAULT_INSET = 16;
+
+export const PLATFORM_INSETS = {
+  TOP: isIOS ? UnistylesRuntime.insets.top || DEFAULT_INSET : DEFAULT_INSET,
+  BOTTOM: isIOS
+    ? UnistylesRuntime.insets.bottom || DEFAULT_INSET
+    : DEFAULT_INSET,
+  LEFT: isIOS ? UnistylesRuntime.insets.left || DEFAULT_INSET : DEFAULT_INSET,
+  RIGHT: isIOS ? UnistylesRuntime.insets.right || DEFAULT_INSET : DEFAULT_INSET,
+};

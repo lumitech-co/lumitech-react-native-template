@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box } from 'themes';
+import { Portal } from '@gorhom/portal';
 import { UnistylesRuntime } from 'react-native-unistyles';
 import { AnimatedBackdrop } from '../AnimatedBackDrop';
 import { AnimatedActivityIndicator } from '../AnimatedActivityIndicator';
@@ -12,7 +13,7 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
   isVisible,
 }) => {
   return (
-    <>
+    <Portal>
       <AnimatedBackdrop isVisible={isVisible} />
 
       {isVisible && (
@@ -26,6 +27,6 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
           <AnimatedActivityIndicator />
         </Box>
       )}
-    </>
+    </Portal>
   );
 };
