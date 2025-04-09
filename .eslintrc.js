@@ -89,16 +89,6 @@ module.exports = {
     'no-negated-condition': 'error',
     'no-unneeded-ternary': 'error',
     'require-await': 'error',
-    'no-magic-numbers': [
-      'warn',
-      {
-        ignoreArrayIndexes: true,
-        ignore: [
-          -3, -1, 0, 0.3, 0.6, 0.5, 0.8, 1, 2, 2.5, 0.2, 3, 5, 100, 200, 401,
-          404, 500, 1000, 60,
-        ],
-      },
-    ],
     'func-style': ['error', 'expression'],
     'id-denylist': ['error', 'e', 'cb', 'item', 'i', 'err', 'el'],
     'padding-line-between-statements': [

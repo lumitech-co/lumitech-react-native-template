@@ -4,7 +4,7 @@
 
 # [Lumitech](https://lumitech.co/) React Native Template 🌌
 
-Welcome to the **Lumitech React Native Template (v0.75.4)**! This template is designed to give you a head start on your project by streamlining the setup process and enabling you to focus on building your app faster. 🌟
+Welcome to the **Lumitech React Native Template (v0.76.7)**! This template is designed to give you a head start on your project by streamlining the setup process and enabling you to focus on building your app faster. 🌟
 
 ### About Lumitech
 [Lumitech](https://lumitech.co/) is a custom software development company providing professional services worldwide. We partner with technology businesses globally helping them to build successful engineering teams and create innovative software products. We’re a global team of software engineers, AI and ML specialists, product managers, and technology experts who have achieved a 600% growth rate since 2022. When a rocket launches toward the moon, it doesn’t stop halfway. Neither do we
@@ -22,7 +22,7 @@ We’ve integrated the latest features from React Native to ensure your project 
 
 After initializing your project using this template, there are a few additional steps needed to fully set up your environment. These will be documented in detail below.
 
-For more information about what’s new in React Native 0.75, you can check out the official [release notes](https://reactnative.dev/blog/2024/08/12/release-0.75).
+For more information about what’s new in React Native 0.76.7, you can check out the official [release notes](https://reactnative.dev/blog/2024/10/23/release-0.76-new-architecture).
 
 By using this template, you’re laying a solid foundation for your project, ready to embrace the future improvements of React Native!
 
@@ -59,7 +59,7 @@ Enable corepack and prepare Yarn 3 for your project:
 
 ### Built With
 
-- [react-native 0.75.0](https://reactnative.dev/blog/2024/08/12/release-0.75)
+- [react-native 0.76.7](https://reactnative.dev/blog/2024/10/23/release-0.76-new-architecture)
 
 - [typescript](https://www.typescriptlang.org/)
 
