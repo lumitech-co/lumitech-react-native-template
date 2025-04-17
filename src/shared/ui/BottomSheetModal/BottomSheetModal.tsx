@@ -50,7 +50,7 @@ export const BottomSheetModal = forwardRef<BaseBottomSheet, BottomPanelProps>(
 
 const stylesheet = createStyleSheet(theme => ({
   backgroundStyle: {
-    backgroundColor: theme.colors.basic_800,
+    backgroundColor: theme.colors.basic_100,
   },
   container: {
     flex: 1,
