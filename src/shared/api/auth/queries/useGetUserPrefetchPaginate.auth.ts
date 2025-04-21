@@ -55,6 +55,7 @@ interface InfiniteFetchParams<TData, TPageParam = PageParam> extends Test {
 interface QueryFnParams<TPageParam> {
   params: Test;
   pageParam: TPageParam;
+  signal: AbortSignal;
 }
 
 export const getUserPrefetchPaginateQueryFnAuthService = async <
@@ -62,11 +63,12 @@ export const getUserPrefetchPaginateQueryFnAuthService = async <
 >({
   params,
   pageParam,
+  signal,
 }: QueryFnParams<TPageParam>) => {
-  const response = await AuthService.getUserPrefetchPaginate({
-    ...params,
-    pageParam,
-  });
+  const response = await AuthService.getUserPrefetchPaginate(
+    { ...params, pageParam },
+    { signal },
+  );
 
   return response?.data;
 };
@@ -92,8 +94,8 @@ export const getUserPrefetchPaginateInfiniteQueryAuthService = <
     QueryKeyType,
     TPageParam
   >({
-    queryFn: ({ pageParam }) =>
-      getUserPrefetchPaginateQueryFnAuthService({ pageParam, params }),
+    queryFn: ({ pageParam, signal }) =>
+      getUserPrefetchPaginateQueryFnAuthService({ pageParam, params, signal }),
     queryKey: getQueryKey(params),
     initialPageParam,
     getNextPageParam,
@@ -117,8 +119,8 @@ export const useGetUserPrefetchPaginateInfiniteQueryAuthService = <
     QueryKeyType,
     TPageParam
   >({
-    queryFn: ({ pageParam }) =>
-      getUserPrefetchPaginateQueryFnAuthService({ pageParam, params }),
+    queryFn: ({ pageParam, signal }) =>
+      getUserPrefetchPaginateQueryFnAuthService({ pageParam, params, signal }),
     queryKey: getQueryKey(params),
     initialPageParam,
     getNextPageParam,

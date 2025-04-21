@@ -55,6 +55,7 @@ interface InfiniteFetchParams<TData, TPageParam = PageParam> extends Test {
 interface QueryFnParams<TPageParam> {
   params: Test;
   pageParam: TPageParam;
+  signal: AbortSignal;
 }
 
 export const getUserPaginateQueryFnAuthService = async <
@@ -62,8 +63,12 @@ export const getUserPaginateQueryFnAuthService = async <
 >({
   params,
   pageParam,
+  signal,
 }: QueryFnParams<TPageParam>) => {
-  const response = await AuthService.getUserPaginate({ ...params, pageParam });
+  const response = await AuthService.getUserPaginate(
+    { ...params, pageParam },
+    { signal },
+  );
 
   return response?.data;
 };
@@ -89,8 +94,8 @@ export const getUserPaginateInfiniteQueryAuthService = <
     QueryKeyType,
     TPageParam
   >({
-    queryFn: ({ pageParam }) =>
-      getUserPaginateQueryFnAuthService({ pageParam, params }),
+    queryFn: ({ pageParam, signal }) =>
+      getUserPaginateQueryFnAuthService({ pageParam, params, signal }),
     queryKey: getQueryKey(params),
     initialPageParam,
     getNextPageParam,
@@ -114,8 +119,8 @@ export const useGetUserPaginateInfiniteQueryAuthService = <
     QueryKeyType,
     TPageParam
   >({
-    queryFn: ({ pageParam }) =>
-      getUserPaginateQueryFnAuthService({ pageParam, params }),
+    queryFn: ({ pageParam, signal }) =>
+      getUserPaginateQueryFnAuthService({ pageParam, params, signal }),
     queryKey: getQueryKey(params),
     initialPageParam,
     getNextPageParam,
