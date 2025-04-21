@@ -1,6 +1,6 @@
 import React from 'react';
+import { View, Text } from 'react-native';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { Box, Text } from 'themes';
 
 interface ErrorMessageProps {
   message: string;
@@ -10,9 +10,9 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
   const { styles } = useStyles(stylesheet);
 
   return (
-    <Box>
+    <View>
       <Text style={styles.errorMessage}>{message}</Text>
-    </Box>
+    </View>
   );
 };
 

@@ -41,10 +41,8 @@ export const platformOS = Platform.OS;
 const DEFAULT_INSET = 16;
 
 export const PLATFORM_INSETS = {
-  TOP: isIOS ? UnistylesRuntime.insets.top || DEFAULT_INSET : DEFAULT_INSET,
-  BOTTOM: isIOS
-    ? UnistylesRuntime.insets.bottom || DEFAULT_INSET
-    : DEFAULT_INSET,
-  LEFT: isIOS ? UnistylesRuntime.insets.left || DEFAULT_INSET : DEFAULT_INSET,
-  RIGHT: isIOS ? UnistylesRuntime.insets.right || DEFAULT_INSET : DEFAULT_INSET,
+  TOP: Math.max(UnistylesRuntime.insets.top, DEFAULT_INSET),
+  BOTTOM: Math.max(UnistylesRuntime.insets.bottom, DEFAULT_INSET),
+  LEFT: Math.max(UnistylesRuntime.insets.left, DEFAULT_INSET),
+  RIGHT: Math.max(UnistylesRuntime.insets.right, DEFAULT_INSET),
 };

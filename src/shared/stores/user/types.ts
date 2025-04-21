@@ -1,13 +1,12 @@
 export interface User {
+  id: string;
+  email: string;
   firstName: string;
   lastName: string;
-  email: string;
-  phoneNumber: string;
-  userId: number;
+  displayName: string;
+  username: string;
 }
 
-export interface State extends User {}
-
-export interface UserStore extends State {
-  setUser: (user: User) => void;
+export interface UserStore {
+  user: User;
 }

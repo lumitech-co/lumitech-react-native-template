@@ -1,5 +1,4 @@
 export const PersistStorageKeys = {
-  AUTH: 'AUTH_STORAGE',
   USER: 'USER_STORAGE',
 } as const;
 

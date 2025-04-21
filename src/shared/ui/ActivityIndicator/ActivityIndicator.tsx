@@ -1,9 +1,8 @@
 import React from 'react';
-import { Box } from 'themes';
 import { Portal } from '@gorhom/portal';
-import { UnistylesRuntime } from 'react-native-unistyles';
+import { View, ActivityIndicator as BaseIndicator } from 'react-native';
+import { useStyles, createStyleSheet } from 'react-native-unistyles';
 import { AnimatedBackdrop } from '../AnimatedBackDrop';
-import { AnimatedActivityIndicator } from '../AnimatedActivityIndicator';
 
 interface ActivityIndicatorProps {
   isVisible: boolean;
@@ -12,21 +11,28 @@ interface ActivityIndicatorProps {
 export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
   isVisible,
 }) => {
+  const { styles, theme } = useStyles(stylesheet);
+
   return (
     <Portal>
       <AnimatedBackdrop isVisible={isVisible} />
 
       {isVisible && (
-        <Box
-          flex={1}
-          position="absolute"
-          alignSelf="center"
-          justifyContent="center"
-          zIndex={999}
-          top={UnistylesRuntime.screen.height / 2.5}>
-          <AnimatedActivityIndicator />
-        </Box>
+        <View style={styles.container}>
+          <BaseIndicator size="large" color={theme.colors.success_300} />
+        </View>
       )}
     </Portal>
   );
 };
+
+const stylesheet = createStyleSheet((_, runtime) => ({
+  container: {
+    flex: 1,
+    position: 'absolute',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    zIndex: 999,
+    top: runtime.screen.height / 2,
+  },
+}));

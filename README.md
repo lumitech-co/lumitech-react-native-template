@@ -65,7 +65,7 @@ Enable corepack and prepare Yarn 3 for your project:
 
 - [react-navigation](https://reactnavigation.org/)
 
-- [zustand](https://zustand-demo.pmnd.rs/)
+- [@legendapp/state](https://legendapp.com/open-source/state/v3/intro/introduction/)
 
 - [@tanstack/react-query](https://tanstack.com/query/latest/docs/framework/react/overview)
 
@@ -284,32 +284,6 @@ export type Endpoints =
   | '/api/auth/sign-in'
   | ({} & string);
 ```
-
-## `schemas.sh`
-
-This script is designed to handle the replacement of certain types in generated files, specifically for react-native-unistyles components.
-
-```bash
-#!/bin/bash
-
-# Define the path to the generated file
-GENERATED_FILE="src/shared/themes/ui/lib/stylesheet.ts"
-
-# Check if the generated file exists
-if [ ! -f "$GENERATED_FILE" ]; then
-  echo "Generated file not found. Please ensure ts-to-zod has run successfully."
-  exit 1
-fi
-
-# Replace occurrences of z.literal(Animated.AnimatedNode) with z.any()
-# The '' after -i is for compatibility with macOS sed
-sed -i '' 's/z\.literal(Animated\.AnimatedNode)/z\.any()/g' "$GENERATED_FILE"
-
-# Inform the user that the replacements have been made
-echo "Replaced Animated.AnimatedNode with z.any() in $GENERATED_FILE"
-```
-
-This script ensures that z.literal(Animated.AnimatedNode) is replaced with z.any() in generated files. This is typically used for ensuring type safety in react-native-unistyles components.
 
 ## `icons.sh`
 

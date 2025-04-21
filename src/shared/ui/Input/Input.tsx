@@ -1,8 +1,7 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
-import { Box } from 'themes';
-import { TextInput, TouchableOpacity } from 'react-native';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { motify, useAnimationState } from 'moti';
 import { InputProps } from './types';
@@ -56,8 +55,8 @@ export const Input = React.forwardRef<TextInput, InputProps>(
     }, [isError]);
 
     return (
-      <Box>
-        <Box justifyContent="center">
+      <View>
+        <View style={styles.inputWrapper}>
           <MotiInput
             state={animatedState}
             ref={ref}
@@ -97,19 +96,25 @@ export const Input = React.forwardRef<TextInput, InputProps>(
               {RightIcon}
             </TouchableOpacity>
           )}
-        </Box>
+        </View>
 
         {isError && (
-          <Box marginTop={8}>
+          <View style={styles.errorWrapper}>
             <ErrorMessage message={errorMessage} />
-          </Box>
+          </View>
         )}
-      </Box>
+      </View>
     );
   },
 );
 
 const stylesheet = createStyleSheet(theme => ({
+  inputWrapper: {
+    justifyContent: 'center',
+  },
+  errorWrapper: {
+    marginTop: 8,
+  },
   input: ({ isLeftIconShown, isRightIconShown }: InputConstructorParams) => ({
     backgroundColor: theme.colors.basic_100,
     borderColor: theme.colors.basic_500,

@@ -1,7 +1,7 @@
 import React from 'react';
-import { ActivityIndicator, ActivityIndicatorProps } from 'react-native';
-import { useStyles } from 'react-native-unistyles';
-import { Box, Colors } from 'themes';
+import { ActivityIndicator, ActivityIndicatorProps, View } from 'react-native';
+import { useStyles, createStyleSheet } from 'react-native-unistyles';
+import { Colors } from 'themes';
 
 interface LoaderProps {
   color?: keyof typeof Colors;
@@ -12,11 +12,18 @@ export const Loader: React.FC<LoaderProps> = ({
   color = 'black',
   size = 'small',
 }) => {
-  const { theme } = useStyles();
+  const { styles, theme } = useStyles(stylesheet);
 
   return (
-    <Box justifyContent="center" alignItems="center">
+    <View style={styles.wrapper}>
       <ActivityIndicator size={size} animating color={theme.colors[color]} />
-    </Box>
+    </View>
   );
 };
+
+const stylesheet = createStyleSheet(() => ({
+  wrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+}));
