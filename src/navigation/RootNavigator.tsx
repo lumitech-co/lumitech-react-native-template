@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { RouteService } from 'services';
 import RNBootSplash from 'react-native-bootsplash';
-import { useAuthStoreSelectors } from 'stores';
+import { useUserId } from 'stores';
 import { StatusBar } from 'react-native';
 import { useStyles } from 'react-native-unistyles';
 import { MainNavigator } from './MainNavigator';
@@ -12,7 +12,7 @@ import { Stack, navigationTheme } from './lib';
 export const RootNavigator: React.FC = () => {
   const { theme } = useStyles();
 
-  const token = useAuthStoreSelectors.use.token();
+  const userId = useUserId();
 
   return (
     <NavigationContainer
@@ -25,7 +25,7 @@ export const RootNavigator: React.FC = () => {
       />
 
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {token ? (
+        {userId ? (
           <Stack.Screen name="MAIN_NAVIGATOR" component={MainNavigator} />
         ) : (
           <Stack.Screen name="AUTH_NAVIGATOR" component={AuthNavigator} />

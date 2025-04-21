@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
@@ -27,13 +27,14 @@ UnistylesRegistry.addBreakpoints(breakpoints).addThemes({
 export const App: React.FC = () => (
   <UnistylesProvider>
     <ReducedMotionConfig mode={ReduceMotion.Never} />
-    <GestureHandlerRootView style={styles.layout}>
-      <KeyboardProvider>
+    <KeyboardProvider>
+      <GestureHandlerRootView style={styles.layout}>
         <SafeAreaProvider>
           <QueryClientProvider client={queryClient}>
             <ModalProvider stack={modalStack}>
               <BottomSheetModalProvider>
                 <EventEmitterProvider>
+                  <StatusBar animated translucent />
                   <RootNavigator />
                 </EventEmitterProvider>
               </BottomSheetModalProvider>
@@ -41,8 +42,8 @@ export const App: React.FC = () => (
           </QueryClientProvider>
           <Toaster position="top-center" />
         </SafeAreaProvider>
-      </KeyboardProvider>
-    </GestureHandlerRootView>
+      </GestureHandlerRootView>
+    </KeyboardProvider>
   </UnistylesProvider>
 );
 

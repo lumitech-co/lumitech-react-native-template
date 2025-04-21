@@ -1,14 +1,26 @@
 import React from 'react';
-import { Box } from 'themes';
+import { View } from 'react-native';
+import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { AnimatedActivityIndicator } from 'ui';
 import { AuthWrapper } from 'widgets';
 
 export const Auth: React.FC = () => {
+  const { styles } = useStyles(stylesheet);
+
   return (
     <AuthWrapper>
-      <Box flex={1} justifyContent="center" alignItems="center">
+      <View style={styles.container}>
         <AnimatedActivityIndicator />
-      </Box>
+      </View>
     </AuthWrapper>
   );
 };
+
+const stylesheet = createStyleSheet(() => ({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+}));

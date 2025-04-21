@@ -1,6 +1,6 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import { Text } from 'themes';
 import i18next from 'i18next';
 import { IconName } from 'react-native-vector-icons';
 import { Icon } from 'ui';
@@ -35,14 +35,7 @@ export const BottomTabBarNavigator: React.FC = () => {
         tabBarItemStyle: styles.tabBarItemStyle,
         lazy: true,
         tabBarLabel: () => (
-          <Text
-            fontSize={10}
-            lineHeight={12}
-            fontWeight="500"
-            fontFamily="Medium"
-            color="black">
-            {titles[route.name]}
-          </Text>
+          <Text style={styles.text}>{titles[route.name]}</Text>
         ),
         tabBarIcon: ({ focused }) => {
           const iconColor = focused ? 'basic_400' : 'basic_300';
@@ -71,7 +64,7 @@ export const BottomTabBarNavigator: React.FC = () => {
   );
 };
 
-const stylesheet = createStyleSheet(() => ({
+const stylesheet = createStyleSheet(theme => ({
   tabBarItemStyle: {
     height: 42,
     marginTop: 10,
@@ -89,5 +82,12 @@ const stylesheet = createStyleSheet(() => ({
     height: 16,
     borderRadius: 8,
     minWidth: 0,
+  },
+  text: {
+    fontSize: 10,
+    lineHeight: 12,
+    fontWeight: '500',
+    fontFamily: theme.fonts.Medium,
+    color: theme.colors.black,
   },
 }));
