@@ -51,12 +51,14 @@ export const createAxiosClient = ({
       data,
       headers,
       params,
+      signal,
     }: {
       method: 'get' | 'post' | 'put' | 'patch' | 'delete';
       url: string;
       data?: TBody;
       headers?: Record<string, string>;
       params?: Params;
+      signal?: AbortSignal;
     }): Promise<{ data: TResponse }> {
       const response = await instance.request<TResponse>({
         method,
@@ -64,6 +66,7 @@ export const createAxiosClient = ({
         data,
         headers,
         params,
+        signal,
       });
 
       return { data: response.data };

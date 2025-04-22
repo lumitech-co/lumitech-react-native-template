@@ -28,8 +28,11 @@ interface QueryFnParams {
   signal?: AbortSignal;
 }
 
-export const getUserQueryFnAuthService = async ({ params }: QueryFnParams) => {
-  const response = await AuthService.getUser(params);
+export const getUserQueryFnAuthService = async ({
+  params,
+  signal,
+}: QueryFnParams) => {
+  const response = await AuthService.getUser(params, { signal });
 
   return response?.data;
 };
@@ -52,7 +55,7 @@ export const getUserQueryAuthService = <
     QueryKeyType
   >({
     queryKey: getQueryKey(params),
-    queryFn: () => getUserQueryFnAuthService({ params }),
+    queryFn: ({ signal }) => getUserQueryFnAuthService({ params, signal }),
     ...fetchOptions,
   });
 };
@@ -67,7 +70,7 @@ export const useGetUserQueryAuthService = <TData = CreateAccountResponse[]>({
     TData,
     QueryKeyType
   >({
-    queryFn: () => getUserQueryFnAuthService({ params }),
+    queryFn: ({ signal }) => getUserQueryFnAuthService({ params, signal }),
     queryKey: getQueryKey(params),
     options,
   });

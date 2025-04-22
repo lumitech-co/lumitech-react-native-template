@@ -255,9 +255,9 @@ void generateQueryHook(
             << "}\n\n";
 
     outFile << "export const " << endpointName << "QueryFn" << serviceName
-            << " = async ({ params }: QueryFnParams) => {\n"
+            << " = async ({ params, signal }: QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
-            << "(params);\n"
+            << "(params, { signal });\n"
             << "  return response?.data;\n"
             << "};\n\n";
 
@@ -285,8 +285,8 @@ void generateQueryHook(
             << "    QueryKeyType\n"
             << "  >({\n"
             << "    queryKey: getQueryKey(params),\n"
-            << "    queryFn: () => " << endpointName << "QueryFn" << serviceName
-            << "({ params }),\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ params, signal }),\n"
             << "    ...fetchOptions,\n"
             << "  });\n"
             << "};\n\n";
@@ -298,8 +298,8 @@ void generateQueryHook(
             << "}: HookParams<TData>) => {\n"
             << "  return useQueryWithOptions<" << responseType
             << ", QueryError, TData, QueryKeyType>({\n"
-            << "    queryFn: () => " << endpointName << "QueryFn" << serviceName
-            << "({ params }),\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ params, signal }),\n"
             << "    queryKey: getQueryKey(params),\n"
             << "    options,\n"
             << "  });\n"
@@ -325,10 +325,16 @@ void generateQueryHook(
             << "  >['options'];\n"
             << "}\n\n";
 
+    outFile << "interface QueryFnParams {\n"
+            << "  meta?: Record<string, unknown> | undefined;\n"
+            << "  queryKey?: QueryKeyType;\n"
+            << "  signal?: AbortSignal;\n"
+            << "}\n\n";
+
     outFile << "export const " << endpointName << "QueryFn" << serviceName
-            << " = async () => {\n"
+            << " = async ({ signal }:QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
-            << "();\n"
+            << "(undefined, { signal });\n"
             << "  return response?.data;\n"
             << "};\n\n";
 
@@ -353,8 +359,8 @@ void generateQueryHook(
             << "    QueryKeyType\n"
             << "  >({\n"
             << "    queryKey: getQueryKey(),\n"
-            << "    queryFn: () => " << endpointName << "QueryFn" << serviceName
-            << "(),\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ signal }),\n"
             << "    ...fetchOptions,\n"
             << "  });\n"
             << "};\n\n";
@@ -365,8 +371,8 @@ void generateQueryHook(
             << "}: HookParams<TData>) => {\n"
             << "  return useQueryWithOptions<" << responseType
             << ", QueryError, TData, QueryKeyType>({\n"
-            << "    queryFn: " << endpointName << "QueryFn" << serviceName
-            << ",\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ signal }),\n"
             << "    queryKey: getQueryKey(),\n"
             << "    options,\n"
             << "  });\n"
@@ -455,9 +461,9 @@ void generatePrefetchQueryHook(
             << "}\n\n";
 
     outFile << "export const " << endpointName << "QueryFn" << serviceName
-            << " = async ({ params }: QueryFnParams) => {\n"
+            << " = async ({ params, signal }: QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
-            << "(params);\n"
+            << "(params, { signal });\n"
             << "  return response?.data;\n"
             << "};\n\n";
 
@@ -485,8 +491,8 @@ void generatePrefetchQueryHook(
             << "    QueryKeyType\n"
             << "  >({\n"
             << "    queryKey: getQueryKey(params),\n"
-            << "    queryFn: () => " << endpointName << "QueryFn" << serviceName
-            << "({ params }),\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ params, signal }),\n"
             << "    ...fetchOptions,\n"
             << "  });\n"
             << "};\n\n";
@@ -498,8 +504,8 @@ void generatePrefetchQueryHook(
             << "}: HookParams<TData>) => {\n"
             << "  return usePrefetchQueryWithOptions<" << responseType
             << ", QueryError, TData, QueryKeyType>({\n"
-            << "    queryFn: () => " << endpointName << "QueryFn" << serviceName
-            << "({ params }),\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ params, signal }),\n"
             << "    queryKey: getQueryKey(params),\n"
             << "    options,\n"
             << "  });\n"
@@ -525,10 +531,16 @@ void generatePrefetchQueryHook(
             << "  >['options'];\n"
             << "}\n\n";
 
+    outFile << "interface QueryFnParams {\n"
+            << "  meta?: Record<string, unknown> | undefined;\n"
+            << "  queryKey?: QueryKeyType;\n"
+            << "  signal?: AbortSignal;\n"
+            << "}\n\n";
+
     outFile << "export const " << endpointName << "QueryFn" << serviceName
-            << " = async () => {\n"
+            << " = async ({ signal }:QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
-            << "();\n"
+            << "(undefined, { signal });\n"
             << "  return response?.data;\n"
             << "};\n\n";
 
@@ -553,8 +565,8 @@ void generatePrefetchQueryHook(
             << "    QueryKeyType\n"
             << "  >({\n"
             << "    queryKey: getQueryKey(),\n"
-            << "    queryFn: () => " << endpointName << "QueryFn" << serviceName
-            << "(),\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ signal }),\n"
             << "    ...fetchOptions,\n"
             << "  });\n"
             << "};\n\n";
@@ -565,8 +577,8 @@ void generatePrefetchQueryHook(
             << "}: HookParams<TData>) => {\n"
             << "  return usePrefetchQueryWithOptions<" << responseType
             << ", QueryError, TData, QueryKeyType>({\n"
-            << "    queryFn: " << endpointName << "QueryFn" << serviceName
-            << ",\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ signal }),\n"
             << "    queryKey: getQueryKey(),\n"
             << "    options,\n"
             << "  });\n"
@@ -684,15 +696,17 @@ void generateInfiniteQueryHook(
   outFile << "interface QueryFnParams<TPageParam> {\n"
           << "  params: " << requestType << ";\n"
           << "  pageParam: TPageParam;\n"
+          << "  signal: AbortSignal;\n"
           << "}\n\n";
 
   outFile << "export const " << endpointName << "QueryFn" << serviceName
           << " = async <TPageParam extends PageParam>({\n"
           << "  params,\n"
           << "  pageParam,\n"
+          << "  signal,\n"
           << "}: QueryFnParams<TPageParam>) => {\n"
           << "  const response = await " << serviceName << "." << endpointName
-          << "({ ...params, pageParam });\n"
+          << "({ ...params, pageParam }, { signal });\n"
           << "  return response?.data;\n"
           << "};\n\n";
 
@@ -717,8 +731,8 @@ void generateInfiniteQueryHook(
           << "    QueryKeyType,\n"
           << "    TPageParam\n"
           << "  >({\n"
-          << "    queryFn: ({ pageParam }) => " << endpointName << "QueryFn"
-          << serviceName << "({ pageParam, params }),\n"
+          << "    queryFn: ({ pageParam, signal }) => " << endpointName << "QueryFn"
+          << serviceName << "({ pageParam, params, signal }),\n"
           << "    queryKey: getQueryKey(params),\n"
           << "    initialPageParam,\n"
           << "    getNextPageParam,\n"
@@ -743,8 +757,8 @@ void generateInfiniteQueryHook(
           << "    QueryKeyType,\n"
           << "    TPageParam\n"
           << "  >({\n"
-          << "    queryFn: ({ pageParam }) => " << endpointName << "QueryFn"
-          << serviceName << "({ pageParam, params }),\n"
+          << "    queryFn: ({ pageParam, signal }) => " << endpointName << "QueryFn"
+          << serviceName << "({ pageParam, params, signal }),\n"
           << "    queryKey: getQueryKey(params),\n"
           << "    initialPageParam,\n"
           << "    getNextPageParam,\n"
@@ -862,15 +876,17 @@ void generatePrefetchInfiniteQueryHook(
   outFile << "interface QueryFnParams<TPageParam> {\n"
           << "  params: " << requestType << ";\n"
           << "  pageParam: TPageParam;\n"
+          << "  signal: AbortSignal;\n"
           << "}\n\n";
 
   outFile << "export const " << endpointName << "QueryFn" << serviceName
           << " = async <TPageParam extends PageParam>({\n"
           << "  params,\n"
           << "  pageParam,\n"
+          << "  signal,\n"
           << "}: QueryFnParams<TPageParam>) => {\n"
           << "  const response = await " << serviceName << "." << endpointName
-          << "({ ...params, pageParam });\n"
+          << "({ ...params, pageParam }, { signal });\n"
           << "  return response?.data;\n"
           << "};\n\n";
 
@@ -895,8 +911,8 @@ void generatePrefetchInfiniteQueryHook(
           << "    QueryKeyType,\n"
           << "    TPageParam\n"
           << "  >({\n"
-          << "    queryFn: ({ pageParam }) => " << endpointName << "QueryFn"
-          << serviceName << "({ pageParam, params }),\n"
+          << "    queryFn: ({ pageParam, signal }) => " << endpointName << "QueryFn"
+          << serviceName << "({ pageParam, params, signal }),\n"
           << "    queryKey: getQueryKey(params),\n"
           << "    initialPageParam,\n"
           << "    getNextPageParam,\n"
@@ -921,8 +937,8 @@ void generatePrefetchInfiniteQueryHook(
           << "    QueryKeyType,\n"
           << "    TPageParam\n"
           << "  >({\n"
-          << "    queryFn: ({ pageParam }) => " << endpointName << "QueryFn"
-          << serviceName << "({ pageParam, params }),\n"
+          << "    queryFn: ({ pageParam, signal }) => " << endpointName << "QueryFn"
+          << serviceName << "({ pageParam, params, signal }),\n"
           << "    queryKey: getQueryKey(params),\n"
           << "    initialPageParam,\n"
           << "    getNextPageParam,\n"

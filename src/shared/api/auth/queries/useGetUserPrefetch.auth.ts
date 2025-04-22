@@ -30,8 +30,9 @@ interface QueryFnParams {
 
 export const getUserPrefetchQueryFnAuthService = async ({
   params,
+  signal,
 }: QueryFnParams) => {
-  const response = await AuthService.getUserPrefetch(params);
+  const response = await AuthService.getUserPrefetch(params, { signal });
 
   return response?.data;
 };
@@ -55,7 +56,8 @@ export const getUserPrefetchPrefetchQueryAuthService = <
     QueryKeyType
   >({
     queryKey: getQueryKey(params),
-    queryFn: () => getUserPrefetchQueryFnAuthService({ params }),
+    queryFn: ({ signal }) =>
+      getUserPrefetchQueryFnAuthService({ params, signal }),
     ...fetchOptions,
   });
 };
@@ -72,7 +74,8 @@ export const useGetUserPrefetchPrefetchQueryAuthService = <
     TData,
     QueryKeyType
   >({
-    queryFn: () => getUserPrefetchQueryFnAuthService({ params }),
+    queryFn: ({ signal }) =>
+      getUserPrefetchQueryFnAuthService({ params, signal }),
     queryKey: getQueryKey(params),
     options,
   });

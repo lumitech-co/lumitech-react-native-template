@@ -11,17 +11,19 @@ export interface HTTPClient {
     data?: TBody;
     headers?: Record<string, string>;
     params?: Params;
+    signal?: AbortSignal;
   }): Promise<{ data: TResponse }>;
 }
 
 export type QueryOptions<D = unknown, M = HTTPMethod> = M extends
   | 'get'
   | 'delete'
-  ? { params?: Params }
+  ? { params?: Params; signal?: AbortSignal }
   : {
       data: D;
       params?: Params;
       headers?: Record<string, string>;
+      signal?: AbortSignal;
     };
 
 export type QueryReturnType<D = unknown, M = HTTPMethod> = M extends
@@ -46,7 +48,10 @@ export interface ApiBuilder {
       overrideBaseQuery?: boolean;
       disableGlobalErrorHandler?: boolean;
       baseQuery?: HTTPClient;
-    }): (config: P) => Promise<{ data: TResponse }>;
+    }): (
+      config: P,
+      extra?: { signal?: AbortSignal },
+    ) => Promise<{ data: TResponse }>;
 
     <TResponse = unknown>(args: {
       query: (
@@ -55,10 +60,13 @@ export interface ApiBuilder {
       overrideBaseQuery?: boolean;
       disableGlobalErrorHandler?: boolean;
       baseQuery?: HTTPClient;
-    }): (config?: {
-      params?: Params;
-      headers?: Record<string, string>;
-    }) => Promise<{ data: TResponse }>;
+    }): (
+      config?: {
+        params?: Params;
+        headers?: Record<string, string>;
+      },
+      extra?: { signal?: AbortSignal },
+    ) => Promise<{ data: TResponse }>;
   };
 
   getAsMutation: {
@@ -88,7 +96,10 @@ export interface ApiBuilder {
       overrideBaseQuery?: boolean;
       disableGlobalErrorHandler?: boolean;
       baseQuery?: HTTPClient;
-    }): (config: P) => Promise<{ data: TResponse }>;
+    }): (
+      config: P,
+      extra?: { signal?: AbortSignal },
+    ) => Promise<{ data: TResponse }>;
 
     <TResponse = unknown>(args: {
       query: (
@@ -97,10 +108,13 @@ export interface ApiBuilder {
       overrideBaseQuery?: boolean;
       disableGlobalErrorHandler?: boolean;
       baseQuery?: HTTPClient;
-    }): (config?: {
-      params?: Params;
-      headers?: Record<string, string>;
-    }) => Promise<{ data: TResponse }>;
+    }): (
+      config?: {
+        params?: Params;
+        headers?: Record<string, string>;
+      },
+      extra?: { signal?: AbortSignal },
+    ) => Promise<{ data: TResponse }>;
   };
 
   paginate: {
@@ -109,7 +123,10 @@ export interface ApiBuilder {
       overrideBaseQuery?: boolean;
       disableGlobalErrorHandler?: boolean;
       baseQuery?: HTTPClient;
-    }): (config: P) => Promise<{ data: TResponse }>;
+    }): (
+      config: P,
+      extra?: { signal?: AbortSignal },
+    ) => Promise<{ data: TResponse }>;
 
     <TResponse = unknown>(args: {
       query: (
@@ -118,10 +135,13 @@ export interface ApiBuilder {
       overrideBaseQuery?: boolean;
       disableGlobalErrorHandler?: boolean;
       baseQuery?: HTTPClient;
-    }): (config?: {
-      params?: Params;
-      headers?: Record<string, string>;
-    }) => Promise<{ data: TResponse }>;
+    }): (
+      config?: {
+        params?: Params;
+        headers?: Record<string, string>;
+      },
+      extra?: { signal?: AbortSignal },
+    ) => Promise<{ data: TResponse }>;
   };
 
   paginateAsPrefetch: {
@@ -130,7 +150,10 @@ export interface ApiBuilder {
       overrideBaseQuery?: boolean;
       disableGlobalErrorHandler?: boolean;
       baseQuery?: HTTPClient;
-    }): (config: P) => Promise<{ data: TResponse }>;
+    }): (
+      config: P,
+      extra?: { signal?: AbortSignal },
+    ) => Promise<{ data: TResponse }>;
 
     <TResponse = unknown>(args: {
       query: (
@@ -139,10 +162,13 @@ export interface ApiBuilder {
       overrideBaseQuery?: boolean;
       disableGlobalErrorHandler?: boolean;
       baseQuery?: HTTPClient;
-    }): (config?: {
-      params?: Params;
-      headers?: Record<string, string>;
-    }) => Promise<{ data: TResponse }>;
+    }): (
+      config?: {
+        params?: Params;
+        headers?: Record<string, string>;
+      },
+      extra?: { signal?: AbortSignal },
+    ) => Promise<{ data: TResponse }>;
   };
 
   delete: {
@@ -199,7 +225,11 @@ export interface ApiBuilder {
       baseQuery?: HTTPClient;
     }): (
       data: TBody,
-      config?: { headers?: Record<string, string>; params?: Params },
+      config?: {
+        headers?: Record<string, string>;
+        params?: Params;
+        signal?: AbortSignal;
+      },
     ) => Promise<{ data: TResponse }>;
 
     <TResponse = unknown>(args: {
@@ -213,6 +243,7 @@ export interface ApiBuilder {
       data: unknown,
       headers?: Record<string, string>,
       params?: Params,
+      signal?: AbortSignal,
     ) => Promise<{ data: TResponse }>;
   };
 

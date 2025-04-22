@@ -20,7 +20,10 @@ export const createApi = <TEndpoints>({
         disableGlobalErrorHandler?: boolean;
         baseQuery?: HTTPClient;
       }) =>
-      async (requestOptions: P): Promise<{ data: TResponse }> => {
+      async (
+        requestOptions: P,
+        extra?: { signal?: AbortSignal },
+      ): Promise<{ data: TResponse }> => {
         const { url, params, headers } = query(requestOptions);
 
         const queryInstance =
@@ -36,6 +39,7 @@ export const createApi = <TEndpoints>({
               ? 'false'
               : 'true',
           },
+          signal: extra?.signal,
         });
 
         return response;
@@ -53,7 +57,10 @@ export const createApi = <TEndpoints>({
         disableGlobalErrorHandler?: boolean;
         baseQuery?: HTTPClient;
       }) =>
-      async (requestOptions: P): Promise<{ data: TResponse }> => {
+      async (
+        requestOptions: P,
+        extra?: { signal?: AbortSignal },
+      ): Promise<{ data: TResponse }> => {
         const { url, params, headers } = query(requestOptions);
 
         const queryInstance =
@@ -69,6 +76,7 @@ export const createApi = <TEndpoints>({
               ? 'false'
               : 'true',
           },
+          signal: extra?.signal,
         });
 
         return response;
@@ -119,7 +127,10 @@ export const createApi = <TEndpoints>({
         disableGlobalErrorHandler?: boolean;
         baseQuery?: HTTPClient;
       }) =>
-      async (requestOptions: P): Promise<{ data: TResponse }> => {
+      async (
+        requestOptions: P,
+        extra?: { signal?: AbortSignal },
+      ): Promise<{ data: TResponse }> => {
         const { url, params, headers } = query(requestOptions);
 
         const queryInstance =
@@ -135,6 +146,7 @@ export const createApi = <TEndpoints>({
               ? 'false'
               : 'true',
           },
+          signal: extra?.signal,
         });
 
         return response;
@@ -152,7 +164,10 @@ export const createApi = <TEndpoints>({
         disableGlobalErrorHandler?: boolean;
         baseQuery?: HTTPClient;
       }) =>
-      async (requestOptions: P): Promise<{ data: TResponse }> => {
+      async (
+        requestOptions: P,
+        extra?: { signal?: AbortSignal },
+      ): Promise<{ data: TResponse }> => {
         const { url, params, headers } = query(requestOptions);
 
         const queryInstance =
@@ -168,6 +183,7 @@ export const createApi = <TEndpoints>({
               ? 'false'
               : 'true',
           },
+          signal: extra?.signal,
         });
 
         return response;
@@ -252,7 +268,10 @@ export const createApi = <TEndpoints>({
         disableGlobalErrorHandler?: boolean;
         baseQuery?: HTTPClient;
       }) =>
-      async (requestOptions: TBody): Promise<{ data: TResponse }> => {
+      async (
+        requestOptions: TBody,
+        extra?: { signal?: AbortSignal },
+      ): Promise<{ data: TResponse }> => {
         const { url, data, headers, params } = query(requestOptions);
 
         const queryInstance =
@@ -269,6 +288,7 @@ export const createApi = <TEndpoints>({
               ? 'false'
               : 'true',
           },
+          signal: extra?.signal,
         });
 
         return response;
