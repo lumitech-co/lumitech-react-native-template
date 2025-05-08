@@ -10,4 +10,3 @@ export * from './StatusBar';
 export * from './Switch';
 export * from './Tooltip';
 export * from './AnimatedButton';
-export * from './BottomSheetModal';
