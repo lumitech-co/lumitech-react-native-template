@@ -2068,29 +2068,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gorhom/bottom-sheet@npm:^5.1.1":
-  version: 5.1.1
-  resolution: "@gorhom/bottom-sheet@npm:5.1.1"
-  dependencies:
-    "@gorhom/portal": "npm:1.0.14"
-    invariant: "npm:^2.2.4"
-  peerDependencies:
-    "@types/react": "*"
-    "@types/react-native": "*"
-    react: "*"
-    react-native: "*"
-    react-native-gesture-handler: ">=2.16.1"
-    react-native-reanimated: ">=3.16.0"
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-    "@types/react-native":
-      optional: true
-  checksum: 10c0/efd66ae6414a2c28cf5725fb4b1f4ae2de9c2ebb7b034252b5c73d3f1944b32ec6125946b56db0d19dab6a9ecb21a6ee2f7d19437381a09302851e0739db6686
-  languageName: node
-  linkType: hard
-
-"@gorhom/portal@npm:1.0.14, @gorhom/portal@npm:^1.0.14":
+"@gorhom/portal@npm:^1.0.14":
   version: 1.0.14
   resolution: "@gorhom/portal@npm:1.0.14"
   dependencies:
@@ -3907,7 +3885,6 @@ __metadata:
     "@babel/runtime": "npm:^7.25.0"
     "@commitlint/cli": "npm:^19.5.0"
     "@commitlint/config-conventional": "npm:^19.5.0"
-    "@gorhom/bottom-sheet": "npm:^5.1.1"
     "@gorhom/portal": "npm:^1.0.14"
     "@hookform/resolvers": "npm:4.1.0"
     "@legendapp/state": "npm:^3.0.0-beta.30"
@@ -3927,7 +3904,7 @@ __metadata:
     "@types/react-native-vector-icons": "npm:^6.4.18"
     "@typescript-eslint/eslint-plugin": "npm:^8.8.1"
     "@typescript-eslint/parser": "npm:^8.8.1"
-    axios: "npm:1.7.9"
+    axios: "npm:1.9.0"
     babel-jest: "npm:^29.6.3"
     babel-plugin-module-resolver: "npm:^5.0.2"
     dayjs: "npm:1.11.13"
@@ -3958,7 +3935,7 @@ __metadata:
     react-native-device-info: "npm:14.0.4"
     react-native-edge-to-edge: "npm:^1.6.0"
     react-native-gesture-handler: "npm:2.23.1"
-    react-native-keyboard-controller: "npm:1.16.8"
+    react-native-keyboard-controller: "npm:1.17.1"
     react-native-mmkv: "npm:3.2.0"
     react-native-modalfy: "npm:3.6.0"
     react-native-reanimated: "patch:react-native-reanimated@npm%3A3.16.7#~/.yarn/patches/react-native-reanimated-npm-3.16.7-1e7cd6d376.patch"
@@ -3966,7 +3943,7 @@ __metadata:
     react-native-screens: "npm:4.5.0"
     react-native-svg: "npm:15.11.1"
     react-native-svg-transformer: "npm:^1.5.0"
-    react-native-unistyles: "npm:2.31.0"
+    react-native-unistyles: "npm:2.32.0"
     react-native-vector-icons: "npm:10.2.0"
     reactotron-react-native: "npm:^5.1.9"
     reactotron-react-native-mmkv: "npm:^0.2.7"
@@ -3975,7 +3952,7 @@ __metadata:
     ts-pattern: "npm:^5.6.2"
     ts-to-zod: "npm:3.8.5"
     typescript: "npm:5.0.4"
-    zod: "npm:3.24.2"
+    zod: "npm:3.24.4"
   languageName: unknown
   linkType: soft
 
@@ -4385,14 +4362,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.7.9":
-  version: 1.7.9
-  resolution: "axios@npm:1.7.9"
+"axios@npm:1.9.0":
+  version: 1.9.0
+  resolution: "axios@npm:1.9.0"
   dependencies:
     follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/b7a41e24b59fee5f0f26c1fc844b45b17442832eb3a0fb42dd4f1430eb4abc571fe168e67913e8a1d91c993232bd1d1ab03e20e4d1fee8c6147649b576fc1b0b
+  checksum: 10c0/9371a56886c2e43e4ff5647b5c2c3c046ed0a3d13482ef1d0135b994a628c41fbad459796f101c655e62f0c161d03883454474d2e435b2e021b1924d9f24994c
   languageName: node
   linkType: hard
 
@@ -10378,16 +10355,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-keyboard-controller@npm:1.16.8":
-  version: 1.16.8
-  resolution: "react-native-keyboard-controller@npm:1.16.8"
+"react-native-keyboard-controller@npm:1.17.1":
+  version: 1.17.1
+  resolution: "react-native-keyboard-controller@npm:1.17.1"
   dependencies:
     react-native-is-edge-to-edge: "npm:^1.1.6"
   peerDependencies:
     react: "*"
     react-native: "*"
     react-native-reanimated: ">=3.0.0"
-  checksum: 10c0/296a982d54cd8e04b0a71cd5c0daae674df66b40d2b98745da05ff29755ae82e528a7e157297de777f8742019c16a9e832823bb232f4e4779bad18981ec6fe23
+  checksum: 10c0/d36ba3c18b30a9bbcaf845136f319e4f2e13bf633600db69bce2d82d295b36ed672586a9fa81a726bfc68da61228c2c4c8134213d3c0c25f6626e0618a3aeaf9
   languageName: node
   linkType: hard
 
@@ -10514,9 +10491,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-unistyles@npm:2.31.0":
-  version: 2.31.0
-  resolution: "react-native-unistyles@npm:2.31.0"
+"react-native-unistyles@npm:2.32.0":
+  version: 2.32.0
+  resolution: "react-native-unistyles@npm:2.32.0"
   peerDependencies:
     "@react-native/normalize-colors": "*"
     react: "*"
@@ -10531,7 +10508,7 @@ __metadata:
       optional: true
     react-native-windows:
       optional: true
-  checksum: 10c0/bb8cc419d654e79674675a1f8150d4cbd869cd31bf89be3f3aa59d15aa95e061baf8a3dfa765c73b36e6190f88155e2864065dedfd7923d9e5a4ae7a772a6e56
+  checksum: 10c0/01d27e42fdaa08ff382ec8e77f11e8a08c1b43141fd3f69e7a94c14efc19475b72d37270993640e16d92ac0ad672ba2c4135872b927119971d4b4d80352f66dd
   languageName: node
   linkType: hard
 
@@ -12915,7 +12892,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:3.24.2, zod@npm:^3.22.4":
+"zod@npm:3.24.4":
+  version: 3.24.4
+  resolution: "zod@npm:3.24.4"
+  checksum: 10c0/ab3112f017562180a41a0f83d870b333677f7d6b77f106696c56894567051b91154714a088149d8387a4f50806a2520efcb666f108cd384a35c236a191186d91
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.22.4":
   version: 3.24.2
   resolution: "zod@npm:3.24.2"
   checksum: 10c0/c638c7220150847f13ad90635b3e7d0321b36cce36f3fc6050ed960689594c949c326dfe2c6fa87c14b126ee5d370ccdebd6efb304f41ef5557a4aaca2824565

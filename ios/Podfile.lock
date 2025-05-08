@@ -1246,7 +1246,29 @@ PODS:
     - react-native-config/App (= 1.5.5)
   - react-native-config/App (1.5.5):
     - React-Core
-  - react-native-keyboard-controller (1.16.8):
+  - react-native-keyboard-controller (1.17.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - react-native-keyboard-controller/common (= 1.17.1)
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-keyboard-controller/common (1.17.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1377,7 +1399,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-unistyles (2.31.0):
+  - react-native-unistyles (2.32.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2184,11 +2206,11 @@ SPEC CHECKSUMS:
   React-Mapbuffer: a381120aea722d2244d4e4b663a10d4c3b2d4e51
   React-microtasksnativemodule: d9b946675010659cddd1c7611c074216579c8ad3
   react-native-config: 644074ab88db883fcfaa584f03520ec29589d7df
-  react-native-keyboard-controller: 1f7048394390f0b7dd97ae7cf52c94ec5f8dd5f0
+  react-native-keyboard-controller: 199d1c1b80dac3460464896238acbf21d23672bd
   react-native-mmkv: b4af3744580f08e1ffc7761103b408d313b2f772
   react-native-safe-area-context: 0d8827b2420dfb4c8a8e27639585e61b912261be
   react-native-skia: 98f89e8844c108ebda57cff1a3bc44da9f3a78b6
-  react-native-unistyles: 8401634fe700d3d0c2b8743538c9f8706dd65abd
+  react-native-unistyles: 17df3e070647de5b9bfe08128eb4db0c85fc1c52
   React-nativeconfig: 67fa7a63ea288cb5b1d0dd2deaf240405fec164f
   React-NativeModulesApple: 34b7a4d7441a4ee78d18109ff107c1ccf7c074a9
   React-perflogger: d1149037ac466ad2141d4ae541ca16cb73b2343b
