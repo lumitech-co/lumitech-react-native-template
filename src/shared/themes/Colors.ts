@@ -114,3 +114,5 @@ export const Colors = {
 
   transparent: 'transparent',
 };
+
+export type ColorsType = keyof typeof Colors;

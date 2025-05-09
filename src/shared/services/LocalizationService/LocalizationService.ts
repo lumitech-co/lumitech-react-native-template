@@ -7,23 +7,23 @@ const resources = {
   en: { translation: en },
 };
 
-const init = () => {
-  i18n.use(initReactI18next).init({
-    compatibilityJSON: 'v3',
-    resources,
-    fallbackLng: 'en',
-    lng: 'en',
-    interpolation: {
-      escapeValue: false,
-    },
-  });
-};
+i18n.use(initReactI18next).init({
+  compatibilityJSON: 'v3',
+  resources,
+  fallbackLng: 'en',
+  lng: 'en',
+  interpolation: {
+    escapeValue: false,
+  },
+});
 
 const changeLanguage = (newLanguage: string) => {
   i18n.changeLanguage(newLanguage);
 };
 
+export const i18nLocale = i18n;
+
 export const LocalizationService = {
-  init,
   changeLanguage,
+  i18n,
 };

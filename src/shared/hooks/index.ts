@@ -5,5 +5,4 @@ export * from './useLatest';
 export * from './useAppStateEvent';
 export * from './useBackHandler';
 export * from './useCombinedRef';
-export * from './useBottomSheetModal';
 export * from './useDebounce';
