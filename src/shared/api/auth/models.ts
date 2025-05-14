@@ -29,6 +29,8 @@ export interface GetUserRequest {
 
 export interface UserResponse {}
 
+export interface UserRequest {}
+
 export interface User {
   test: string;
 }

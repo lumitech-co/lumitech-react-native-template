@@ -4,3 +4,5 @@ export * from './useQueryWithOptions';
 export * from './useInfiniteQueryWithOptions';
 export * from './usePrefetchQueryWithOptions';
 export * from './usePrefetchInfiniteQueryWithOptions';
+export * from './syncedQuery';
+export * from './syncedMutation';
