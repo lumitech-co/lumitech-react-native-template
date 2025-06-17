@@ -1,5 +1,5 @@
 import { toast } from 'sonner-native';
-import { DefaultTheme } from 'themes';
+import { LightTheme } from 'themes';
 import { ViewStyle } from 'react-native';
 
 interface ToastParams {
@@ -16,7 +16,7 @@ const style: ViewStyle = {
   shadowOpacity: 0.2,
   elevation: 5,
   borderRadius: 22,
-  shadowColor: DefaultTheme.colors.basic_100,
+  shadowColor: LightTheme.colors.basic_100,
 };
 
 const duration = 3500;
@@ -28,7 +28,7 @@ const onSuccess = ({ position, title, description }: ToastParams) => {
     style,
     styles: {
       title: {
-        fontFamily: DefaultTheme.fonts.Regular,
+        fontFamily: LightTheme.fonts.Regular,
       },
     },
     duration,
@@ -43,7 +43,7 @@ const onDanger = ({ position, title, description }: ToastParams) => {
     style,
     styles: {
       title: {
-        fontFamily: DefaultTheme.fonts.Regular,
+        fontFamily: LightTheme.fonts.Regular,
       },
     },
     duration,
@@ -58,7 +58,7 @@ const onWarning = ({ position, title, description }: ToastParams) => {
     style,
     styles: {
       title: {
-        fontFamily: DefaultTheme.fonts.Regular,
+        fontFamily: LightTheme.fonts.Regular,
       },
     },
     duration,

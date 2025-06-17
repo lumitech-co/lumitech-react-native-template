@@ -104,7 +104,7 @@ export const Switch = React.forwardRef<
     backgroundColor: interpolateColor(
       translateX.value,
       [0, TRACK_CIRCLE_WIDTH],
-      [theme.colors.transparent, theme.colors.success_400],
+      [theme.colors.manatee, theme.colors.primary],
     ),
   }));
 
@@ -142,7 +142,7 @@ export const Switch = React.forwardRef<
           <Animated.View
             style={[
               styles.circle,
-              { backgroundColor: theme.colors.basic_600 },
+              { backgroundColor: theme.colors.background },
               animatedStyle,
             ]}
           />
@@ -165,7 +165,6 @@ const stylesheet = createStyleSheet(theme => ({
     height: CIRCLE_WIDTH,
     borderRadius: 999,
     borderWidth: BORDER,
-    elevation: 18,
     marginHorizontal: 1,
     paddingTop: 1,
     justifyContent: 'center',

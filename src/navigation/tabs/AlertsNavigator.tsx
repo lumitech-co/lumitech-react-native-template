@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alerts } from 'screens';
+import { Alerts } from '../../modules';
 import { Stack } from '../lib';
 
 export const AlertsNavigator: React.FC = () => (

@@ -1,6 +1,10 @@
 import React from 'react';
 import { Portal } from '@gorhom/portal';
-import { View, ActivityIndicator as BaseIndicator } from 'react-native';
+import {
+  View,
+  ActivityIndicator as BaseIndicator,
+  StatusBar,
+} from 'react-native';
 import { useStyles, createStyleSheet } from 'react-native-unistyles';
 import { AnimatedBackdrop } from '../AnimatedBackDrop';
 
@@ -15,11 +19,12 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
 
   return (
     <Portal>
+      <StatusBar translucent animated />
       <AnimatedBackdrop isVisible={isVisible} />
 
       {isVisible && (
         <View style={styles.container}>
-          <BaseIndicator size="large" color={theme.colors.success_300} />
+          <BaseIndicator size="large" color={theme.colors.primary} />
         </View>
       )}
     </Portal>

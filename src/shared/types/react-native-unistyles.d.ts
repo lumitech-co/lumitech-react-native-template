@@ -1,7 +1,8 @@
-import { DefaultTheme, breakpoints } from 'themes';
+import { LightTheme, DarkTheme, breakpoints } from 'themes';
 
 interface AppThemes {
-  defaultTheme: typeof DefaultTheme;
+  light: typeof LightTheme;
+  dark: typeof DarkTheme;
 }
 
 type AppBreakpoints = typeof breakpoints;

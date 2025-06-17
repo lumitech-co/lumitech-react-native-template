@@ -1,20 +1,30 @@
-/* eslint-disable camelcase */
-/* eslint-disable react/prop-types */
 import React from 'react';
-import { RefreshControl as Control, RefreshControlProps } from 'react-native';
+import {
+  RefreshControl as RNRefreshControl,
+  RefreshControlProps,
+} from 'react-native';
 import { useStyles } from 'react-native-unistyles';
+import { ColorsType } from 'themes';
 
-export const RefreshControl = React.forwardRef<Control, RefreshControlProps>(
-  ({ tintColor, colors, ...rest }, ref) => {
-    const { theme } = useStyles();
+interface RefreshProps extends Omit<RefreshControlProps, 'colors'> {
+  color?: ColorsType;
+}
 
-    return (
-      <Control
-        {...rest}
-        ref={ref}
-        tintColor={tintColor || theme.colors.black}
-        colors={colors || [theme.colors.black, theme.colors.black]}
-      />
-    );
-  },
-);
+export const RefreshControl: React.FC<RefreshProps> = ({
+  color = 'primary',
+  refreshing = false,
+  onRefresh,
+  ...props
+}) => {
+  const { theme } = useStyles();
+
+  return (
+    <RNRefreshControl
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      colors={[theme.colors[color]]}
+      tintColor={theme.colors[color]}
+      {...props}
+    />
+  );
+};

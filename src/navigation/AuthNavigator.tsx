@@ -1,5 +1,5 @@
 import React from 'react';
-import { Auth } from 'screens';
+import { Auth } from '../modules';
 import { Stack } from './lib';
 
 export const AuthNavigator: React.FC = () => {

@@ -8,5 +8,4 @@ export * from './Loader';
 export * from './RefreshControl';
 export * from './StatusBar';
 export * from './Switch';
-export * from './Tooltip';
 export * from './AnimatedButton';

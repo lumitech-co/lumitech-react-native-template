@@ -8,34 +8,43 @@ import Animated, {
 } from 'react-native-reanimated';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
 
+const DURATION = 250;
+
+const BASE_SCALE = 0.95;
+
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'bold-link';
+
 export interface AnimatedBackgroundButtonProps {
   accessibilityHint?: string;
   accessibilityLabel?: string;
-  Icon?: ReactElement;
+  LeftIcon?: ReactElement;
+  RightIcon?: ReactElement;
   isDisabled?: boolean;
   isLoading?: boolean;
   onPress: () => void;
   title: string;
   scale?: number;
+  type?: ButtonVariant;
 }
-
-const DURATION = 250;
-
-const BASE_SCALE = 0.95;
 
 export const AnimatedButton = ({
   accessibilityHint,
   accessibilityLabel,
-  Icon,
+  LeftIcon,
+  RightIcon,
   isDisabled = false,
   isLoading = false,
   scale = BASE_SCALE,
   onPress,
   title,
+  type = 'primary',
 }: AnimatedBackgroundButtonProps) => {
-  const { styles, theme } = useStyles(stylesheet);
+  const { styles, theme } = useStyles(stylesheet, {
+    type,
+  });
 
   const transition = useSharedValue(0);
+
   const isActive = useSharedValue(false);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -83,13 +92,17 @@ export const AnimatedButton = ({
           },
         ]}>
         {isLoading ? (
-          <ActivityIndicator color={theme.colors.success_500} size={18} />
+          <ActivityIndicator
+            color={theme.colors.primary_background}
+            size={18}
+          />
         ) : (
           <>
-            {Icon}
+            {LeftIcon}
             <Text numberOfLines={1} style={styles.title}>
               {title}
             </Text>
+            {RightIcon}
           </>
         )}
       </Animated.View>
@@ -100,21 +113,64 @@ export const AnimatedButton = ({
 const stylesheet = createStyleSheet(theme => ({
   container: {
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: theme.borderRadius.base,
     flexDirection: 'row',
     gap: 8,
-    height: 56,
     justifyContent: 'center',
     paddingHorizontal: 12,
-    paddingVertical: 16,
-    backgroundColor: theme.colors.success_500,
+    backgroundColor: theme.colors.primary,
+    variants: {
+      type: {
+        primary: {
+          height: 56,
+          paddingVertical: 16,
+        },
+        secondary: {
+          height: 40,
+        },
+        ghost: {
+          height: 40,
+          backgroundColor: theme.colors.transparent,
+          borderColor: theme.colors.primary,
+          borderWidth: 1,
+        },
+        'bold-link': {
+          height: 36,
+          backgroundColor: theme.colors.transparent,
+          borderColor: theme.colors.primary_separator,
+          borderWidth: 1,
+        },
+      },
+    },
   },
   title: {
-    color: theme.colors.basic_300,
+    color: theme.colors.primary_button_text,
     flexShrink: 1,
-    fontSize: 19,
-    lineHeight: 24,
-    fontWeight: '400',
-    fontFamily: theme.fonts.Regular,
+    fontWeight: '600',
+    fontFamily: theme.fonts.Bold,
+    variants: {
+      type: {
+        primary: {
+          fontSize: 19,
+          lineHeight: 24,
+        },
+        secondary: {
+          fontSize: 16,
+          lineHeight: 21,
+        },
+        ghost: {
+          fontSize: 14,
+          lineHeight: 19,
+          color: theme.colors.primary,
+        },
+        'bold-link': {
+          fontSize: 14,
+          lineHeight: 19,
+          color: theme.colors.primary,
+          fontFamily: theme.fonts.Bold,
+          fontWeight: '700',
+        },
+      },
+    },
   },
 }));

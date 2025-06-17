@@ -1,12 +1,10 @@
 import React, { FC } from 'react';
 import { ScrollViewProps } from 'react-native';
 import { KeyboardAwareScrollView as KeyboardAwareScrollViewComponent } from 'react-native-keyboard-controller';
-import { Colors } from 'themes';
 
 interface KeyboardAwareScrollViewProps extends ScrollViewProps {
   bottomOffset?: number;
   enabled?: boolean;
-  backgroundColor?: typeof Colors;
 }
 
 const BOTTOM_OFFSET = 70;

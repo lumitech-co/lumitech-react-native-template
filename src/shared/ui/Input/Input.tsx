@@ -1,8 +1,12 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { Pressable, TextInput, View } from 'react-native';
+import {
+  createStyleSheet,
+  UnistylesRuntime,
+  useStyles,
+} from 'react-native-unistyles';
 import { motify, useAnimationState } from 'moti';
 import { InputProps } from './types';
 import { ErrorMessage } from '../ErrorMessage';
@@ -28,15 +32,18 @@ export const Input = React.forwardRef<TextInput, InputProps>(
       editable = true,
       isError,
       errorMessage,
+      type = 'primary',
       ...rest
     },
     ref,
   ) => {
-    const { styles, theme } = useStyles(stylesheet);
+    const { styles, theme } = useStyles(stylesheet, {
+      type,
+    });
 
     const animatedState = useAnimationState({
       focused: {
-        borderColor: theme.colors.success_400,
+        borderColor: theme.colors.tifanny_blue,
       },
       unfocused: {
         borderColor: theme.colors.transparent,
@@ -66,7 +73,6 @@ export const Input = React.forwardRef<TextInput, InputProps>(
               }
 
               rest?.onFocus?.(event);
-
               onFocusReceive?.();
             }}
             onBlur={event => {
@@ -77,24 +83,25 @@ export const Input = React.forwardRef<TextInput, InputProps>(
               rest?.onBlur?.(event);
             }}
             style={styles.input({ isRightIconShown, isLeftIconShown })}
-            placeholderTextColor={theme.colors.black}
+            placeholderTextColor={theme.colors.mens_night}
             editable={editable}
             multiline={multiline}
+            keyboardAppearance={
+              UnistylesRuntime.getTheme() === 'dark' ? 'dark' : 'light'
+            }
             {...rest}
           />
 
           {!!isLeftIconShown && (
-            <TouchableOpacity style={styles.leftIconBox} onPress={onLeftPress}>
+            <Pressable style={styles.leftIconBox} onPress={onLeftPress}>
               {LeftIcon}
-            </TouchableOpacity>
+            </Pressable>
           )}
 
           {!!isRightIconShown && (
-            <TouchableOpacity
-              style={styles.rightIconBox}
-              onPress={onRightPress}>
+            <Pressable style={styles.rightIconBox} onPress={onRightPress}>
               {RightIcon}
-            </TouchableOpacity>
+            </Pressable>
           )}
         </View>
 
@@ -116,16 +123,25 @@ const stylesheet = createStyleSheet(theme => ({
     marginTop: 8,
   },
   input: ({ isLeftIconShown, isRightIconShown }: InputConstructorParams) => ({
-    backgroundColor: theme.colors.basic_100,
+    backgroundColor: theme.colors.background,
     borderColor: theme.colors.basic_500,
     borderWidth: 1,
     fontSize: 16,
     fontFamily: theme.fonts.Regular,
-    color: theme.colors.black,
+    color: theme.colors.mens_night,
     height: 48,
     paddingLeft: constructPaddingLeft({ isLeftIconShown }),
     paddingRight: constructPaddingRight({ isRightIconShown }),
     textAlignVertical: 'center',
+    variants: {
+      type: {
+        primary: {},
+        search: {
+          backgroundColor: theme.colors.search_input_background,
+          borderColor: theme.colors.primary_separator,
+        },
+      },
+    },
   }),
   leftIconBox: {
     position: 'absolute',
