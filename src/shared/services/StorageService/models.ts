@@ -1,7 +1,5 @@
 export const StorageKeys = {
-  SCHEDULES_DATE: 'SCHEDULES_DATE',
-  SCHEDULES_SEARCH: 'SCHEDULES_SEARCH',
-  ALERTS_BADGE_COUNT: 'ALERTS_BADGE_COUNT',
+  AUTH_REMEMBER_ME_FIELDS: 'AUTH_REMEMBER_ME_FIELDS',
 } as const;
 
 export type StorageKey = keyof typeof StorageKeys | (string & {});

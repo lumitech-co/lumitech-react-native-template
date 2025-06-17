@@ -48,7 +48,7 @@
       "shared/*": ["shared/*"]
     },
     "target": "esnext",
-    "module": "commonjs",
+    "module": "ES2022",
     "types": ["react-native"],
     "lib": [
       "es2019",

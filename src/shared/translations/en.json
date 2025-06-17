@@ -2,6 +2,9 @@
   "application": {
     "name": "React Native Template"
   },
+  "empty-state": {
+    "no-activities": "No activities found"
+  },
   "errors": {
     "server-unable": "An error occurred. Please try again later"
   },
@@ -10,11 +13,44 @@
     "description": "New features and improvements are now available. Please update your application to the latest version."
   },
   "screens": {
+    "alerts": "Alerts",
+    "account": "Account",
     "forgot-password": "Forgot password",
     "sign-in": "Log in",
     "reset-password": "Change password",
     "create-account": "Registration",
-    "alerts": "Alerts",
-    "account": "Account"
+    "home": "Home",
+    "accounts": "Accounts",
+    "activity": "Activity",
+    "documents": "Documents",
+    "more": "More"
+  },
+  "labels": {
+    "show-more": "Show more",
+    "show-less": "Show less"
+  },
+  "buttons": {
+    "sign-in": "Sign in",
+    "remember-me": "Remember me",
+    "face-id": "Face ID",
+    "see-all-activity": "See all activity",
+    "see-all-holdings": "See all holdings"
+  },
+  "placeholders": {
+    "enter-your-email": "Enter your email",
+    "enter-your-password": "Enter your password"
+  },
+  "auth": {
+    "manulife": "Manulife",
+    "sign-in-with-your": "Sign in with your",
+    "manulife-id": "Login",
+    "forgot-your-username-and-password": "Forgot your username and password?",
+    "dont-have-a-manulife-id": "Don't have a login ID?",
+    "click-here": "Click here"
+  },
+  "validations": {
+    "email-invalid": "Please enter a valid email address",
+    "email-required": "Please provide email",
+    "please-provide-password": "Please provide a valid password"
   }
 }

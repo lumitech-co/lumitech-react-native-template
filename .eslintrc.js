@@ -27,44 +27,36 @@ module.exports = {
     },
     'boundaries/elements': [
       {
-        type: 'api',
-        pattern: './src/shared/api/**',
+        type: 'shared',
+        pattern: './src/shared/**',
       },
       {
-        type: 'hooks',
-        pattern: './src/shared/hooks/**',
+        type: 'common',
+        pattern: './src/modules/Common/**',
       },
       {
-        type: 'lib',
-        pattern: './src/shared/lib/**',
-      },
-      {
-        type: 'services',
-        pattern: './src/shared/services/**',
-      },
-      {
-        type: 'stores',
-        pattern: './src/shared/stores/**',
-      },
-      {
-        type: 'themes',
-        pattern: './src/shared/themes/**',
-      },
-      {
-        type: 'types',
-        pattern: './src/shared/types/**',
-      },
-      {
-        type: 'ui',
-        pattern: './src/shared/ui/**',
+        type: 'modules',
+        pattern: './src/modules/**',
       },
       {
         type: 'features',
-        pattern: './src/features/**',
+        pattern: './src/modules/*/features/**',
+      },
+      {
+        type: 'adapters',
+        pattern: './src/modules/*/adapters/**',
+      },
+      {
+        type: 'models',
+        pattern: './src/modules/*/models.ts',
+      },
+      {
+        type: 'ui',
+        pattern: './src/modules/*/ui/**',
       },
       {
         type: 'widgets',
-        pattern: './src/widgets/**',
+        pattern: './src/modules/*/widgets/**',
       },
       {
         type: 'screens',
@@ -139,208 +131,174 @@ module.exports = {
         default: 'disallow',
         rules: [
           {
-            from: ['ui'],
-            allow: ['themes', 'types', 'hooks', 'lib'],
-            disallow: [
-              'api',
-              'services',
-              'stores',
-              'translations',
-              'features',
-              'widgets',
-              'screens',
-              'navigation',
-            ],
-            message:
-              'UI components are restricted to import only themes, types, hooks.',
+            from: ['modules'],
+            allow: ['shared', 'common'],
+            message: 'Modules can import from shared and common',
           },
           {
-            from: ['services'],
-            allow: ['types', 'translations', 'themes'],
-            disallow: [
-              'api',
-              'lib',
-              'stores',
-              'translations',
-              'features',
-              'widgets',
-              'screens',
-              'navigation',
-            ],
-            message:
-              'Services are restricted to import only types, translations, themes.',
-          },
-          {
-            from: ['types'],
-            allow: [
-              'api',
-              'services',
-              'hooks',
-              'lib',
-              'stores',
-              'translations',
-              'themes',
-            ],
-          },
-          {
-            from: ['api'],
-            allow: ['hooks', 'types', 'stores', 'services'],
-            disallow: [
-              'lib',
-              'ui',
-              'themes',
-              'translations',
-              'features',
-              'widgets',
-              'screens',
-              'navigation',
-            ],
-            message:
-              'API layer is restricted to import only hooks, types, stores, services.',
-          },
-          {
-            from: ['hooks'],
-            allow: ['types', 'services', 'lib'],
-            disallow: [
-              'api',
-              'translations',
-              'themes',
-              'stores',
-              'ui',
-              'features',
-              'widgets',
-              'screens',
-              'navigation',
-            ],
-            message:
-              'Hooks are restricted to import only types, themes, services.',
-          },
-          {
-            from: ['lib'],
-            allow: ['types', 'services'],
-            disallow: [
-              'api',
-              'hooks',
-              'lib',
-              'translations',
-              'stores',
-              'ui',
-              'features',
-              'widgets',
-              'screens',
-              'navigation',
-            ],
-            message: 'Lib layer is restricted to import only types, services.',
-          },
-          {
-            from: ['stores'],
-            allow: ['types'],
-            disallow: [
-              'api',
-              'hooks',
-              'lib',
-              'services',
-              'translations',
-              'themes',
-              'ui',
-              'features',
-              'widgets',
-              'screens',
-              'navigation',
-            ],
-            message: 'Stores layer is restricted to import only types.',
-          },
-          {
-            from: ['themes'],
-            allow: ['types'],
-            disallow: [
-              'api',
-              'hooks',
-              'lib',
-              'services',
-              'translations',
-              'stores',
-              'ui',
-              'features',
-              'widgets',
-              'screens',
-              'navigation',
-            ],
-            message: 'Themes layer is restricted to import only types.',
-          },
-          {
-            from: ['features'],
-            allow: [
-              'api',
-              'hooks',
-              'lib',
-              'services',
-              'stores',
-              'themes',
-              'translations',
-              'types',
-              'ui',
-            ],
-            disallow: ['widgets', 'screens', 'navigation'],
-            message:
-              'Features layer is restricted to import everything from shared layer.',
-          },
-          {
-            from: ['widgets'],
-            allow: [
-              'features',
-              'hooks',
-              'lib',
-              'services',
-              'stores',
-              'themes',
-              'translations',
-              'types',
-              'ui',
-            ],
-            disallow: ['screens', 'navigation'],
-            message:
-              'Widgets layer is restricted to import everything from shared/features layers.',
-          },
-          {
-            from: ['screens'],
-            allow: [
-              'features',
-              'widgets',
-              'hooks',
-              'lib',
-              'services',
-              'stores',
-              'themes',
-              'translations',
-              'types',
-              'ui',
-            ],
-            disallow: ['navigation'],
-            message:
-              'Screens layer is restricted to import everything from shared/features/widgets layers.',
+            from: ['common'],
+            allow: ['shared'],
+            message: 'Common can import from shared',
           },
           {
             from: ['navigation'],
-            allow: [
+            allow: ['modules'],
+            message: 'Navigation can import from modules',
+          },
+          {
+            from: ['ui'],
+            disallow: ['features'],
+            message: 'Only Compose components can use feature hooks',
+          },
+          {
+            from: ['widgets'],
+            allow: ['features'],
+            message: 'Only Compose components can use feature hooks',
+          },
+          {
+            from: [
               'features',
+              'adapters',
+              'models',
+              'ui',
               'widgets',
               'screens',
-              'hooks',
-              'lib',
-              'services',
-              'stores',
-              'themes',
-              'translations',
-              'types',
-              'ui',
+              'navigation',
             ],
-            disallow: [],
+            allow: ['shared'],
+            message: 'Modules can import from shared',
+          },
+          {
+            from: [
+              'features',
+              'adapters',
+              'models',
+              'ui',
+              'widgets',
+              'screens',
+              'navigation',
+            ],
+            allow: ['common'],
+            message: 'Modules can import from modules/Common',
+          },
+          {
+            from: [
+              'features',
+              'adapters',
+              'models',
+              'ui',
+              'widgets',
+              'screens',
+            ],
+            disallow: ['modules'],
             message:
-              'Navigation layer is restricted to import everything from shared/features/widgets/screens layers.',
+              'Modules cannot import submodules from other modules except Common',
+          },
+          {
+            from: ['features'],
+            allow: ['shared', 'adapters'],
+            message:
+              'Features can only use shared modules and adapters for data transformation',
+          },
+          {
+            from: ['adapters'],
+            allow: ['shared'],
+            message:
+              'Adapters can only use shared modules for data transformation',
+          },
+          {
+            from: ['models'],
+            disallow: [
+              'shared',
+              'features',
+              'adapters',
+              'ui',
+              'widgets',
+              'screens',
+              'navigation',
+            ],
+            message:
+              'Models can only contain UI interfaces/types with UI prefix and cannot import from other layers',
+          },
+          {
+            from: ['ui'],
+            allow: ['models'],
+            disallow: [
+              'shared',
+              'features',
+              'adapters',
+              'widgets',
+              'screens',
+              'navigation',
+            ],
+            message:
+              'UI components can only use local models and cannot use features or other modules',
+          },
+          {
+            from: ['widgets'],
+            allow: ['ui', 'features', 'models'],
+            disallow: ['adapters', 'screens', 'navigation'],
+            message:
+              'Widgets can use UI components, features, and models, but not adapters',
+          },
+          {
+            from: ['screens'],
+            allow: ['widgets'],
+            disallow: ['ui', 'features', 'adapters', 'models'],
+            message: 'Screens can only use widgets',
+          },
+          {
+            from: ['navigation'],
+            allow: ['screens', 'shared'],
+            disallow: ['ui', 'features', 'adapters', 'models', 'widgets'],
+            message: 'Navigation can only use screens and shared modules',
+          },
+          {
+            from: ['shared'],
+            allow: ['shared'],
+            message: 'Shared modules can only use other shared modules',
+          },
+        ],
+      },
+    ],
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          {
+            group: [
+              '../features',
+              '../features/*',
+              './features',
+              './features/*',
+              '**/features',
+              '**/features/*',
+            ],
+            message:
+              'Only Compose components and module index files can use feature hooks',
           },
         ],
       },
     ],
   },
+  overrides: [
+    {
+      files: ['**/*Compose*.tsx'],
+      rules: {
+        'no-restricted-imports': 'off',
+      },
+    },
+    {
+      files: ['**/modules/*/index.ts'],
+      rules: {
+        'no-restricted-imports': 'off',
+      },
+    },
+    {
+      files: ['**/modules/*/@*/index.ts'],
+      rules: {
+        'no-restricted-imports': 'off',
+      },
+    },
+  ],
 };

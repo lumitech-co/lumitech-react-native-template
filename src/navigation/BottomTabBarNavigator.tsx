@@ -1,17 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Text } from 'react-native';
 import { createStyleSheet, useStyles } from 'react-native-unistyles';
-import i18next from 'i18next';
 import { IconName } from 'react-native-vector-icons';
 import { Icon } from 'ui';
 import { RouteService, RouteType, Routes } from 'services';
+import { useTranslation } from 'react-i18next';
 import { Tab } from './lib';
 import { AlertsNavigator, ProfileNavigator } from './tabs';
-
-const titles: Record<string, string> = {
-  [Routes.ALERTS_NAVIGATOR]: i18next.t('screens.alerts'),
-  [Routes.PROFILE_NAVIGATOR]: i18next.t('screens.account'),
-};
 
 const tabIcons: Record<string, IconName> = {
   [Routes.ALERTS_NAVIGATOR]: 'alerts',
@@ -20,6 +15,16 @@ const tabIcons: Record<string, IconName> = {
 
 export const BottomTabBarNavigator: React.FC = () => {
   const { theme, styles } = useStyles(stylesheet);
+
+  const { t } = useTranslation();
+
+  const titles: Record<string, string> = useMemo(
+    () => ({
+      [Routes.ALERTS_NAVIGATOR]: t('screens.alerts'),
+      [Routes.PROFILE_NAVIGATOR]: t('screens.account'),
+    }),
+    [t],
+  );
 
   const handleLongPress = (routeName: RouteType) => {
     RouteService.navigate(routeName);

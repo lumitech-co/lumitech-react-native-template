@@ -1,15 +1,15 @@
 import React from 'react';
 import { ActivityIndicator, ActivityIndicatorProps, View } from 'react-native';
 import { useStyles, createStyleSheet } from 'react-native-unistyles';
-import { Colors } from 'themes';
+import { ColorsType } from 'themes';
 
 interface LoaderProps {
-  color?: keyof typeof Colors;
+  color?: ColorsType;
   size?: ActivityIndicatorProps['size'];
 }
 
 export const Loader: React.FC<LoaderProps> = ({
-  color = 'black',
+  color = 'primary',
   size = 'small',
 }) => {
   const { styles, theme } = useStyles(stylesheet);
