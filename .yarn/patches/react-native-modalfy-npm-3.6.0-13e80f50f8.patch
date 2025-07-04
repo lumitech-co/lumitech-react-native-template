@@ -1,0 +1,21 @@
+diff --git a/src/lib/ModalState.ts b/src/lib/ModalState.ts
+index 990024c8fc2a52c93446a639d0cfbdc4fcbd2ecd..bcae467d9177b8b40dcc30e28cfd4da747476962 100644
+--- a/src/lib/ModalState.ts
++++ b/src/lib/ModalState.ts
+@@ -282,11 +282,15 @@ const createModalState = (): ModalStateType<any> => {
+         currentModalHash: [...currentState.stack.openedItems].slice(-1)[0]?.hash,
+       } as ModalPendingClosingAction)
+ 
++      const newPendingClosingActionsArray = new Set([...newPendingClosingActions].filter((item, index, self) =>
++       index === self.findIndex((t) => t.currentModalHash === item.currentModalHash)
++      ));
++
+       return {
+         ...currentState,
+         stack: {
+           ...currentState.stack,
+-          pendingClosingActions: newPendingClosingActions,
++          pendingClosingActions: newPendingClosingActionsArray,
+         },
+       }
+     }).stack

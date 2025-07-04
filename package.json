@@ -52,7 +52,7 @@
     "react-native-gesture-handler": "2.23.1",
     "react-native-keyboard-controller": "1.17.1",
     "react-native-mmkv": "3.2.0",
-    "react-native-modalfy": "3.6.0",
+    "react-native-modalfy": "patch:react-native-modalfy@npm%3A3.6.0#~/.yarn/patches/react-native-modalfy-npm-3.6.0-13e80f50f8.patch",
     "react-native-reanimated": "patch:react-native-reanimated@npm%3A3.16.7#~/.yarn/patches/react-native-reanimated-npm-3.16.7-1e7cd6d376.patch",
     "react-native-safe-area-context": "5.1.0",
     "react-native-screens": "4.5.0",
