@@ -3937,7 +3937,7 @@ __metadata:
     react-native-gesture-handler: "npm:2.23.1"
     react-native-keyboard-controller: "npm:1.17.1"
     react-native-mmkv: "npm:3.2.0"
-    react-native-modalfy: "npm:3.6.0"
+    react-native-modalfy: "npm:3.7.0"
     react-native-reanimated: "patch:react-native-reanimated@npm%3A3.16.7#~/.yarn/patches/react-native-reanimated-npm-3.16.7-1e7cd6d376.patch"
     react-native-safe-area-context: "npm:5.1.0"
     react-native-screens: "npm:4.5.0"
@@ -10378,9 +10378,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-modalfy@npm:3.6.0":
-  version: 3.6.0
-  resolution: "react-native-modalfy@npm:3.6.0"
+"react-native-modalfy@npm:3.7.0":
+  version: 3.7.0
+  resolution: "react-native-modalfy@npm:3.7.0"
   dependencies:
     hoist-non-react-statics: "npm:^3.3.2"
     react-is: "npm:^17.0.2"
@@ -10389,7 +10389,7 @@ __metadata:
     react: ">=16.8.3"
     react-native: ">=0.59.0"
     react-native-gesture-handler: ">=2.2.1"
-  checksum: 10c0/3b78206661a39895a266757264d53c67f98c9a0aabe0ee86fc70e657125c47373ad1613e86f74d6c33ece5b29f08736cce8b15ddfb7a28bb98741875eec3a059
+  checksum: 10c0/9674f2ba23a26ce69ddc8880a8412c65fb04d84098b700cef61993cb85d0ce5400c1a08c1e39b155545fc904725d976353a4f58deb5ceb92c0406aa6d67a2973
   languageName: node
   linkType: hard
 
