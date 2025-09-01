@@ -224,6 +224,495 @@ This architecture ensures:
 - **Maintainability**: Strict layering prevents architectural violations
 - **Scalability**: New modules can be added without affecting existing code
 
+## 📚 Recommended Library Usage
+
+This section outlines the preferred libraries and best practices for common React Native development patterns.
+
+### Lists
+
+For optimal performance and user experience, we recommend using these list components instead of React Native's default `FlatList`:
+
+#### 1. FlashList
+**[FlashList](https://shopify.github.io/flash-list/)** by Shopify is our primary recommendation for high-performance lists.
+
+**When to use FlashList:**
+- Large datasets with hundreds or thousands of items
+- Lists with complex item layouts
+- When you need consistent performance across different devices
+- Default choice for most list implementations
+
+**Key benefits:**
+- Up to 10x better performance than FlatList
+- Automatic item size calculation
+- Better memory management
+- Smooth scrolling even with complex items
+
+**Basic usage:**
+```tsx
+import { FlashList } from "@shopify/flash-list"
+
+<FlashList
+  data={data}
+  renderItem={({ item }) => <ItemComponent item={item} />}
+  estimatedItemSize={100}
+/>
+```
+
+#### 2. LegendList
+**[LegendList](https://legendapp.com/open-source/list/)** is our recommended choice for lists that require advanced optimization and integration with Legend State.
+
+**When to use LegendList:**
+- When using Legend State for state management
+- Complex lists with real-time updates
+- Lists that need fine-grained reactivity
+- Advanced optimization requirements
+
+**Key benefits:**
+- Seamless integration with Legend State
+- Minimal re-renders with granular reactivity
+- Built-in optimization for Legend State observables
+- Advanced performance optimizations
+
+**Basic usage:**
+```tsx
+import { LegendList } from "@legendapp/list"
+
+<LegendList
+  data={data$} // Legend State observable
+  renderItem={({ item }) => <ItemComponent item={item} />}
+/>
+```
+
+**Choosing between FlashList and LegendList:**
+- Use **FlashList** as the default choice for most lists
+- Use **LegendList** when you're heavily using Legend State and need reactive list updates
+- Both libraries offer significant performance improvements over the standard FlatList
+
+### State Management
+
+For state management, we provide two excellent options depending on your preferred approach and application requirements:
+
+#### 1. Legend State (Primary Recommendation)
+**[Legend State](https://legendapp.com/open-source/state/)** is our primary choice for state management, offering fine-grained reactivity and excellent performance.
+
+**When to use Legend State:**
+- Default choice for most applications
+- When you need fine-grained reactivity
+- Applications with complex state updates
+- When performance is critical
+- Integration with LegendList for optimal list performance
+
+**Key benefits:**
+- Minimal re-renders with granular reactivity
+- Simple and intuitive API
+- Excellent TypeScript support
+- Built-in persistence capabilities
+- Outstanding performance with large datasets
+- Seamless integration with React Native
+
+**Basic usage:**
+```tsx
+import { observable, observer } from "@legendapp/state"
+
+// Create observable state
+const user$ = observable({
+  name: "John",
+  email: "john@example.com",
+  preferences: {
+    theme: "dark"
+  }
+})
+
+// Use in components
+const UserProfile = () => {
+  return (
+    <View>
+      <Text>{user$.name.get()}</Text>
+      <Button
+        title="Change Theme"
+        onPress={() => user$.preferences.theme.set("light")}
+      />
+    </View>
+  )
+}
+```
+
+#### 2. Zustand
+**[Zustand](https://github.com/pmndrs/zustand)** is our recommended alternative for developers who prefer a Redux-like store pattern.
+
+**When to use Zustand:**
+- When you prefer Redux-like store architecture
+- Team is more familiar with traditional state management patterns
+- Need centralized store with actions and reducers
+- Smaller applications with simpler state requirements
+
+**Key benefits:**
+- Familiar Redux-like API without boilerplate
+- Small bundle size and minimal setup
+- Great TypeScript support
+- Middleware support (persist, devtools, etc.)
+- Easy migration from Redux
+
+**Basic usage:**
+```tsx
+import { create } from 'zustand'
+
+interface UserStore {
+  user: {
+    name: string
+    email: string
+    preferences: {
+      theme: string
+    }
+  }
+  updateTheme: (theme: string) => void
+  updateUser: (user: Partial<UserStore['user']>) => void
+}
+
+const useUserStore = create<UserStore>((set) => ({
+  user: {
+    name: "John",
+    email: "john@example.com",
+    preferences: {
+      theme: "dark"
+    }
+  },
+  updateTheme: (theme) =>
+    set((state) => ({
+      user: {
+        ...state.user,
+        preferences: { ...state.user.preferences, theme }
+      }
+    })),
+  updateUser: (userData) =>
+    set((state) => ({
+      user: { ...state.user, ...userData }
+    }))
+}))
+
+// Use in components
+const UserProfile = () => {
+  const { user, updateTheme } = useUserStore()
+
+  return (
+    <View>
+      <Text>{user.name}</Text>
+      <Button
+        title="Change Theme"
+        onPress={() => updateTheme("light")}
+      />
+    </View>
+  )
+}
+```
+
+**Choosing between Legend State and Zustand:**
+- Use **Legend State** as the default choice for optimal performance and reactivity
+- Use **Zustand** when your team prefers Redux-like patterns or when migrating from Redux
+- Both libraries offer excellent TypeScript support and performance
+- Legend State excels in fine-grained updates, while Zustand provides familiar store patterns
+
+### Styling
+
+**[React Native Unistyles v3](https://www.unistyl.es/v3/start/introduction)** is our recommended styling library, offering native performance with shadow node updates.
+
+**Why React Native Unistyles v3:**
+- **Native Shadow Node Updates**: Style changes happen directly on the native side without React re-renders
+- **Familiar API**: Uses `StyleSheet.create` similar to React Native's built-in StyleSheet
+- **Zero Re-renders**: Theme changes and dynamic styles update natively without component re-renders
+- **TypeScript First**: Excellent TypeScript support with full type safety for themes and breakpoints
+- **New Architecture Ready**: Fully compatible with React Native's new architecture (Fabric)
+- **Runtime Performance**: All style calculations happen on the native thread
+
+**Key Features:**
+- **Native Performance**: Direct shadow node manipulation for optimal performance
+- **Theme Support**: Built-in theming with automatic theme switching
+- **Breakpoints**: Responsive design with screen size breakpoints
+- **Dynamic Styles**: Runtime style updates without JavaScript bridge overhead
+- **Web Support**: Seamless React Native Web compatibility
+- **No Hook Dependencies**: Direct StyleSheet.create API without additional hooks
+
+**Basic Usage:**
+
+**1. Theme Configuration:**
+```tsx
+
+const LightTheme = {
+  colors: {
+    primary: '#007AFF',
+    background: '#FFFFFF',
+    text: '#000000',
+    surface: '#F2F2F7'
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32
+  }
+}
+
+const DarkTheme = {
+  colors: {
+    primary: '#0A84FF',
+    background: '#000000',
+    text: '#FFFFFF',
+    surface: '#1C1C1E'
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32
+  }
+}
+
+const breakpoints = {
+  xs: 0,
+  sm: 576,
+  md: 768,
+  lg: 992,
+  xl: 1200
+}
+
+StyleSheet.configure({
+  themes: {
+    light: LightTheme,
+    dark: DarkTheme,
+  },
+  breakpoints,
+  settings: {
+    initialTheme: () => {
+     // return intiial theme from global store
+    },
+  },
+});
+
+```
+
+**2. Component Styling (v3 API):**
+```tsx
+import React from 'react'
+import { View, Text } from 'react-native'
+import { StyleSheet } from 'react-native-unistyles'
+
+const Component = () => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Hello World</Text>
+      <View style={styles.card}>
+        <Text style={styles.cardText}>Card content</Text>
+      </View>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create(theme => ({
+  container: {
+    flex: 1,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.background
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: theme.colors.text,
+    marginBottom: theme.spacing.lg
+  },
+  card: {
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
+    borderRadius: 12,
+    // Variants for different states
+    variants: {
+      size: {
+        small: {
+          padding: theme.spacing.sm
+        },
+        large: {
+          padding: theme.spacing.xl
+        }
+      }
+    }
+  },
+  cardText: {
+    color: theme.colors.text,
+    fontSize: 16
+  }
+}))
+```
+
+**3. Responsive and Dynamic Styles:**
+```tsx
+const styles = StyleSheet.create((theme, runtime) => ({
+  container: {
+    flex: 1,
+    // Responsive padding using breakpoints
+    padding: {
+      xs: theme.spacing.sm,
+      md: theme.spacing.lg,
+      xl: theme.spacing.xl
+    }
+  },
+  dynamicContainer: {
+    // Runtime calculations without re-renders
+    width: runtime.screen.width * 0.8,
+    height: runtime.screen.height * 0.5,
+    backgroundColor: runtime.orientation === 'portrait'
+      ? theme.colors.primary
+      : theme.colors.surface
+  }
+}))
+```
+
+**4. Theme Switching:**
+```tsx
+import { UnistylesRuntime } from 'react-native-unistyles'
+
+// Switch theme anywhere in the app
+UnistylesRuntime.setTheme('dark') // Updates all components instantly via shadow nodes
+```
+
+**Key Advantages of v3:**
+- **No useStyles Hook**: Direct StyleSheet.create API like standard React Native
+- **Native Updates**: Theme and breakpoint changes update shadow nodes directly
+- **Zero Re-renders**: Style updates don't trigger React component re-renders
+- **Better Performance**: All calculations happen on the native thread
+- **Familiar API**: Easy migration from React Native StyleSheet
+- **Type Safety**: Full TypeScript support for themes, breakpoints, and runtime values
+
+**Migration from React Native StyleSheet:**
+```tsx
+// Before (React Native StyleSheet)
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF'
+  }
+})
+
+// After (Unistyles v3)
+const styles = StyleSheet.create(theme => ({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background
+  }
+}))
+```
+
+The migration is seamless - just replace the import and optionally add theme support while keeping the same familiar API.
+
+### Library Selection Guidelines
+
+When choosing third-party libraries for React Native development, prioritize libraries that support the new architecture and offer optimal performance.
+
+#### Performance Hierarchy (Best to Good)
+
+**1. Nitro Modules** ⭐ **Recommended**
+Libraries built with **[Nitro Modules](https://nitro.margelo.com/)** offer the best performance and are our top recommendation.
+
+**Why Nitro Modules:**
+- **Fastest Performance**: Superior to TurboModules and Fabric in execution speed
+- **Better Memory Management**: More efficient memory usage and garbage collection
+- **Type Safety**: Full TypeScript support with compile-time type checking
+- **Modern Architecture**: Built specifically for React Native's new architecture
+- **Cross-Platform**: Single codebase for iOS, Android, and Web
+
+**Examples of Nitro Module libraries:**
+- `react-native-nitro-sqlite` - High-performance SQLite database
+- `react-native-nitro-image` - Optimized image processing
+- Custom Nitro modules for performance-critical operations
+
+**2. Fabric/TurboModules** ✅ **Good Choice**
+Libraries supporting React Native's new architecture with TurboModules and Fabric.
+
+**Why TurboModules/Fabric:**
+- **New Architecture Support**: Compatible with React Native 0.68+
+- **Better Performance**: Improved over bridge-based modules
+- **Type Safety**: JSI-based with better TypeScript integration
+- **Future Proof**: Standard for React Native's evolution
+
+**Examples:**
+- `react-native-reanimated` (v3+) - High-performance animations
+- `react-native-gesture-handler` (v2+) - Native gesture recognition
+- `@react-native-community/netinfo` - Network connectivity
+- `react-native-mmkv` - Fast key-value storage
+
+**3. Expo Modules** ✅ **Acceptable**
+Libraries built with Expo Modules API offer good compatibility and ease of use.
+
+**Why Expo Modules:**
+- **New Architecture Compatible**: Works with both old and new architecture
+- **Easy Development**: Simplified native module development
+- **Cross-Platform**: Consistent API across platforms
+- **Maintained**: Well-maintained by the Expo team
+
+**Examples:**
+- `expo-camera` - Camera functionality
+- `expo-location` - Location services
+- `expo-notifications` - Push notifications
+- `expo-secure-store` - Secure storage
+
+#### Library Selection Checklist
+
+When evaluating libraries, check for:
+
+✅ **New Architecture Support**
+- Explicitly states TurboModule/Fabric compatibility
+- Works with React Native 0.68+ and new architecture enabled
+- No deprecated bridge-based implementations
+
+✅ **Performance Characteristics**
+- Nitro Modules > TurboModules/Fabric > Expo Modules > Bridge-based
+- Benchmark data available for performance-critical operations
+- Efficient memory usage and minimal JavaScript thread blocking
+
+✅ **Maintenance and Community**
+- Active maintenance with recent updates
+- Good community support and documentation
+- Regular compatibility updates with new React Native versions
+
+✅ **TypeScript Support**
+- Full TypeScript definitions included
+- Type-safe APIs and proper generic support
+- Good IDE integration with IntelliSense
+
+#### Libraries to Avoid
+
+❌ **Bridge-based modules** (Legacy architecture)
+- Modules that only support the old bridge architecture
+- Libraries that haven't been updated for new architecture
+- Performance bottlenecks with frequent JavaScript ↔ Native communication
+
+❌ **Unmaintained libraries**
+- No updates in the last 12+ months
+- No new architecture support roadmap
+- Critical issues without responses
+
+#### Migration Strategy
+
+When migrating existing projects:
+
+1. **Audit Current Libraries**: Check new architecture compatibility
+2. **Prioritize Performance-Critical**: Replace bridge-based modules for performance-sensitive operations
+3. **Gradual Migration**: Replace libraries incrementally during development cycles
+4. **Test Thoroughly**: Ensure new architecture modules work correctly in your specific use case
+
+**Example Migration Path:**
+```
+Old: react-native-async-storage (Bridge)
+↓
+New: @react-native-async-storage/async-storage (TurboModule)
+
+Old: react-native-sqlite-storage (Bridge)  
+↓
+New: react-native-nitro-sqlite (Nitro Module)
+```
+
+By following these guidelines, you ensure optimal performance, future compatibility, and maintainable codebases.
+
 ## 🌍 Environment Setup
 
 Before you begin, it’s essential to configure the environment settings for your project. This involves setting up different environment-specific variables for iOS and Android builds, such as API keys, database connections, or other environment-specific configurations.
