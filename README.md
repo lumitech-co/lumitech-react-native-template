@@ -4,7 +4,7 @@
 
 # [Lumitech](https://lumitech.co/) React Native Template 🌌
 
-Welcome to the **Lumitech React Native Template (v0.76.7)**! This template is designed to give you a head start on your project by streamlining the setup process and enabling you to focus on building your app faster. 🌟
+Welcome to the **Lumitech React Native Template (v0.79.0)**! This template is designed to give you a head start on your project by streamlining the setup process and enabling you to focus on building your app faster. 🌟
 
 ### About Lumitech
 [Lumitech](https://lumitech.co/) is a custom software development company providing professional services worldwide. We partner with technology businesses globally helping them to build successful engineering teams and create innovative software products. We’re a global team of software engineers, AI and ML specialists, product managers, and technology experts who have achieved a 600% growth rate since 2022. When a rocket launches toward the moon, it doesn’t stop halfway. Neither do we
@@ -22,7 +22,7 @@ We’ve integrated the latest features from React Native to ensure your project 
 
 After initializing your project using this template, there are a few additional steps needed to fully set up your environment. These will be documented in detail below.
 
-For more information about what’s new in React Native 0.76.7, you can check out the official [release notes](https://reactnative.dev/blog/2024/10/23/release-0.76-new-architecture).
+For more information about what’s new in React Native 0.79.0, you can check out the official [release notes](https://reactnative.dev/blog/2025/04/08/react-native-0.79).
 
 By using this template, you’re laying a solid foundation for your project, ready to embrace the future improvements of React Native!
 
@@ -59,7 +59,7 @@ Enable corepack and prepare Yarn 3 for your project:
 
 ### Built With
 
-- [react-native 0.76.7](https://reactnative.dev/blog/2024/10/23/release-0.76-new-architecture)
+- [react-native 0.79.0](https://reactnative.dev/blog/2025/04/08/react-native-0.79)
 
 - [typescript](https://www.typescriptlang.org/)
 
@@ -81,11 +81,148 @@ Enable corepack and prepare Yarn 3 for your project:
 
 - [react-native-modalfy](https://colorfy-software.gitbook.io/react-native-modalfy)
 
-- [react-hook-form](https://react-hook-form.com/)
 
 ### Inspired by
 
 - [Feature Sliced Architecture](https://feature-sliced.design/en/)
+
+## 📁 Project Structure
+
+The project follows a custom Feature Sliced Design (FSD) architecture, promoting modular design and clear separation of concerns:
+
+#### `src/shared`:
+Common resources and utilities used across the entire application.
+- **`api`**: API client configuration, base HTTP services, and endpoint definitions
+- **`lib`**: Third-party library integrations and abstractions (React Query, MMKV, Reanimated), Helper functions, formatters, validators, and common utilities
+- **`ui`**: Reusable UI components and design system elements
+- **`common`**: All reusable business logic that can be shared across modules
+
+#### `src/modules`:
+Feature-based modules that encapsulate complete business domains. Each module follows a strict layering pattern:
+
+**Module Structure:**
+- **`features/`**: Contains all business logic for the module
+  - Handles data fetching, state management, and business rules
+  - Implements use cases and domain-specific operations
+  - Manages module-specific state and side effects
+
+- **`adapters/`**: Data transformation layer that adapts business data to UI format
+  - Converts API responses to UI-friendly data structures
+  - Handles data mapping and transformation logic
+  - Bridges the gap between business logic and presentation
+
+- **`ui/`**: Dumb UI components that focus purely on presentation
+  - Stateless components that receive props and render UI
+  - Can include local `models.ts` files for component-specific interfaces
+  - No business logic or external data fetching
+
+- **`widgets/`**: Composed components that combine features with UI (must use "Compose" naming)
+  - Examples: `UserProfileCompose`, `ProductListCompose`, `CartSummaryCompose`
+  - Orchestrates features and spreads data to UI components
+  - Acts as a bridge between business logic and presentation components
+
+- **`screens/`**: Top-level screen components that can only use widgets
+  - Represents complete application screens
+  - Composes widgets to create full user interfaces
+  - Handles screen-specific navigation and layout
+
+#### `src/navigation`:
+Navigation configuration and routing logic.
+- Navigation stacks, tab navigators, and routing configuration
+- Deep linking setup and navigation utilities
+- Screen parameter types and navigation helpers
+
+#### `src/assets`:
+Static assets organized by type for easy management and optimization.
+- **`fonts/`**: Custom fonts including IcoMoon icon fonts
+- **`images/`**: SVG and raster images used throughout the app
+- **`resources/`**: Configuration files like IcoMoon selection.json for icon generation
+- **`bootsplash/`**: Generated splash screen assets for iOS and Android
+
+#### Project Tree:
+```
+.
+├── App.tsx
+├── android/
+├── ios/
+├── scripts/
+│   ├── api-codegen/
+│   ├── icons.sh
+│   └── modify-endpoints.sh
+├── src/
+│   ├── shared/
+│   │   ├── api/
+│   │   │   ├── baseQuery.ts
+│   │   │   └── createApi.ts
+│   │   ├── hooks/
+│   │   │   ├── useAppStateEvent.ts
+│   │   │   └── index.ts
+│   │   ├── lib/
+│   │   │   ├── Dates.ts
+│   │   │   ├── Environments.ts
+│   │   │   ├── index.ts
+│   │   ├── ui/
+│   │   │   ├── ActivityIndicator/
+│   │   │   └── index.ts
+│   │   ├── providers/
+│   │   │   ├── EventEmitterProvider/
+│   │   │   ├── LanguageProvider/
+│   │   │   └── index.ts
+│   │   ├── services/
+│   │   │   ├── KeyboardService/
+│   │   │   ├── RouteService/
+│   │   │   └── index.ts
+│   ├── modules/
+│   │   └── [module-name]/
+│   │       ├── features/
+│   │       │   ├── [feature-logic].ts
+│   │       │   └── index.ts
+│   │       ├── adapters/
+│   │       │   ├── [data-adapter].ts
+│   │       │   └── index.ts
+│   │       ├── ui/
+│   │       │   ├── components/
+│   │       │   ├── models.ts
+│   │       │   └── index.ts
+│   │       ├── widgets/
+│   │       │   ├── [ComponentName]Compose.tsx
+│   │       │   └── index.ts
+│   │       ├── screens/
+│   │       │   ├── [ScreenName].tsx
+│   │       │   └── index.ts
+│   │       └── index.ts
+│   ├── navigation/
+│   │   ├── stacks/
+│   │   ├── types.ts
+│   │   └── index.ts
+│   └── assets/
+│       ├── fonts/
+│       │   └── icomoon.ttf
+│       ├── images/
+│       ├── resources/
+│       │   └── selection.json
+│       └── bootsplash/
+├── package.json
+├── tsconfig.json
+├── babel.config.js
+├── metro.config.js
+└── react-native.config.js
+```
+
+**Architecture Rules:**
+- **Features** contain all business logic and can use shared/common utilities
+- **Adapters** transform business data into UI-ready formats
+- **UI components** are purely presentational and stateless
+- **Widgets** must use "Compose" naming convention and orchestrate features + UI
+- **Screens** can only import and use widgets, never features or UI components directly
+- **Common** folder contains all reusable logic shared across modules
+
+This architecture ensures:
+- **Clear Data Flow**: Features → Adapters → Widgets → UI Components
+- **Separation of Concerns**: Business logic, data transformation, and presentation are isolated
+- **Reusability**: Common logic and UI components can be shared across modules
+- **Maintainability**: Strict layering prevents architectural violations
+- **Scalability**: New modules can be added without affecting existing code
 
 ## 🌍 Environment Setup
 
@@ -218,9 +355,7 @@ Our project utilizes **[React Native Reanimated](https://docs.swmansion.com/reac
 The following custom components, built using Reanimated and Skia, can be found in the `shared/ui` layer of the project:
 
 - **`AnimatedActivityIndicator`**: A polished, animated activity indicator offering a smooth visual during loading states.
-- **`InfinityCarousel`**: An infinite scrolling carousel with fluid animations, ideal for displaying content like images or cards in a continuous loop.
 - **`Switch`**: A custom toggle switch with smooth, animated transitions, providing a more elegant and flexible alternative to the default switch component.
-- **`ToolTip`**: An animated tooltip component that smoothly reveals additional information or hints when interacting with UI elements.
 
 ### Why We Use Reanimated and Skia:
 
