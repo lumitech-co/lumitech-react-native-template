@@ -6,7 +6,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StyleSheet, withUnistyles } from 'react-native-unistyles';
 
 const DURATION = 250;
 
@@ -27,6 +27,8 @@ export interface AnimatedBackgroundButtonProps {
   type?: ButtonVariant;
 }
 
+const UniStyleActivityIndicator = withUnistyles(ActivityIndicator);
+
 export const AnimatedButton = ({
   accessibilityHint,
   accessibilityLabel,
@@ -39,7 +41,7 @@ export const AnimatedButton = ({
   title,
   type = 'primary',
 }: AnimatedBackgroundButtonProps) => {
-  const { styles, theme } = useStyles(stylesheet, {
+  styles.useVariants({
     type,
   });
 
@@ -92,8 +94,8 @@ export const AnimatedButton = ({
           },
         ]}>
         {isLoading ? (
-          <ActivityIndicator
-            color={theme.colors.primary_background}
+          <UniStyleActivityIndicator
+            uniProps={theme => ({ color: theme.colors.background })}
             size={18}
           />
         ) : (
@@ -110,7 +112,7 @@ export const AnimatedButton = ({
   );
 };
 
-const stylesheet = createStyleSheet(theme => ({
+const styles = StyleSheet.create(theme => ({
   container: {
     alignItems: 'center',
     borderRadius: theme.borderRadius.base,

@@ -1,10 +1,8 @@
 import React from 'react';
 import { View, Image } from 'react-native';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StyleSheet } from 'react-native-unistyles';
 
 export const AuthLogo: React.FC = () => {
-  const { styles } = useStyles(stylesheet);
-
   return (
     <View style={styles.wrapper}>
       <Image
@@ -16,7 +14,7 @@ export const AuthLogo: React.FC = () => {
   );
 };
 
-const stylesheet = createStyleSheet(theme => ({
+const styles = StyleSheet.create(theme => ({
   wrapper: {
     flexDirection: 'row',
     justifyContent: 'center',

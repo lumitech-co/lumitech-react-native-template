@@ -2,26 +2,29 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { RouteService } from 'services';
 import RNBootSplash from 'react-native-bootsplash';
+import { withUnistyles } from 'react-native-unistyles';
 import { StatusBar } from 'react-native';
-import { useStyles } from 'react-native-unistyles';
 import { useRootNavigator } from 'modules';
 import { MainNavigator } from './MainNavigator';
 import { AuthNavigator } from './AuthNavigator';
 import { Stack } from './lib';
 
-export const RootNavigator: React.FC = () => {
-  const { theme } = useStyles();
+const UniStatusBar = withUnistyles(StatusBar);
 
-  const { navigationTheme, currentTheme, token } = useRootNavigator();
+export const RootNavigator: React.FC = () => {
+  const { navigationTheme, token } = useRootNavigator();
 
   return (
     <NavigationContainer
       ref={RouteService.navigationRef}
       onReady={() => RNBootSplash.hide({ fade: true })}
       theme={navigationTheme}>
-      <StatusBar
-        barStyle={currentTheme === 'light' ? 'dark-content' : 'light-content'}
-        backgroundColor={theme.colors.primary_background}
+      <UniStatusBar
+        uniProps={(theme, runtime) => ({
+          barStyle:
+            runtime.themeName === 'light' ? 'dark-content' : 'light-content',
+          backgroundColor: theme.colors.background,
+        })}
         animated
         translucent
       />

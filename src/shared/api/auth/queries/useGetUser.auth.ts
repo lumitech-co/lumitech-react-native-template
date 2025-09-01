@@ -1,4 +1,10 @@
-import { InvalidateQueryFilters } from '@tanstack/react-query';
+import {
+  InvalidateQueryFilters,
+  QueryObserverOptions,
+  QueryObserverResult,
+} from '@tanstack/react-query';
+import { useComputed, useObservable } from '@legendapp/state/react';
+import { SyncedOptions } from '@legendapp/state/sync';
 import { getQueryClient } from '../../queryClient';
 import {
   QueryError,
@@ -7,7 +13,7 @@ import {
   QueryFetchParams,
   queryKeys,
 } from '../../models';
-import { useQueryWithOptions } from '../../hooks';
+import { useQueryWithOptions, syncedQuery } from '../../hooks';
 import { AuthService } from '../AuthService';
 
 import { CreateAccountResponse, Test } from '../models';
@@ -19,6 +25,24 @@ interface HookParams<TData> extends Test {
     TData,
     QueryKeyType
   >['options'];
+}
+
+interface ObservableHookParams<TData, TSelected = TData> {
+  params$: Test;
+  options?: Omit<
+    QueryObserverOptions<
+      CreateAccountResponse[],
+      QueryError,
+      TData,
+      TSelected,
+      QueryKeyType
+    >,
+    'queryFn' | 'queryKey'
+  >;
+  observableOptions?: Omit<
+    SyncedOptions<QueryObserverResult<TData, QueryError>>,
+    'get' | 'set' | 'retry'
+  >;
 }
 
 interface QueryFnParams {
@@ -86,4 +110,34 @@ export const invalidateGetUserQueryAuthService = (
     queryKey: getQueryKey(params),
     ...options,
   });
+};
+
+export const useGetUserAuthServiceObservable = <
+  TData = CreateAccountResponse[],
+  TSelected = TData,
+>({
+  params$,
+  options,
+  observableOptions,
+}: ObservableHookParams<TData, TSelected>) => {
+  const queryClient = getQueryClient();
+
+  const queryKey$ = useComputed(() => getQueryKey(params$));
+
+  return useObservable(
+    syncedQuery<
+      CreateAccountResponse[],
+      QueryError,
+      TData,
+      TSelected,
+      QueryKeyType
+    >({
+      queryClient,
+      queryFn: ({ signal }) =>
+        getUserQueryFnAuthService({ params: params$, signal }),
+      queryKey: queryKey$.get(),
+      options,
+      observableOptions,
+    }),
+  );
 };

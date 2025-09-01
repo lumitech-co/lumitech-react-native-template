@@ -56,14 +56,7 @@ export type UseInfiniteQueryWithOptionsParams<
     allPages: TQueryFnData[],
   ) => TPageParam | undefined;
   options?: Omit<
-    UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey,
-      TPageParam
-    >,
+    UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
     'queryFn' | 'queryKey' | 'initialPageParam' | 'getNextPageParam'
   >;
 };

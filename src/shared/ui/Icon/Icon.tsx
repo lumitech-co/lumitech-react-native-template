@@ -1,19 +1,12 @@
 import React from 'react';
-import { useStyles } from 'react-native-unistyles';
-import {
-  createIconSetFromIcoMoon,
-  IconName,
-  Props,
-} from 'react-native-vector-icons';
+import { withUnistyles } from 'react-native-unistyles';
+import { IconName, Props } from 'react-native-vector-icons';
 import { ColorsType } from 'themes';
+import createIconSet from '@react-native-vector-icons/icomoon';
 
 export const IcomoonConfig = require('../../../assets/resources/selection.json');
 
-export const IcomoonIcon = createIconSetFromIcoMoon(
-  IcomoonConfig,
-  'icomoon',
-  'icomoon.ttf',
-);
+const IcomoonIcon = createIconSet(IcomoonConfig);
 
 const DEFAULT_ICON_SIZE = 16;
 
@@ -23,20 +16,21 @@ interface BaseProps extends Props {
   color?: ColorsType;
 }
 
+const UniIcon = withUnistyles(IcomoonIcon);
+
 export const Icon: React.FC<BaseProps> = ({
   name,
   size,
   color = 'black',
   ...rest
 }) => {
-  const { theme } = useStyles();
-
   return (
-    // @ts-ignore WIP
-    <IcomoonIcon
+    <UniIcon
       name={name}
       size={size || DEFAULT_ICON_SIZE}
-      color={theme.colors[color]}
+      uniProps={theme => ({
+        color: theme.colors[color],
+      })}
       {...rest}
     />
   );

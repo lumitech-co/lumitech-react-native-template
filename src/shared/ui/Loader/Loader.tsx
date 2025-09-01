@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, ActivityIndicatorProps, View } from 'react-native';
-import { useStyles, createStyleSheet } from 'react-native-unistyles';
+import { StyleSheet, withUnistyles } from 'react-native-unistyles';
 import { ColorsType } from 'themes';
 
 interface LoaderProps {
@@ -8,20 +8,24 @@ interface LoaderProps {
   size?: ActivityIndicatorProps['size'];
 }
 
+const UniStyleActivityIndicator = withUnistyles(ActivityIndicator);
+
 export const Loader: React.FC<LoaderProps> = ({
   color = 'primary',
   size = 'small',
 }) => {
-  const { styles, theme } = useStyles(stylesheet);
-
   return (
     <View style={styles.wrapper}>
-      <ActivityIndicator size={size} animating color={theme.colors[color]} />
+      <UniStyleActivityIndicator
+        size={size}
+        animating
+        uniProps={theme => ({ color: theme.colors[color] })}
+      />
     </View>
   );
 };
 
-const stylesheet = createStyleSheet(() => ({
+const styles = StyleSheet.create(() => ({
   wrapper: {
     justifyContent: 'center',
     alignItems: 'center',

@@ -1,5 +1,4 @@
 /* eslint-disable react/style-prop-object */
-import React, { useEffect, useMemo } from 'react';
 import {
   BlurMask,
   Canvas,
@@ -7,6 +6,7 @@ import {
   Skia,
   SweepGradient,
 } from '@shopify/react-native-skia';
+import React, { useEffect, useMemo } from 'react';
 import Animated, {
   Easing,
   interpolate,
@@ -16,7 +16,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 
 const CANVAS_SIZE = 120;
 
@@ -29,7 +29,7 @@ const CIRCLE_RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
 export const AnimatedActivityIndicator = () => {
   const progress = useSharedValue(0);
 
-  const { styles, theme } = useStyles(stylesheet);
+  const { theme } = useUnistyles();
 
   useEffect(() => {
     progress.value = withRepeat(
@@ -74,10 +74,10 @@ export const AnimatedActivityIndicator = () => {
           <SweepGradient
             c={{ x: CANVAS_SIZE / 2, y: CANVAS_SIZE / 2 }}
             colors={[
-              theme.colors.success_400,
-              theme.colors.success_400,
-              theme.colors.success_400,
-              theme.colors.success_400,
+              theme.colors.success_100,
+              theme.colors.success_100,
+              theme.colors.success_100,
+              theme.colors.success_100,
             ]}
           />
           <BlurMask blur={8} style="solid" />
@@ -87,7 +87,7 @@ export const AnimatedActivityIndicator = () => {
   );
 };
 
-const stylesheet = createStyleSheet(() => ({
+const styles = StyleSheet.create(() => ({
   canvas: {
     width: CANVAS_SIZE,
     height: CANVAS_SIZE,

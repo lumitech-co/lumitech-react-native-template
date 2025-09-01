@@ -1,14 +1,12 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StyleSheet } from 'react-native-unistyles';
 
 interface ErrorMessageProps {
   message: string;
 }
 
 export const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
-  const { styles } = useStyles(stylesheet);
-
   return (
     <View>
       <Text style={styles.errorMessage}>{message}</Text>
@@ -16,7 +14,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
   );
 };
 
-const stylesheet = createStyleSheet(theme => ({
+const styles = StyleSheet.create(theme => ({
   errorMessage: {
     color: theme.colors.danger_500,
     flexShrink: 1,

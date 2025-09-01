@@ -40,6 +40,7 @@ local.properties
 .cxx/
 *.keystore
 !debug.keystore
+.kotlin/
 
 # node.js
 #
@@ -84,6 +85,7 @@ yarn-error.log
 .env.develop
 .env.release
 .env.stage
+.env
 
 builder-name-check
 check-generics

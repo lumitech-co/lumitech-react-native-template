@@ -24,7 +24,9 @@ export const touchableConfig = {
 
 export const isIOS = Platform.OS === 'ios';
 
-type ReactComponent<Props = {}> = React.ComponentType<Props>;
+type ReactComponent<Props = {}> = React.ComponentType<Props> & {
+  defaultProps?: Partial<Props>;
+};
 
 export const setDefaultProps = <T extends ReactComponent>(
   Component: T,

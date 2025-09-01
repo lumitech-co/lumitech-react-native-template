@@ -8,15 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		0C80B921A6F3F58F76C31292 /* libPods-ReactNativeTemplate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-ReactNativeTemplate.a */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		13BC907535704A12A604352D /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DDCFC1C9A8D94E8DBA4554C2 /* BootSplash.storyboard */; };
 		92B2C46039292F40AB7234ED /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = BCAE7E540CD7D65C51B20FF5 /* PrivacyInfo.xcprivacy */; };
 		9D00BA196163442DB5600628 /* DMSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA4718241E104C1DA45E100E /* DMSans-Bold.ttf */; };
 		A006100EF4F54B16BEC662AD /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D665904966634E7DBA529216 /* Colors.xcassets */; };
 		A46DB2A6FB064141838A384A /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C1EA9158F804B41B1D1CE6C /* icomoon.ttf */; };
 		E90430D6D5FA4910A26F2C27 /* DMSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0E8ACD8EAED1480AB5E2938C /* DMSans-Regular.ttf */; };
+		F51819B12E658D1E00D7D4C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51819B02E658D1E00D7D4C2 /* AppDelegate.swift */; };
 		F57862AC2D75C81600432F7F /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = F57862AB2D75C81600432F7F /* Config.xcconfig */; };
 		FA7878A0A19B4D39B8D4FBF3 /* DMSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92D359F9F3AA4A12A1BC3852 /* DMSans-Medium.ttf */; };
 /* End PBXBuildFile section */
@@ -24,11 +23,8 @@
 /* Begin PBXFileReference section */
 		0E8ACD8EAED1480AB5E2938C /* DMSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DMSans-Regular.ttf"; path = "../src/assets/fonts/DMSans-Regular.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* ReactNativeTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReactNativeTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ReactNativeTemplate/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = ReactNativeTemplate/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ReactNativeTemplate/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ReactNativeTemplate/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ReactNativeTemplate/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = ReactNativeTemplate/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-ReactNativeTemplate-ReactNativeTemplateTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ReactNativeTemplate-ReactNativeTemplateTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-ReactNativeTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeTemplate.debug.xcconfig"; path = "Target Support Files/Pods-ReactNativeTemplate/Pods-ReactNativeTemplate.debug.xcconfig"; sourceTree = "<group>"; };
@@ -42,6 +38,7 @@
 		D665904966634E7DBA529216 /* Colors.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Colors.xcassets; path = ReactNativeTemplate/Colors.xcassets; sourceTree = "<group>"; };
 		DDCFC1C9A8D94E8DBA4554C2 /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = ReactNativeTemplate/BootSplash.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F51819B02E658D1E00D7D4C2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ReactNativeTemplate/AppDelegate.swift; sourceTree = "<group>"; };
 		F57862AB2D75C81600432F7F /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		FA4718241E104C1DA45E100E /* DMSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DMSans-Bold.ttf"; path = "../src/assets/fonts/DMSans-Bold.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,15 +58,13 @@
 		13B07FAE1A68108700A75B9A /* ReactNativeTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				DDCFC1C9A8D94E8DBA4554C2 /* BootSplash.storyboard */,
 				D665904966634E7DBA529216 /* Colors.xcassets */,
 				BCAE7E540CD7D65C51B20FF5 /* PrivacyInfo.xcprivacy */,
+				F51819B02E658D1E00D7D4C2 /* AppDelegate.swift */,
 			);
 			name = ReactNativeTemplate;
 			sourceTree = "<group>";
@@ -170,7 +165,7 @@
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
@@ -291,8 +286,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				F51819B12E658D1E00D7D4C2 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,10 +433,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -516,10 +507,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

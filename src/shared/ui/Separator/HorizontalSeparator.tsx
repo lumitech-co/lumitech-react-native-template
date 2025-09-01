@@ -1,14 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StyleSheet } from 'react-native-unistyles';
 
 export const HorizontalSeparator: React.FC = () => {
-  const { styles } = useStyles(stylesheet);
-
   return <View style={styles.separator} />;
 };
 
-const stylesheet = createStyleSheet(theme => ({
+const styles = StyleSheet.create(theme => ({
   separator: {
     height: 1,
     width: '100%',

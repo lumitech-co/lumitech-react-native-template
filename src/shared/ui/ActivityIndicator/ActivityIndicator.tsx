@@ -1,37 +1,34 @@
 import React from 'react';
-import { Portal } from '@gorhom/portal';
-import {
-  View,
-  ActivityIndicator as BaseIndicator,
-  StatusBar,
-} from 'react-native';
-import { useStyles, createStyleSheet } from 'react-native-unistyles';
+import { ActivityIndicator as BaseIndicator, View } from 'react-native';
+import { StyleSheet, withUnistyles } from 'react-native-unistyles';
 import { AnimatedBackdrop } from '../AnimatedBackDrop';
 
 interface ActivityIndicatorProps {
   isVisible: boolean;
 }
 
+const UniStyleActivityIndicator = withUnistyles(BaseIndicator);
+
 export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
   isVisible,
 }) => {
-  const { styles, theme } = useStyles(stylesheet);
-
   return (
-    <Portal>
-      <StatusBar translucent animated />
+    <>
       <AnimatedBackdrop isVisible={isVisible} />
 
       {isVisible && (
         <View style={styles.container}>
-          <BaseIndicator size="large" color={theme.colors.primary} />
+          <UniStyleActivityIndicator
+            size="large"
+            uniProps={theme => ({ color: theme.colors.primary })}
+          />
         </View>
       )}
-    </Portal>
+    </>
   );
 };
 
-const stylesheet = createStyleSheet((_, runtime) => ({
+const styles = StyleSheet.create((_, runtime) => ({
   container: {
     flex: 1,
     position: 'absolute',
