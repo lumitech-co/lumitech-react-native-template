@@ -9,24 +9,31 @@ const std::filesystem::path API_DIR =
 const std::filesystem::path INDEX_FILE = API_DIR / "index.ts";
 const std::unordered_set<std::string> EXCLUDED_FOLDERS = {"models", "hooks"};
 
-void updateAPIIndexFile() {
+void updateAPIIndexFile()
+{
   std::cout << "\n🔍 Updating API index file..." << std::endl;
-  std::cout << "📂 Target file: " << INDEX_FILE << "\n" << std::endl;
+  std::cout << "📂 Target file: " << INDEX_FILE << "\n"
+            << std::endl;
 
   std::ofstream tempFile("temp_index.ts");
-  if (!tempFile.is_open()) {
+  if (!tempFile.is_open())
+  {
     std::cerr << "❌ Error: Unable to create temporary file.\n";
     return;
   }
 
   tempFile << "// This file is auto-generated. Do not modify manually.\n\n";
 
-  std::cout << "⏳ Scanning API subdirectories...\n" << std::endl;
+  std::cout << "⏳ Scanning API subdirectories...\n"
+            << std::endl;
 
-  for (const auto &entry : std::filesystem::directory_iterator(API_DIR)) {
-    if (entry.is_directory()) {
+  for (const auto &entry : std::filesystem::directory_iterator(API_DIR))
+  {
+    if (entry.is_directory())
+    {
       std::string moduleName = entry.path().filename().string();
-      if (EXCLUDED_FOLDERS.find(moduleName) != EXCLUDED_FOLDERS.end()) {
+      if (EXCLUDED_FOLDERS.find(moduleName) != EXCLUDED_FOLDERS.end())
+      {
         continue;
       }
 
@@ -37,7 +44,6 @@ void updateAPIIndexFile() {
 
   tempFile << "\nexport * from './queryClient';\n";
   tempFile << "export * from './models';\n";
-  tempFile << "export * from './lib';\n";
   tempFile << "export { useMutationEvents, useQueryEvents } from './hooks';\n";
 
   tempFile.close();
@@ -46,10 +52,12 @@ void updateAPIIndexFile() {
   std::cout << "\n✅ " << INDEX_FILE << " has been updated successfully!\n"
             << std::endl;
 
-  std::cout << "🎉 API index file update completed!\n" << std::endl;
+  std::cout << "🎉 API index file update completed!\n"
+            << std::endl;
 }
 
-int main() {
+int main()
+{
   updateAPIIndexFile();
   return 0;
 }

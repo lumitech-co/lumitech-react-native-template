@@ -1,18 +1,9 @@
-import {
-  AppRegistry,
-  TextInput,
-  Text,
-  LogBox,
-  Pressable as RNPressable,
-} from 'react-native';
-import { Pressable } from 'react-native-gesture-handler';
+import { AppRegistry, TextInput, Text, LogBox } from 'react-native';
 import { App } from './App';
 import { setDefaultProps, parseEnv } from './src/shared/lib';
 import { name as appName } from './app.json';
 
 setDefaultProps(Text, { allowFontScaling: false });
-setDefaultProps(Pressable, { allowFontScaling: false });
-setDefaultProps(RNPressable, { allowFontScaling: false });
 setDefaultProps(TextInput, { allowFontScaling: false });
 
 parseEnv();

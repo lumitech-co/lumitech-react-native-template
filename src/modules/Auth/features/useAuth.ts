@@ -30,7 +30,7 @@ export const useAuth = () => {
     });
   });
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     KeyboardService.dismiss();
 
     authFormStore$.didSubmit.set(true);
@@ -45,7 +45,7 @@ export const useAuth = () => {
 
     const { email, password } = formData;
 
-    await onSignIn({ email, password });
+    onSignIn({ email, password });
   };
 
   return {

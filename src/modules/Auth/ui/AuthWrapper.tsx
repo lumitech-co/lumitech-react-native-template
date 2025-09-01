@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StyleSheet } from 'react-native-unistyles';
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -14,8 +14,6 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
   children,
   bottomOffset = BOTTOM_OFFSET,
 }) => {
-  const { styles } = useStyles(stylesheet);
-
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={styles.contentContainer}
@@ -27,7 +25,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
   );
 };
 
-const stylesheet = createStyleSheet((theme, runtime) => ({
+const styles = StyleSheet.create((theme, runtime) => ({
   contentContainer: {
     flexGrow: 1,
     backgroundColor: theme.colors.primary_background,

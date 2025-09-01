@@ -24,7 +24,6 @@ interface UseInfiniteQueryWithOptionsParams<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >['queryFn'];
@@ -33,19 +32,11 @@ interface UseInfiniteQueryWithOptionsParams<
     TQueryFnData,
     TError,
     TData,
-    TQueryFnData,
     TQueryKey,
     TPageParam
   >['getNextPageParam'];
   options?: Omit<
-    UseInfiniteQueryOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryFnData,
-      TQueryKey,
-      TPageParam
-    >,
+    UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
     'queryFn' | 'queryKey' | 'initialPageParam' | 'getNextPageParam'
   >;
 }

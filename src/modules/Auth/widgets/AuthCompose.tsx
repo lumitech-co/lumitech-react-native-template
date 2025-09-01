@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { View, Text } from 'react-native';
 import { Pressable } from 'react-native-gesture-handler';
 import { Show } from '@legendapp/state/react';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StyleSheet } from 'react-native-unistyles';
 import {
   ActivityIndicator,
   AnimatedButton,
@@ -16,8 +16,6 @@ import { AuthFooter, AuthLogo, AuthMainInformation, AuthWrapper } from '../ui';
 
 export const AuthCompose: React.FC = () => {
   const { t } = useTranslation();
-
-  const { styles } = useStyles(stylesheet);
 
   const { onSubmit, isLoading$, authFormStore$ } = useAuth();
 
@@ -49,6 +47,7 @@ export const AuthCompose: React.FC = () => {
                 keyboardType="email-address"
                 autoCorrect={false}
                 placeholder={t('placeholders.enter-your-email')}
+                disableFullscreenUI
               />
             </View>
 
@@ -76,6 +75,7 @@ export const AuthCompose: React.FC = () => {
                 placeholder={t('placeholders.enter-your-password')}
                 onRightPress={() => authFormStore$.isSecureModeEnabled.toggle()}
                 isRightIconShown
+                disableFullscreenUI
               />
             </View>
 
@@ -112,13 +112,13 @@ export const AuthCompose: React.FC = () => {
   );
 };
 
-const stylesheet = createStyleSheet(theme => ({
+const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
   },
   formWrapper: {
     flex: 1,
-    marginTop: 141,
+    marginTop: '10%',
     justifyContent: 'center',
     paddingHorizontal: 29,
   },

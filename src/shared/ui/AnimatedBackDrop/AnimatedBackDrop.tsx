@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { StyleSheet, ViewProps } from 'react-native';
+import { ViewProps } from 'react-native';
 import Animated, {
   AnimatedProps,
   useAnimatedProps,
@@ -8,7 +8,7 @@ import Animated, {
   useDerivedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StyleSheet } from 'react-native-unistyles';
 
 interface AnimatedBackdropProps {
   onBackdropPress?: () => void;
@@ -17,8 +17,6 @@ interface AnimatedBackdropProps {
 
 export const AnimatedBackdrop: React.FC<AnimatedBackdropProps> = React.memo(
   ({ onBackdropPress, isVisible }) => {
-    const { styles } = useStyles(stylesheet);
-
     const visibility = useDerivedValue(() => {
       return isVisible ? 1 : 0;
     }, [isVisible]);
@@ -45,10 +43,12 @@ export const AnimatedBackdrop: React.FC<AnimatedBackdropProps> = React.memo(
   },
 );
 
-const stylesheet = createStyleSheet(theme => ({
+const styles = StyleSheet.create((theme, runtime) => ({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: theme.colors.black_50,
+    width: runtime.screen.width,
+    height: runtime.screen.height,
+    backgroundColor: theme.colors.black_30,
     zIndex: 99999,
   },
 }));

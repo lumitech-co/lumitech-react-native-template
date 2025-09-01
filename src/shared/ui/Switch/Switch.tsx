@@ -20,7 +20,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 
 const SWITCH_CONTAINER_WIDTH = 40;
 const SWITCH_CONTAINER_HEIGHT = 24;
@@ -47,7 +47,7 @@ export const Switch = React.forwardRef<
   SwitchComponentRefProps,
   SwitchComponentProps
 >(({ value, onChange, enabled = true }, ref) => {
-  const { styles, theme } = useStyles(stylesheet);
+  const { theme } = useUnistyles();
 
   const panRef = useRef<PanGestureHandler>(null);
 
@@ -152,7 +152,7 @@ export const Switch = React.forwardRef<
   );
 });
 
-const stylesheet = createStyleSheet(theme => ({
+const styles = StyleSheet.create(theme => ({
   switchContainer: {
     width: SWITCH_CONTAINER_WIDTH,
     height: SWITCH_CONTAINER_HEIGHT,

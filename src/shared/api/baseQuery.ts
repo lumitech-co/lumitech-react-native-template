@@ -1,20 +1,39 @@
 import Config from 'react-native-config';
 import { ExceptionService, ToastService } from 'services';
-import { resetAllStores } from 'stores';
+import { getAuthStoreInstance, resetAllStores } from 'stores';
+import { Mutex } from 'async-mutex';
 import { createAxiosClient } from './http-client';
+
+export const refreshMutex = new Mutex();
 
 export const baseQuery = createAxiosClient({
   baseURL: Config.API_URL || '',
+  getToken: () => {
+    const { token } = getAuthStoreInstance();
+
+    return token.get();
+  },
   onError: error => {
     ToastService.onDanger({
       title: ExceptionService.errorResolver(error),
     });
   },
-  onUnauthorized: error => {
-    ToastService.onDanger({
-      title: ExceptionService.errorResolver(error),
-    });
+  onUnauthorized: async error => {
+    if (refreshMutex.isLocked()) {
+      await refreshMutex.waitForUnlock();
+    } else {
+      const release = await refreshMutex.acquire();
 
-    resetAllStores();
+      try {
+        // your tokens request here
+      } catch {
+        ToastService.onDanger({
+          title: ExceptionService.errorResolver(error),
+        });
+        resetAllStores();
+      } finally {
+        release();
+      }
+    }
   },
 });

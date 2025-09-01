@@ -1,6 +1,5 @@
 import { DefaultTheme, Theme } from '@react-navigation/native';
-import { useMemo } from 'react';
-import { useStyles } from 'react-native-unistyles';
+import { useUnistyles } from 'react-native-unistyles';
 import { useCurrentTheme, useToken } from 'stores';
 
 export const useRootNavigator = () => {
@@ -8,26 +7,24 @@ export const useRootNavigator = () => {
 
   const currentTheme = useCurrentTheme();
 
-  const { theme } = useStyles();
+  const { theme } = useUnistyles();
 
-  const navigationTheme = useMemo<Theme>(() => {
-    return {
-      dark: currentTheme === 'dark',
-      colors: {
-        ...DefaultTheme.colors,
-        background: theme.colors.primary_background,
-        border: 'transparent',
-        primary: theme.colors.primary,
-        card: theme.colors.primary_background,
-        text: theme.colors.secondary,
-        notification: theme.colors.primary,
-      },
-      fonts: {
-        ...DefaultTheme.fonts,
-        ...theme.fonts,
-      },
-    };
-  }, [currentTheme]);
+  const navigationTheme = {
+    dark: currentTheme === 'dark',
+    colors: {
+      ...DefaultTheme.colors,
+      background: theme.colors.primary_background,
+      border: 'transparent',
+      primary: theme.colors.primary,
+      card: theme.colors.primary_background,
+      text: theme.colors.secondary,
+      notification: theme.colors.primary,
+    },
+    fonts: {
+      ...DefaultTheme.fonts,
+      ...theme.fonts,
+    },
+  } satisfies Theme;
 
   return {
     currentTheme,

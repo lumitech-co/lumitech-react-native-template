@@ -139,3 +139,30 @@ export const invalidateGetUserPaginateInfiniteQueryAuthService = (
     ...options,
   });
 };
+
+export const resetGetUserPaginateInfiniteQueryAuthService = async <
+  TPageParam = PageParam,
+>(
+  params: Test,
+): Promise<void> => {
+  const queryClient = getQueryClient();
+  const queryKey = getQueryKey(params);
+
+  queryClient.setQueryData(
+    queryKey,
+    (oldData: InfiniteData<CreateAccountResponse[], TPageParam>) => {
+      if (!oldData) {
+        return undefined;
+      }
+
+      return {
+        pages: oldData.pages.slice(0, 1),
+        pageParams: oldData.pageParams.slice(0, 1),
+      };
+    },
+  );
+
+  await queryClient.invalidateQueries({
+    queryKey: getQueryKey(params),
+  });
+};

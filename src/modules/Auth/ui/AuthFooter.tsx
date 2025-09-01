@@ -1,12 +1,10 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
+import { StyleSheet } from 'react-native-unistyles';
 
 export const AuthFooter: React.FC = () => {
   const { t } = useTranslation();
-
-  const { styles } = useStyles(stylesheet);
 
   return (
     <View style={styles.wrapper}>
@@ -19,7 +17,7 @@ export const AuthFooter: React.FC = () => {
   );
 };
 
-const stylesheet = createStyleSheet(theme => ({
+const styles = StyleSheet.create(theme => ({
   wrapper: {
     marginTop: 16,
   },

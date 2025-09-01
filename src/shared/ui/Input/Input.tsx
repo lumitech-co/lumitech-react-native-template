@@ -2,11 +2,7 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
-import {
-  createStyleSheet,
-  UnistylesRuntime,
-  useStyles,
-} from 'react-native-unistyles';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { motify, useAnimationState } from 'moti';
 import { InputProps } from './types';
 import { ErrorMessage } from '../ErrorMessage';
@@ -37,7 +33,11 @@ export const Input = React.forwardRef<TextInput, InputProps>(
     },
     ref,
   ) => {
-    const { styles, theme } = useStyles(stylesheet, {
+    const { theme, rt } = useUnistyles();
+
+    const KEYBOARD_APPEARANCE = rt.themeName === 'dark' ? 'dark' : 'light';
+
+    styles.useVariants({
       type,
     });
 
@@ -86,9 +86,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(
             placeholderTextColor={theme.colors.mens_night}
             editable={editable}
             multiline={multiline}
-            keyboardAppearance={
-              UnistylesRuntime.getTheme() === 'dark' ? 'dark' : 'light'
-            }
+            keyboardAppearance={KEYBOARD_APPEARANCE}
             {...rest}
           />
 
@@ -115,7 +113,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(
   },
 );
 
-const stylesheet = createStyleSheet(theme => ({
+const styles = StyleSheet.create(theme => ({
   inputWrapper: {
     justifyContent: 'center',
   },

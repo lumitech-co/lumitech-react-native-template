@@ -12,18 +12,22 @@ const std::string QUERY_KEYS_FILE = "src/shared/api/models/QueryKeys.ts";
 const std::unordered_set<std::string> EXCLUDED_FOLDERS = {"models"};
 const std::string LOCK_FILE = "./codegen.lock";
 
-
-std::string toCamelCase(const std::string &input) {
+std::string toCamelCase(const std::string &input)
+{
   std::stringstream ss(input);
   std::string word, result;
   bool first = true;
 
-  while (std::getline(ss, word, '_')) {
-    if (first) {
+  while (std::getline(ss, word, '_'))
+  {
+    if (first)
+    {
       result += std::tolower(word[0]);
       result += word.substr(1);
       first = false;
-    } else {
+    }
+    else
+    {
       word[0] = std::toupper(word[0]);
       result += word;
     }
@@ -32,7 +36,8 @@ std::string toCamelCase(const std::string &input) {
   return result;
 }
 
-std::string toCapitalize(const std::string &input) {
+std::string toCapitalize(const std::string &input)
+{
   if (input.empty())
     return input;
   std::string result = input;
@@ -40,19 +45,24 @@ std::string toCapitalize(const std::string &input) {
   return result;
 }
 
-std::string extractServicePrefix(const std::string &serviceName) {
+std::string extractServicePrefix(const std::string &serviceName)
+{
   std::string prefix = serviceName;
 
-  if (prefix.find("Service") != std::string::npos) {
+  if (prefix.find("Service") != std::string::npos)
+  {
     prefix = prefix.substr(0, prefix.find("Service"));
   }
   return toCamelCase(prefix);
 }
 
-std::string toSnakeCase(const std::string &input) {
+std::string toSnakeCase(const std::string &input)
+{
   std::string result;
-  for (char c : input) {
-    if (std::isupper(c) && !result.empty()) {
+  for (char c : input)
+  {
+    if (std::isupper(c) && !result.empty())
+    {
       result += "_";
     }
     result += std::toupper(c);
@@ -60,9 +70,11 @@ std::string toSnakeCase(const std::string &input) {
   return result;
 }
 
-std::string generateHash(const std::filesystem::path &filePath) {
+std::string generateHash(const std::filesystem::path &filePath)
+{
   std::ifstream file(filePath, std::ios::binary);
-  if (!file.is_open()) {
+  if (!file.is_open())
+  {
     std::cerr << "❌ Error: Unable to open file: " << filePath << "\n";
     return "";
   }
@@ -78,24 +90,28 @@ std::string generateHash(const std::filesystem::path &filePath) {
   std::sregex_iterator end;
 
   std::string endpointData;
-  for (; it != end; ++it) {
+  for (; it != end; ++it)
+  {
     endpointData += it->str() + "\n";
   }
 
   std::hash<std::string> hasher;
   size_t hashValue = hasher(endpointData);
 
-  std::cout << "🛠️  Extracted Endpoints for Hashing: \n" << endpointData;
+  std::cout << "🛠️  Extracted Endpoints for Hashing: \n"
+            << endpointData;
   std::cout << "🔢 Generated Hash: " << hashValue << "\n";
 
   return std::to_string(hashValue);
 }
 
-std::string normalizeType(const std::string& type) {
-    return std::regex_replace(type, std::regex(R"(\[\]$)"), "");
+std::string normalizeType(const std::string &type)
+{
+  return std::regex_replace(type, std::regex(R"(\[\]$)"), "");
 }
 
-std::string capitalizeFirstLetter(const std::string &str) {
+std::string capitalizeFirstLetter(const std::string &str)
+{
   if (str.empty())
     return str;
   std::string capitalized = str;
@@ -103,9 +119,11 @@ std::string capitalizeFirstLetter(const std::string &str) {
   return capitalized;
 }
 
-std::string readFile(const std::filesystem::path &filePath) {
+std::string readFile(const std::filesystem::path &filePath)
+{
   std::ifstream file(filePath);
-  if (!file.is_open()) {
+  if (!file.is_open())
+  {
     std::cerr << "❌ Error: Unable to open file: " << filePath << "\n";
     return "";
   }
@@ -115,39 +133,46 @@ std::string readFile(const std::filesystem::path &filePath) {
   return content.str();
 }
 
-
 bool isExcludedFolder(const std::string &folderName,
-                      const std::unordered_set<std::string> &excludedFolders) {
+                      const std::unordered_set<std::string> &excludedFolders)
+{
   return excludedFolders.find(folderName) != excludedFolders.end();
 }
 
-
-void removeIfEmpty(const std::filesystem::path &dirPath) {
+void removeIfEmpty(const std::filesystem::path &dirPath)
+{
   if (std::filesystem::exists(dirPath) &&
-      std::filesystem::is_directory(dirPath)) {
-    if (std::filesystem::is_empty(dirPath)) {
+      std::filesystem::is_directory(dirPath))
+  {
+    if (std::filesystem::is_empty(dirPath))
+    {
       std::filesystem::remove(dirPath);
     }
   }
 }
 
-void deleteQueryKeysFile() {
-  if (std::filesystem::exists(QUERY_KEYS_FILE)) {
+void deleteQueryKeysFile()
+{
+  if (std::filesystem::exists(QUERY_KEYS_FILE))
+  {
     std::cout << "🗑️  Deleting existing " << QUERY_KEYS_FILE << "...\n";
     std::filesystem::remove(QUERY_KEYS_FILE);
   }
 }
 
-void updateIndexFile(const std::filesystem::path &serviceDir) {
+void updateIndexFile(const std::filesystem::path &serviceDir)
+{
   std::filesystem::path indexFile = serviceDir / "index.ts";
 
-  if (!std::filesystem::exists(indexFile)) {
+  if (!std::filesystem::exists(indexFile))
+  {
     std::ofstream createFile(indexFile);
     createFile.close();
   }
 
   std::ofstream outFile(indexFile, std::ios::trunc);
-  if (!outFile.is_open()) {
+  if (!outFile.is_open())
+  {
     std::cerr << "❌ Error: Unable to open " << indexFile << " for writing.\n";
     return;
   }
@@ -156,31 +181,39 @@ void updateIndexFile(const std::filesystem::path &serviceDir) {
 
   std::filesystem::path queriesDir = serviceDir / "queries";
   if (std::filesystem::exists(queriesDir) &&
-      std::filesystem::is_directory(queriesDir)) {
+      std::filesystem::is_directory(queriesDir))
+  {
     bool hasTsFiles = false;
-    for (const auto &entry : std::filesystem::directory_iterator(queriesDir)) {
-      if (entry.path().extension() == ".ts") {
+    for (const auto &entry : std::filesystem::directory_iterator(queriesDir))
+    {
+      if (entry.path().extension() == ".ts")
+      {
         hasTsFiles = true;
         break;
       }
     }
-    if (hasTsFiles) {
+    if (hasTsFiles)
+    {
       outFile << "export * from './queries';\n";
     }
   }
 
   std::filesystem::path mutationsDir = serviceDir / "mutations";
   if (std::filesystem::exists(mutationsDir) &&
-      std::filesystem::is_directory(mutationsDir)) {
+      std::filesystem::is_directory(mutationsDir))
+  {
     bool hasTsFiles = false;
     for (const auto &entry :
-         std::filesystem::directory_iterator(mutationsDir)) {
-      if (entry.path().extension() == ".ts") {
+         std::filesystem::directory_iterator(mutationsDir))
+    {
+      if (entry.path().extension() == ".ts")
+      {
         hasTsFiles = true;
         break;
       }
     }
-    if (hasTsFiles) {
+    if (hasTsFiles)
+    {
       outFile << "export * from './mutations';\n";
     }
   }
@@ -189,34 +222,37 @@ void updateIndexFile(const std::filesystem::path &serviceDir) {
   std::cout << "✅ Updated index.ts at: " << indexFile << "\n";
 }
 
+bool isSpecialType(std::string type)
+{
+  type = std::regex_replace(type, std::regex(R"(\[\]$)"), "");
 
-bool isSpecialType(std::string type) {
-    type = std::regex_replace(type, std::regex(R"(\[\]$)"), "");
+  static const std::regex specialTypePattern(
+      R"(^(void|unknown|any|boolean|string|true|false|Object|\{\}|\[\]|0|1|BigInt)$)");
 
-    static const std::regex specialTypePattern(
-        R"(^(void|unknown|any|boolean|string|true|false|Object|\{\}|\[\]|0|1|BigInt)$)");
-
-    return std::regex_match(type, specialTypePattern);
+  return std::regex_match(type, specialTypePattern);
 }
-
 
 void generateQueryHook(
     const std::filesystem::path &hooksDir, const std::string &hookName,
     const std::string &responseType, const std::string &requestType,
     const std::string &queryKeyName, const std::string &serviceName,
     const std::string &endpointName, const std::string &servicePrefix,
-    bool isVoidRequest, const std::string &servicePrefixHook) {
+    bool isVoidRequest, const std::string &servicePrefixHook)
+{
 
   std::filesystem::path queryFile =
       hooksDir / "queries" / (hookName + "." + servicePrefix + ".ts");
 
   std::ofstream outFile(queryFile);
-  if (!outFile.is_open()) {
+  if (!outFile.is_open())
+  {
     std::cerr << "❌ Error: Unable to create query file: " << queryFile << "\n";
     return;
   }
 
-  outFile << "import { InvalidateQueryFilters } from '@tanstack/react-query';\n"
+  outFile << "import { InvalidateQueryFilters, QueryObserverOptions, QueryObserverResult } from '@tanstack/react-query';\n"
+          << "import { useComputed, useObservable } from '@legendapp/state/react';\n"
+          << "import { SyncedOptions } from '@legendapp/state/sync';\n"
           << "import { getQueryClient } from '../../queryClient';\n"
           << "import {\n"
           << "  QueryError,\n"
@@ -225,19 +261,22 @@ void generateQueryHook(
           << "  QueryFetchParams,\n"
           << "  queryKeys,\n"
           << "} from '../../models';\n"
-          << "import { useQueryWithOptions } from '../../hooks';\n"
+          << "import { useQueryWithOptions, syncedQuery } from '../../hooks';\n"
           << "import { " << serviceName << " } from '../" << serviceName
           << "';\n\n";
 
-  if (!isSpecialType(responseType)) {
+  if (!isSpecialType(responseType))
+  {
     outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
   }
 
-  if (!isVoidRequest && !isSpecialType(requestType)) {
+  if (!isVoidRequest && !isSpecialType(requestType))
+  {
     outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
-  if (!isVoidRequest) {
+  if (!isVoidRequest)
+  {
     outFile << "\ninterface HookParams<TData> extends " << requestType << " {\n"
             << "  options?: UseQueryWithOptionsParams<\n"
             << "    " << responseType << ",\n"
@@ -245,6 +284,24 @@ void generateQueryHook(
             << "    TData,\n"
             << "    QueryKeyType\n"
             << "  >['options'];\n"
+            << "}\n\n";
+
+    outFile << "interface ObservableHookParams<TData, TSelected = TData> {\n"
+            << "  params$: " << requestType << ";\n"
+            << "  options?: Omit<\n"
+            << "    QueryObserverOptions<\n"
+            << "      " << responseType << ",\n"
+            << "    QueryError,\n"
+            << "    TData,\n"
+            << "    TSelected,\n"
+            << "    QueryKeyType\n"
+            << "  >,\n"
+            << "    'queryFn' | 'queryKey'\n"
+            << "  >;\n"
+            << "  observableOptions?: Omit<\n"
+            << "    SyncedOptions<QueryObserverResult<TData, QueryError>>,\n"
+            << "    'get' | 'set' | 'retry'\n"
+            << "  >;\n"
             << "}\n\n";
 
     outFile << "interface QueryFnParams {\n"
@@ -315,7 +372,35 @@ void generateQueryHook(
             << "    ...options,\n"
             << "  });\n"
             << "};\n";
-  } else {
+
+    outFile << "\nexport const " << hookName << servicePrefixHook << "Observable" << " = <\n"
+            << "  TData = " << responseType << ",\n"
+            << "  TSelected = TData,\n"
+            << ">({\n"
+            << "  params$,\n"
+            << "  options,\n"
+            << "  observableOptions,\n"
+            << "}: ObservableHookParams<TData, TSelected>) => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  const queryKey$ = useComputed(() => getQueryKey(params$));\n"
+            << "  return useObservable(\n"
+            << "    syncedQuery<\n"
+            << "    " << responseType << ",\n"
+            << "    QueryError,\n"
+            << "    TData,\n"
+            << "    TSelected,\n"
+            << "    QueryKeyType\n"
+            << "  >({\n"
+            << "    queryClient,\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName << "({ params: params$, signal }),\n"
+            << "    queryKey: queryKey$.get(),\n"
+            << "    options,\n"
+            << "    observableOptions,\n"
+            << "  }));\n"
+            << "};\n";
+  }
+  else
+  {
     outFile << "\ninterface HookParams<TData> {\n"
             << "  options?: UseQueryWithOptionsParams<\n"
             << "    " << responseType << ",\n"
@@ -323,6 +408,23 @@ void generateQueryHook(
             << "    TData,\n"
             << "    QueryKeyType\n"
             << "  >['options'];\n"
+            << "}\n\n";
+
+    outFile << "interface ObservableHookParams<TData, TSelected = TData> {\n"
+            << "  params$: " << requestType << ";\n"
+            << "  options?: Omit<\n"
+            << "    QueryObserverOptions<\n"
+            << "      " << responseType << ",\n"
+            << "    QueryError,\n"
+            << "    " << responseType << ",\n"
+            << "    QueryKeyType\n"
+            << "  >,\n"
+            << "    'queryFn' | 'queryKey'\n"
+            << "  >;\n"
+            << "  observableOptions?: Omit<\n"
+            << "    SyncedOptions<QueryObserverResult<" << responseType << ", QueryError>>,\n"
+            << "    'get' | 'set' | 'retry'\n"
+            << "  >;\n"
             << "}\n\n";
 
     outFile << "interface QueryFnParams {\n"
@@ -387,11 +489,38 @@ void generateQueryHook(
             << "    ...options,\n"
             << "  });\n"
             << "};\n";
+
+    outFile << "\nexport const " << hookName << servicePrefixHook << "Observable" << " = <\n"
+            << "  TData = " << responseType << ",\n"
+            << "  TSelected = TData,\n"
+            << ">({\n"
+            << "  params$,\n"
+            << "  options,\n"
+            << "  observableOptions,\n"
+            << "}: ObservableHookParams<TData, TSelected>) => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  const queryKey$ = useComputed(() => getQueryKey(params$));\n"
+            << "  return useObservable(\n"
+            << "    syncedQuery<\n"
+            << "    " << responseType << ",\n"
+            << "    QueryError,\n"
+            << "    TData,\n"
+            << "    TSelected,\n"
+            << "    QueryKeyType\n"
+            << "  >({\n"
+            << "    queryClient,\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName << "({ params: params$, signal }),\n"
+            << "    queryKey: queryKey$.get(),\n"
+            << "    options,\n"
+            << "    observableOptions,\n"
+            << "  }));\n"
+            << "};\n";
   }
 
   std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
   std::ofstream indexOutFile(indexFile, std::ios::app);
-  if (!indexOutFile.is_open()) {
+  if (!indexOutFile.is_open())
+  {
     std::cerr << "❌ Error: Unable to update mutations index file: "
               << indexFile << "\n";
     return;
@@ -410,13 +539,15 @@ void generatePrefetchQueryHook(
     const std::string &responseType, const std::string &requestType,
     const std::string &queryKeyName, const std::string &serviceName,
     const std::string &endpointName, const std::string &servicePrefix,
-    bool isVoidRequest, const std::string &servicePrefixHook) {
+    bool isVoidRequest, const std::string &servicePrefixHook)
+{
 
   std::filesystem::path queryFile =
       hooksDir / "queries" / (hookName + "." + servicePrefix + ".ts");
 
   std::ofstream outFile(queryFile);
-  if (!outFile.is_open()) {
+  if (!outFile.is_open())
+  {
     std::cerr << "❌ Error: Unable to create prefetch query file: " << queryFile
               << "\n";
     return;
@@ -435,15 +566,18 @@ void generatePrefetchQueryHook(
           << "import { " << serviceName << " } from '../" << serviceName
           << "';\n\n";
 
-  if (!isSpecialType(responseType)) {
+  if (!isSpecialType(responseType))
+  {
     outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
   }
 
-  if (!isVoidRequest && !isSpecialType(requestType)) {
+  if (!isVoidRequest && !isSpecialType(requestType))
+  {
     outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
-  if (!isVoidRequest) {
+  if (!isVoidRequest)
+  {
     outFile << "\ninterface HookParams<TData> extends " << requestType << " {\n"
             << "  options?: UsePrefetchQueryWithOptionsParams<\n"
             << "    " << responseType << ",\n"
@@ -521,7 +655,9 @@ void generatePrefetchQueryHook(
             << "    ...options,\n"
             << "  });\n"
             << "};\n";
-  } else {
+  }
+  else
+  {
     outFile << "\ninterface HookParams<TData> {\n"
             << "  options?: UsePrefetchQueryWithOptionsParams<\n"
             << "    " << responseType << ",\n"
@@ -597,7 +733,8 @@ void generatePrefetchQueryHook(
 
   std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
   std::ofstream indexOutFile(indexFile, std::ios::app);
-  if (!indexOutFile.is_open()) {
+  if (!indexOutFile.is_open())
+  {
     std::cerr << "❌ Error: Unable to update mutations index file: "
               << indexFile << "\n";
     return;
@@ -615,13 +752,15 @@ void generateInfiniteQueryHook(
     const std::string &responseType, const std::string &requestType,
     const std::string &queryKeyName, const std::string &serviceName,
     const std::string &endpointName, const std::string &servicePrefix,
-    bool isVoidRequest, const std::string &servicePrefixHook) {
+    bool isVoidRequest, const std::string &servicePrefixHook)
+{
 
   std::filesystem::path queryFile =
       hooksDir / "queries" / (hookName + "." + servicePrefix + ".ts");
 
   std::ofstream outFile(queryFile);
-  if (!outFile.is_open()) {
+  if (!outFile.is_open())
+  {
     std::cerr << "❌ Error: Unable to create infinite query file: " << queryFile
               << "\n";
     return;
@@ -641,11 +780,13 @@ void generateInfiniteQueryHook(
           << "import { " << serviceName << " } from '../" << serviceName
           << "';\n\n";
 
-  if (!isSpecialType(responseType)) {
+  if (!isSpecialType(responseType))
+  {
     outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
   }
 
-  if (!isVoidRequest && !isSpecialType(requestType)) {
+  if (!isVoidRequest && !isSpecialType(requestType))
+  {
     outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
@@ -777,16 +918,42 @@ void generateInfiniteQueryHook(
           << "  });\n"
           << "};\n";
 
-    std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
-    std::ofstream indexOutFile(indexFile, std::ios::app);
-    if (!indexOutFile.is_open()) {
-        std::cerr << "❌ Error: Unable to update mutations index file: "
-            << indexFile << "\n";
-        return;
-    }
+  outFile << "\nexport const reset" << toCapitalize(endpointName) << "InfiniteQuery" << servicePrefixHook << " = async <TPageParam = PageParam>(\n"
+          << "  params: " << requestType << ",\n"
+          << "): Promise<void> => {\n"
+          << "  const queryClient = getQueryClient();\n"
+          << "  const queryKey = getQueryKey(params);\n\n"
+          << "  queryClient.setQueryData(\n"
+          << "    queryKey,\n"
+          << "    (oldData: InfiniteData<" << responseType << "[],\n"
+          << "      TPageParam\n"
+          << "    >) => {\n"
+          << "      if (!oldData) {\n"
+          << "        return undefined;\n"
+          << "      }\n\n"
+          << "      return {\n"
+          << "        pages: oldData.pages.slice(0, 1),\n"
+          << "        pageParams: oldData.pageParams.slice(0, 1),\n"
+          << "      };\n"
+          << "    },\n"
+          << "  );\n\n"
 
-    indexOutFile << "export * from './" << hookName << "." << servicePrefix
-            << "';\n";
+          << "  await queryClient.invalidateQueries({\n"
+          << "    queryKey: getQueryKey(params),\n"
+          << "  });\n"
+          << "};\n";
+
+  std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
+  std::ofstream indexOutFile(indexFile, std::ios::app);
+  if (!indexOutFile.is_open())
+  {
+    std::cerr << "❌ Error: Unable to update mutations index file: "
+              << indexFile << "\n";
+    return;
+  }
+
+  indexOutFile << "export * from './" << hookName << "." << servicePrefix
+               << "';\n";
 
   outFile.close();
   std::cout << "✅ Infinite query hook generated: " << queryFile << "\n";
@@ -797,13 +964,15 @@ void generatePrefetchInfiniteQueryHook(
     const std::string &responseType, const std::string &requestType,
     const std::string &queryKeyName, const std::string &serviceName,
     const std::string &endpointName, const std::string &servicePrefix,
-    bool isVoidRequest, const std::string &servicePrefixHook) {
+    bool isVoidRequest, const std::string &servicePrefixHook)
+{
 
   std::filesystem::path queryFile =
       hooksDir / "queries" / (hookName + "." + servicePrefix + ".ts");
 
   std::ofstream outFile(queryFile);
-  if (!outFile.is_open()) {
+  if (!outFile.is_open())
+  {
     std::cerr << "❌ Error: Unable to create prefetch infinite query file: "
               << queryFile << "\n";
     return;
@@ -822,11 +991,13 @@ void generatePrefetchInfiniteQueryHook(
           << "import { " << serviceName << " } from '../" << serviceName
           << "';\n\n";
 
-  if (!isSpecialType(responseType)) {
+  if (!isSpecialType(responseType))
+  {
     outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
   }
 
-  if (!isVoidRequest && !isSpecialType(requestType)) {
+  if (!isVoidRequest && !isSpecialType(requestType))
+  {
     outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
@@ -957,16 +1128,42 @@ void generatePrefetchInfiniteQueryHook(
           << "  });\n"
           << "};\n";
 
-    std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
-    std::ofstream indexOutFile(indexFile, std::ios::app);
-    if (!indexOutFile.is_open()) {
-        std::cerr << "❌ Error: Unable to update mutations index file: "
-            << indexFile << "\n";
-        return;
-    }
+  outFile << "\nexport const reset" << toCapitalize(endpointName) << "InfiniteQuery" << servicePrefixHook << " = async <TPageParam = PageParam>(\n"
+          << "  params: " << requestType << ",\n"
+          << "): Promise<void> => {\n"
+          << "  const queryClient = getQueryClient();\n"
+          << "  const queryKey = getQueryKey(params);\n\n"
+          << "  queryClient.setQueryData(\n"
+          << "    queryKey,\n"
+          << "    (oldData: InfiniteData<" << responseType << "[],\n"
+          << "      TPageParam\n"
+          << "    >) => {\n"
+          << "      if (!oldData) {\n"
+          << "        return undefined;\n"
+          << "      }\n\n"
+          << "      return {\n"
+          << "        pages: oldData.pages.slice(0, 1),\n"
+          << "        pageParams: oldData.pageParams.slice(0, 1),\n"
+          << "      };\n"
+          << "    },\n"
+          << "  );\n\n"
 
-    indexOutFile << "export * from './" << hookName << "." << servicePrefix
-                << "';\n";
+          << "  await queryClient.invalidateQueries({\n"
+          << "    queryKey: getQueryKey(params),\n"
+          << "  });\n"
+          << "};\n";
+
+  std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
+  std::ofstream indexOutFile(indexFile, std::ios::app);
+  if (!indexOutFile.is_open())
+  {
+    std::cerr << "❌ Error: Unable to update mutations index file: "
+              << indexFile << "\n";
+    return;
+  }
+
+  indexOutFile << "export * from './" << hookName << "." << servicePrefix
+               << "';\n";
   outFile.close();
   std::cout << "✅ Prefetch infinite query hook generated: " << queryFile
             << "\n";
@@ -980,13 +1177,15 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
                           const std::string &serviceName,
                           const std::string &endpointName,
                           const std::string &servicePrefix, bool isVoidRequest,
-                          const std::string &servicePrefixHook) {
+                          const std::string &servicePrefixHook)
+{
 
   std::filesystem::path mutationFile =
       hooksDir / "mutations" / (hookName + "." + servicePrefix + ".ts");
 
   std::ofstream outFile(mutationFile);
-  if (!outFile.is_open()) {
+  if (!outFile.is_open())
+  {
     std::cerr << "❌ Error: Unable to create mutation hook file: "
               << mutationFile << "\n";
     return;
@@ -1000,15 +1199,18 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
           << "import { " << serviceName << " } from '../" << serviceName
           << "';\n\n";
 
-  if (!isVoidRequest && requestType != "void" && requestType.find("void") == std::string::npos) {
+  if (!isVoidRequest && requestType != "void" && requestType.find("void") == std::string::npos)
+  {
     outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
   }
 
-  if (responseType != "void" && responseType.find("void") == std::string::npos) {
+  if (responseType != "void" && responseType.find("void") == std::string::npos)
+  {
     outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
   }
 
-  if (!isVoidRequest) {
+  if (!isVoidRequest)
+  {
     outFile << "\nexport const " << endpointName << "MutationFn" << serviceName
             << " = async (params: " << inlineRequestType << ") => {\n"
             << "  const response = await " << serviceName << "." << endpointName
@@ -1028,7 +1230,9 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
             << "    mutationKey: getMutationKey(),\n"
             << "  });\n"
             << "};\n";
-  } else {
+  }
+  else
+  {
     outFile << "\nexport const " << endpointName << "MutationFn" << serviceName
             << " = async () => {\n"
             << "  const response = await " << serviceName << "." << endpointName
@@ -1052,7 +1256,8 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
 
   std::filesystem::path indexFile = hooksDir / "mutations" / "index.ts";
   std::ofstream indexOutFile(indexFile, std::ios::app);
-  if (!indexOutFile.is_open()) {
+  if (!indexOutFile.is_open())
+  {
     std::cerr << "❌ Error: Unable to update mutations index file: "
               << indexFile << "\n";
     return;
@@ -1065,31 +1270,35 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
   std::cout << "✅ Mutation hook generated: " << mutationFile << "\n";
 }
 
+void removeEmptyFolders(const std::filesystem::path &serviceDir)
+{
+  std::filesystem::path queriesDir = serviceDir / "queries";
+  std::filesystem::path mutationsDir = serviceDir / "mutations";
+  std::filesystem::path queryKeysFile = serviceDir / "QueryKeys.ts";
 
-void removeEmptyFolders(const std::filesystem::path &serviceDir) {
-    std::filesystem::path queriesDir = serviceDir / "queries";
-    std::filesystem::path mutationsDir = serviceDir / "mutations";
-    std::filesystem::path queryKeysFile = serviceDir / "QueryKeys.ts";
+  if (std::filesystem::exists(queriesDir) && std::filesystem::is_empty(queriesDir))
+  {
+    std::filesystem::remove_all(queriesDir);
+    std::cout << "🗑️ Removed empty queries folder.\n";
+  }
 
-    if (std::filesystem::exists(queriesDir) && std::filesystem::is_empty(queriesDir)) {
-        std::filesystem::remove_all(queriesDir);
-        std::cout << "🗑️ Removed empty queries folder.\n";
-    }
+  if (std::filesystem::exists(mutationsDir) && std::filesystem::is_empty(mutationsDir))
+  {
+    std::filesystem::remove_all(mutationsDir);
+    std::cout << "🗑️ Removed empty mutations folder.\n";
+  }
 
-    if (std::filesystem::exists(mutationsDir) && std::filesystem::is_empty(mutationsDir)) {
-        std::filesystem::remove_all(mutationsDir);
-        std::cout << "🗑️ Removed empty mutations folder.\n";
-    }
-
-    if (std::filesystem::exists(queryKeysFile)) {
-        std::filesystem::remove(queryKeysFile);
-        std::cout << "🗑️ Removed unused QueryKeys.ts.\n";
-    }
+  if (std::filesystem::exists(queryKeysFile))
+  {
+    std::filesystem::remove(queryKeysFile);
+    std::cout << "🗑️ Removed unused QueryKeys.ts.\n";
+  }
 }
 
 void generateHooks(const std::string &serviceName,
                    const std::filesystem::path &serviceFile,
-                   const std::filesystem::path &hooksDir) {
+                   const std::filesystem::path &hooksDir)
+{
 
   std::string fileExtension = "." + toSnakeCase(serviceName) + ".ts";
 
@@ -1097,7 +1306,8 @@ void generateHooks(const std::string &serviceName,
   std::filesystem::create_directories(hooksDir / "mutations");
 
   std::string fileContent = readFile(serviceFile);
-  if (fileContent.empty()) {
+  if (fileContent.empty())
+  {
     return;
   }
 
@@ -1113,7 +1323,8 @@ void generateHooks(const std::string &serviceName,
   std::sregex_iterator it(fileContent.begin(), fileContent.end(), methodPattern);
   std::sregex_iterator end;
 
-  for (; it != end; ++it) {
+  for (; it != end; ++it)
+  {
     std::smatch match = *it;
 
     std::string endpointName = match[1].str();
@@ -1127,33 +1338,42 @@ void generateHooks(const std::string &serviceName,
 
     bool isVoidRequest = requestType == "void";
 
-    if (method == "get" || method == "postAsQuery") {
+    if (method == "get" || method == "postAsQuery")
+    {
       hasQueries = true;
       generateQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
       detectedQueries.insert(hookName);
-    } else if (method == "getAsPrefetch") {
+    }
+    else if (method == "getAsPrefetch")
+    {
       hasQueries = true;
       generatePrefetchQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
       detectedQueries.insert(hookName);
-    } else if (method == "paginate" || method == "paginateAsPrefetch") {
+    }
+    else if (method == "paginate" || method == "paginateAsPrefetch")
+    {
       hasQueries = true;
       generateInfiniteQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
       detectedQueries.insert(hookName);
-    } else if (std::regex_match(
-        method,
-        std::regex(R"(post|getAsMutation|delete|put|patch)")))  {
+    }
+    else if (std::regex_match(
+                 method,
+                 std::regex(R"(post|getAsMutation|delete|put|patch)")))
+    {
       hasMutations = true;
-      generateMutationHook(hooksDir, hookName, responseType, requestType, queryKeyName,serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      generateMutationHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
 
       detectedMutations.insert(hookName);
     }
   }
 
-  if (detectedQueries.empty()) {
+  if (detectedQueries.empty())
+  {
     std::filesystem::remove_all(hooksDir / "queries");
     std::cout << "🗑️ Removed empty queries folder.\n";
   }
-  if (detectedMutations.empty()) {
+  if (detectedMutations.empty())
+  {
     std::filesystem::remove_all(hooksDir / "mutations");
     std::cout << "🗑️ Removed empty mutations folder.\n";
   }
@@ -1161,24 +1381,26 @@ void generateHooks(const std::string &serviceName,
   updateIndexFile(hooksDir);
 }
 
-
-void removeGeneratedFiles(const std::filesystem::path &serviceDir) {
+void removeGeneratedFiles(const std::filesystem::path &serviceDir)
+{
   std::filesystem::path queriesDir = serviceDir / "queries";
   std::filesystem::path mutationsDir = serviceDir / "mutations";
 
-  if (std::filesystem::exists(queriesDir)) {
+  if (std::filesystem::exists(queriesDir))
+  {
     std::filesystem::remove_all(queriesDir);
     std::cout << "🗑️ Removed old queries folder.\n";
   }
 
-  if (std::filesystem::exists(mutationsDir)) {
+  if (std::filesystem::exists(mutationsDir))
+  {
     std::filesystem::remove_all(mutationsDir);
     std::cout << "🗑️ Removed old mutations folder.\n";
   }
 }
 
-
-int main() {
+int main()
+{
   const std::filesystem::path apiDir = "./src/shared/api";
   const std::unordered_set<std::string> excludedFolders = {"models"};
 
@@ -1186,15 +1408,18 @@ int main() {
             << "📂 Searching for services in: " << apiDir << "\n";
 
   for (const auto &entry :
-       std::filesystem::recursive_directory_iterator(apiDir)) {
+       std::filesystem::recursive_directory_iterator(apiDir))
+  {
     if (entry.is_regular_file() && entry.path().extension() == ".ts" &&
-        entry.path().filename().string().find("Service") != std::string::npos) {
+        entry.path().filename().string().find("Service") != std::string::npos)
+    {
 
       std::filesystem::path serviceDir = entry.path().parent_path();
       std::string serviceName = entry.path().stem().string();
       std::string folderName = serviceDir.filename().string();
 
-      if (isExcludedFolder(folderName, excludedFolders)) {
+      if (isExcludedFolder(folderName, excludedFolders))
+      {
         std::cout << "⚠️  Skipping excluded folder: " << serviceDir << "\n";
         continue;
       }

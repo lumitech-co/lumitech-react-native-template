@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Text } from 'react-native';
-import { createStyleSheet, useStyles } from 'react-native-unistyles';
 import { IconName } from 'react-native-vector-icons';
+import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { Icon } from 'ui';
 import { RouteService, RouteType, Routes } from 'services';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,7 @@ const tabIcons: Record<string, IconName> = {
 };
 
 export const BottomTabBarNavigator: React.FC = () => {
-  const { theme, styles } = useStyles(stylesheet);
+  const { theme } = useUnistyles();
 
   const { t } = useTranslation();
 
@@ -69,7 +69,7 @@ export const BottomTabBarNavigator: React.FC = () => {
   );
 };
 
-const stylesheet = createStyleSheet(theme => ({
+const styles = StyleSheet.create(theme => ({
   tabBarItemStyle: {
     height: 42,
     marginTop: 10,

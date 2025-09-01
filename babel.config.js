@@ -25,5 +25,11 @@ module.exports = {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     ],
+    [
+      'react-native-unistyles/plugin',
+      {
+        root: 'src',
+      },
+    ],
   ],
 };

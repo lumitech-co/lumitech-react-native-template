@@ -3,12 +3,14 @@ import {
   RefreshControl as RNRefreshControl,
   RefreshControlProps,
 } from 'react-native';
-import { useStyles } from 'react-native-unistyles';
+import { withUnistyles } from 'react-native-unistyles';
 import { ColorsType } from 'themes';
 
 interface RefreshProps extends Omit<RefreshControlProps, 'colors'> {
   color?: ColorsType;
 }
+
+const UniStyleRefreshControl = withUnistyles(RNRefreshControl);
 
 export const RefreshControl: React.FC<RefreshProps> = ({
   color = 'primary',
@@ -16,14 +18,14 @@ export const RefreshControl: React.FC<RefreshProps> = ({
   onRefresh,
   ...props
 }) => {
-  const { theme } = useStyles();
-
   return (
-    <RNRefreshControl
+    <UniStyleRefreshControl
       refreshing={refreshing}
       onRefresh={onRefresh}
-      colors={[theme.colors[color]]}
-      tintColor={theme.colors[color]}
+      uniProps={theme => ({
+        colors: [theme.colors[color]],
+        tintColor: theme.colors[color],
+      })}
       {...props}
     />
   );
