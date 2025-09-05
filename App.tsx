@@ -12,13 +12,9 @@ import { queryClient } from 'api';
 import { breakpoints, DarkTheme, LightTheme } from 'themes';
 import { RootNavigator } from 'navigation';
 import { EventEmitterProvider, LanguageProvider } from 'providers';
-import { isDev } from 'lib';
 import { themeStore$ } from 'stores';
+import { useDebug } from 'hooks';
 import { modalStack } from './src/modules';
-
-if (isDev) {
-  require('./ReactotronConfig');
-}
 
 StyleSheet.configure({
   themes: {
@@ -34,6 +30,8 @@ StyleSheet.configure({
 });
 
 export const App: React.FC = () => {
+  useDebug();
+
   return (
     <LanguageProvider>
       <ReducedMotionConfig mode={ReduceMotion.Never} />

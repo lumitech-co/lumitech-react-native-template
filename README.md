@@ -7,6 +7,7 @@
 Welcome to the **Lumitech React Native Template (v0.79.0)**! This template is designed to give you a head start on your project by streamlining the setup process and enabling you to focus on building your app faster. 🌟
 
 ### About Lumitech
+
 [Lumitech](https://lumitech.co/) is a custom software development company providing professional services worldwide. We partner with technology businesses globally helping them to build successful engineering teams and create innovative software products. We’re a global team of software engineers, AI and ML specialists, product managers, and technology experts who have achieved a 600% growth rate since 2022. When a rocket launches toward the moon, it doesn’t stop halfway. Neither do we
 
 ### What’s New?
@@ -81,7 +82,6 @@ Enable corepack and prepare Yarn 3 for your project:
 
 - [react-native-modalfy](https://colorfy-software.gitbook.io/react-native-modalfy)
 
-
 ### Inspired by
 
 - [Feature Sliced Architecture](https://feature-sliced.design/en/)
@@ -91,32 +91,40 @@ Enable corepack and prepare Yarn 3 for your project:
 The project follows a custom Feature Sliced Design (FSD) architecture, promoting modular design and clear separation of concerns:
 
 #### `src/shared`:
+
 Common resources and utilities used across the entire application.
+
 - **`api`**: API client configuration, base HTTP services, and endpoint definitions
 - **`lib`**: Third-party library integrations and abstractions (React Query, MMKV, Reanimated), Helper functions, formatters, validators, and common utilities
 - **`ui`**: Reusable UI components and design system elements
 - **`common`**: All reusable business logic that can be shared across modules
 
 #### `src/modules`:
+
 Feature-based modules that encapsulate complete business domains. Each module follows a strict layering pattern:
 
 **Module Structure:**
+
 - **`features/`**: Contains all business logic for the module
+
   - Handles data fetching, state management, and business rules
   - Implements use cases and domain-specific operations
   - Manages module-specific state and side effects
 
 - **`adapters/`**: Data transformation layer that adapts business data to UI format
+
   - Converts API responses to UI-friendly data structures
   - Handles data mapping and transformation logic
   - Bridges the gap between business logic and presentation
 
 - **`ui/`**: Dumb UI components that focus purely on presentation
+
   - Stateless components that receive props and render UI
   - Can include local `models.ts` files for component-specific interfaces
   - No business logic or external data fetching
 
 - **`widgets/`**: Composed components that combine features with UI (must use "Compose" naming)
+
   - Examples: `UserProfileCompose`, `ProductListCompose`, `CartSummaryCompose`
   - Orchestrates features and spreads data to UI components
   - Acts as a bridge between business logic and presentation components
@@ -127,19 +135,24 @@ Feature-based modules that encapsulate complete business domains. Each module fo
   - Handles screen-specific navigation and layout
 
 #### `src/navigation`:
+
 Navigation configuration and routing logic.
+
 - Navigation stacks, tab navigators, and routing configuration
 - Deep linking setup and navigation utilities
 - Screen parameter types and navigation helpers
 
 #### `src/assets`:
+
 Static assets organized by type for easy management and optimization.
+
 - **`fonts/`**: Custom fonts including IcoMoon icon fonts
 - **`images/`**: SVG and raster images used throughout the app
 - **`resources/`**: Configuration files like IcoMoon selection.json for icon generation
 - **`bootsplash/`**: Generated splash screen assets for iOS and Android
 
 #### Project Tree:
+
 ```
 .
 ├── App.tsx
@@ -210,6 +223,7 @@ Static assets organized by type for easy management and optimization.
 ```
 
 **Architecture Rules:**
+
 - **Features** contain all business logic and can use shared/common utilities
 - **Adapters** transform business data into UI-ready formats
 - **UI components** are purely presentational and stateless
@@ -218,6 +232,7 @@ Static assets organized by type for easy management and optimization.
 - **Common** folder contains all reusable logic shared across modules
 
 This architecture ensures:
+
 - **Clear Data Flow**: Features → Adapters → Widgets → UI Components
 - **Separation of Concerns**: Business logic, data transformation, and presentation are isolated
 - **Reusability**: Common logic and UI components can be shared across modules
@@ -233,57 +248,66 @@ This section outlines the preferred libraries and best practices for common Reac
 For optimal performance and user experience, we recommend using these list components instead of React Native's default `FlatList`:
 
 #### 1. FlashList
+
 **[FlashList](https://shopify.github.io/flash-list/)** by Shopify is our primary recommendation for high-performance lists.
 
 **When to use FlashList:**
+
 - Large datasets with hundreds or thousands of items
 - Lists with complex item layouts
 - When you need consistent performance across different devices
 - Default choice for most list implementations
 
 **Key benefits:**
+
 - Up to 10x better performance than FlatList
 - Automatic item size calculation
 - Better memory management
 - Smooth scrolling even with complex items
 
 **Basic usage:**
+
 ```tsx
-import { FlashList } from "@shopify/flash-list"
+import { FlashList } from '@shopify/flash-list';
 
 <FlashList
   data={data}
   renderItem={({ item }) => <ItemComponent item={item} />}
   estimatedItemSize={100}
-/>
+/>;
 ```
 
 #### 2. LegendList
+
 **[LegendList](https://legendapp.com/open-source/list/)** is our recommended choice for lists that require advanced optimization and integration with Legend State.
 
 **When to use LegendList:**
+
 - When using Legend State for state management
 - Complex lists with real-time updates
 - Lists that need fine-grained reactivity
 - Advanced optimization requirements
 
 **Key benefits:**
+
 - Seamless integration with Legend State
 - Minimal re-renders with granular reactivity
 - Built-in optimization for Legend State observables
 - Advanced performance optimizations
 
 **Basic usage:**
+
 ```tsx
-import { LegendList } from "@legendapp/list"
+import { LegendList } from '@legendapp/list';
 
 <LegendList
   data={data$} // Legend State observable
   renderItem={({ item }) => <ItemComponent item={item} />}
-/>
+/>;
 ```
 
 **Choosing between FlashList and LegendList:**
+
 - Use **FlashList** as the default choice for most lists
 - Use **LegendList** when you're heavily using Legend State and need reactive list updates
 - Both libraries offer significant performance improvements over the standard FlatList
@@ -293,9 +317,11 @@ import { LegendList } from "@legendapp/list"
 For state management, we provide two excellent options depending on your preferred approach and application requirements:
 
 #### 1. Legend State (Primary Recommendation)
+
 **[Legend State](https://legendapp.com/open-source/state/)** is our primary choice for state management, offering fine-grained reactivity and excellent performance.
 
 **When to use Legend State:**
+
 - Default choice for most applications
 - When you need fine-grained reactivity
 - Applications with complex state updates
@@ -303,6 +329,7 @@ For state management, we provide two excellent options depending on your preferr
 - Integration with LegendList for optimal list performance
 
 **Key benefits:**
+
 - Minimal re-renders with granular reactivity
 - Simple and intuitive API
 - Excellent TypeScript support
@@ -311,17 +338,18 @@ For state management, we provide two excellent options depending on your preferr
 - Seamless integration with React Native
 
 **Basic usage:**
+
 ```tsx
-import { observable, observer } from "@legendapp/state"
+import { observable, observer } from '@legendapp/state';
 
 // Create observable state
 const user$ = observable({
-  name: "John",
-  email: "john@example.com",
+  name: 'John',
+  email: 'john@example.com',
   preferences: {
-    theme: "dark"
-  }
-})
+    theme: 'dark',
+  },
+});
 
 // Use in components
 const UserProfile = () => {
@@ -330,23 +358,26 @@ const UserProfile = () => {
       <Text>{user$.name.get()}</Text>
       <Button
         title="Change Theme"
-        onPress={() => user$.preferences.theme.set("light")}
+        onPress={() => user$.preferences.theme.set('light')}
       />
     </View>
-  )
-}
+  );
+};
 ```
 
 #### 2. Zustand
+
 **[Zustand](https://github.com/pmndrs/zustand)** is our recommended alternative for developers who prefer a Redux-like store pattern.
 
 **When to use Zustand:**
+
 - When you prefer Redux-like store architecture
 - Team is more familiar with traditional state management patterns
 - Need centralized store with actions and reducers
 - Smaller applications with simpler state requirements
 
 **Key benefits:**
+
 - Familiar Redux-like API without boilerplate
 - Small bundle size and minimal setup
 - Great TypeScript support
@@ -354,59 +385,58 @@ const UserProfile = () => {
 - Easy migration from Redux
 
 **Basic usage:**
+
 ```tsx
-import { create } from 'zustand'
+import { create } from 'zustand';
 
 interface UserStore {
   user: {
-    name: string
-    email: string
+    name: string;
+    email: string;
     preferences: {
-      theme: string
-    }
-  }
-  updateTheme: (theme: string) => void
-  updateUser: (user: Partial<UserStore['user']>) => void
+      theme: string;
+    };
+  };
+  updateTheme: (theme: string) => void;
+  updateUser: (user: Partial<UserStore['user']>) => void;
 }
 
-const useUserStore = create<UserStore>((set) => ({
+const useUserStore = create<UserStore>(set => ({
   user: {
-    name: "John",
-    email: "john@example.com",
+    name: 'John',
+    email: 'john@example.com',
     preferences: {
-      theme: "dark"
-    }
+      theme: 'dark',
+    },
   },
-  updateTheme: (theme) =>
-    set((state) => ({
+  updateTheme: theme =>
+    set(state => ({
       user: {
         ...state.user,
-        preferences: { ...state.user.preferences, theme }
-      }
+        preferences: { ...state.user.preferences, theme },
+      },
     })),
-  updateUser: (userData) =>
-    set((state) => ({
-      user: { ...state.user, ...userData }
-    }))
-}))
+  updateUser: userData =>
+    set(state => ({
+      user: { ...state.user, ...userData },
+    })),
+}));
 
 // Use in components
 const UserProfile = () => {
-  const { user, updateTheme } = useUserStore()
+  const { user, updateTheme } = useUserStore();
 
   return (
     <View>
       <Text>{user.name}</Text>
-      <Button
-        title="Change Theme"
-        onPress={() => updateTheme("light")}
-      />
+      <Button title="Change Theme" onPress={() => updateTheme('light')} />
     </View>
-  )
-}
+  );
+};
 ```
 
 **Choosing between Legend State and Zustand:**
+
 - Use **Legend State** as the default choice for optimal performance and reactivity
 - Use **Zustand** when your team prefers Redux-like patterns or when migrating from Redux
 - Both libraries offer excellent TypeScript support and performance
@@ -417,6 +447,7 @@ const UserProfile = () => {
 **[React Native Unistyles v3](https://www.unistyl.es/v3/start/introduction)** is our recommended styling library, offering native performance with shadow node updates.
 
 **Why React Native Unistyles v3:**
+
 - **Native Shadow Node Updates**: Style changes happen directly on the native side without React re-renders
 - **Familiar API**: Uses `StyleSheet.create` similar to React Native's built-in StyleSheet
 - **Zero Re-renders**: Theme changes and dynamic styles update natively without component re-renders
@@ -425,6 +456,7 @@ const UserProfile = () => {
 - **Runtime Performance**: All style calculations happen on the native thread
 
 **Key Features:**
+
 - **Native Performance**: Direct shadow node manipulation for optimal performance
 - **Theme Support**: Built-in theming with automatic theme switching
 - **Breakpoints**: Responsive design with screen size breakpoints
@@ -435,47 +467,47 @@ const UserProfile = () => {
 **Basic Usage:**
 
 **1. Theme Configuration:**
-```tsx
 
+```tsx
 const LightTheme = {
   colors: {
     primary: '#007AFF',
     background: '#FFFFFF',
     text: '#000000',
-    surface: '#F2F2F7'
+    surface: '#F2F2F7',
   },
   spacing: {
     xs: 4,
     sm: 8,
     md: 16,
     lg: 24,
-    xl: 32
-  }
-}
+    xl: 32,
+  },
+};
 
 const DarkTheme = {
   colors: {
     primary: '#0A84FF',
     background: '#000000',
     text: '#FFFFFF',
-    surface: '#1C1C1E'
+    surface: '#1C1C1E',
   },
   spacing: {
     xs: 4,
     sm: 8,
     md: 16,
     lg: 24,
-    xl: 32
-  }
-}
+    xl: 32,
+  },
+};
 
 const breakpoints = {
   xs: 0,
   sm: 576,
   md: 768,
   lg: 992,
-  xl: 1200
-}
+  xl: 1200,
+};
 
 StyleSheet.configure({
   themes: {
@@ -485,18 +517,18 @@ StyleSheet.configure({
   breakpoints,
   settings: {
     initialTheme: () => {
-     // return intiial theme from global store
+      // return intiial theme from global store
     },
   },
 });
-
 ```
 
 **2. Component Styling (v3 API):**
+
 ```tsx
-import React from 'react'
-import { View, Text } from 'react-native'
-import { StyleSheet } from 'react-native-unistyles'
+import React from 'react';
+import { View, Text } from 'react-native';
+import { StyleSheet } from 'react-native-unistyles';
 
 const Component = () => {
   return (
@@ -506,20 +538,20 @@ const Component = () => {
         <Text style={styles.cardText}>Card content</Text>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
     padding: theme.spacing.md,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.text,
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   card: {
     padding: theme.spacing.md,
@@ -529,22 +561,23 @@ const styles = StyleSheet.create(theme => ({
     variants: {
       size: {
         small: {
-          padding: theme.spacing.sm
+          padding: theme.spacing.sm,
         },
         large: {
-          padding: theme.spacing.xl
-        }
-      }
-    }
+          padding: theme.spacing.xl,
+        },
+      },
+    },
   },
   cardText: {
     color: theme.colors.text,
-    fontSize: 16
-  }
-}))
+    fontSize: 16,
+  },
+}));
 ```
 
 **3. Responsive and Dynamic Styles:**
+
 ```tsx
 const styles = StyleSheet.create((theme, runtime) => ({
   container: {
@@ -553,29 +586,32 @@ const styles = StyleSheet.create((theme, runtime) => ({
     padding: {
       xs: theme.spacing.sm,
       md: theme.spacing.lg,
-      xl: theme.spacing.xl
-    }
+      xl: theme.spacing.xl,
+    },
   },
   dynamicContainer: {
     // Runtime calculations without re-renders
     width: runtime.screen.width * 0.8,
     height: runtime.screen.height * 0.5,
-    backgroundColor: runtime.orientation === 'portrait'
-      ? theme.colors.primary
-      : theme.colors.surface
-  }
-}))
+    backgroundColor:
+      runtime.orientation === 'portrait'
+        ? theme.colors.primary
+        : theme.colors.surface,
+  },
+}));
 ```
 
 **4. Theme Switching:**
+
 ```tsx
-import { UnistylesRuntime } from 'react-native-unistyles'
+import { UnistylesRuntime } from 'react-native-unistyles';
 
 // Switch theme anywhere in the app
-UnistylesRuntime.setTheme('dark') // Updates all components instantly via shadow nodes
+UnistylesRuntime.setTheme('dark'); // Updates all components instantly via shadow nodes
 ```
 
 **Key Advantages of v3:**
+
 - **No useStyles Hook**: Direct StyleSheet.create API like standard React Native
 - **Native Updates**: Theme and breakpoint changes update shadow nodes directly
 - **Zero Re-renders**: Style updates don't trigger React component re-renders
@@ -584,22 +620,23 @@ UnistylesRuntime.setTheme('dark') // Updates all components instantly via shadow
 - **Type Safety**: Full TypeScript support for themes, breakpoints, and runtime values
 
 **Migration from React Native StyleSheet:**
+
 ```tsx
 // Before (React Native StyleSheet)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF'
-  }
-})
+    backgroundColor: '#FFFFFF',
+  },
+});
 
 // After (Unistyles v3)
 const styles = StyleSheet.create(theme => ({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
-  }
-}))
+    backgroundColor: theme.colors.background,
+  },
+}));
 ```
 
 The migration is seamless - just replace the import and optionally add theme support while keeping the same familiar API.
@@ -614,6 +651,7 @@ When choosing third-party libraries for React Native development, prioritize lib
 Libraries built with **[Nitro Modules](https://nitro.margelo.com/)** offer the best performance and are our top recommendation.
 
 **Why Nitro Modules:**
+
 - **Fastest Performance**: Superior to TurboModules and Fabric in execution speed
 - **Better Memory Management**: More efficient memory usage and garbage collection
 - **Type Safety**: Full TypeScript support with compile-time type checking
@@ -621,6 +659,7 @@ Libraries built with **[Nitro Modules](https://nitro.margelo.com/)** offer the b
 - **Cross-Platform**: Single codebase for iOS, Android, and Web
 
 **Examples of Nitro Module libraries:**
+
 - `react-native-nitro-sqlite` - High-performance SQLite database
 - `react-native-nitro-image` - Optimized image processing
 - Custom Nitro modules for performance-critical operations
@@ -629,12 +668,14 @@ Libraries built with **[Nitro Modules](https://nitro.margelo.com/)** offer the b
 Libraries supporting React Native's new architecture with TurboModules and Fabric.
 
 **Why TurboModules/Fabric:**
+
 - **New Architecture Support**: Compatible with React Native 0.68+
 - **Better Performance**: Improved over bridge-based modules
 - **Type Safety**: JSI-based with better TypeScript integration
 - **Future Proof**: Standard for React Native's evolution
 
 **Examples:**
+
 - `react-native-reanimated` (v3+) - High-performance animations
 - `react-native-gesture-handler` (v2+) - Native gesture recognition
 - `@react-native-community/netinfo` - Network connectivity
@@ -644,12 +685,14 @@ Libraries supporting React Native's new architecture with TurboModules and Fabri
 Libraries built with Expo Modules API offer good compatibility and ease of use.
 
 **Why Expo Modules:**
+
 - **New Architecture Compatible**: Works with both old and new architecture
 - **Easy Development**: Simplified native module development
 - **Cross-Platform**: Consistent API across platforms
 - **Maintained**: Well-maintained by the Expo team
 
 **Examples:**
+
 - `expo-camera` - Camera functionality
 - `expo-location` - Location services
 - `expo-notifications` - Push notifications
@@ -660,21 +703,25 @@ Libraries built with Expo Modules API offer good compatibility and ease of use.
 When evaluating libraries, check for:
 
 ✅ **New Architecture Support**
+
 - Explicitly states TurboModule/Fabric compatibility
 - Works with React Native 0.68+ and new architecture enabled
 - No deprecated bridge-based implementations
 
 ✅ **Performance Characteristics**
+
 - Nitro Modules > TurboModules/Fabric > Expo Modules > Bridge-based
 - Benchmark data available for performance-critical operations
 - Efficient memory usage and minimal JavaScript thread blocking
 
 ✅ **Maintenance and Community**
+
 - Active maintenance with recent updates
 - Good community support and documentation
 - Regular compatibility updates with new React Native versions
 
 ✅ **TypeScript Support**
+
 - Full TypeScript definitions included
 - Type-safe APIs and proper generic support
 - Good IDE integration with IntelliSense
@@ -682,11 +729,13 @@ When evaluating libraries, check for:
 #### Libraries to Avoid
 
 ❌ **Bridge-based modules** (Legacy architecture)
+
 - Modules that only support the old bridge architecture
 - Libraries that haven't been updated for new architecture
 - Performance bottlenecks with frequent JavaScript ↔ Native communication
 
 ❌ **Unmaintained libraries**
+
 - No updates in the last 12+ months
 - No new architecture support roadmap
 - Critical issues without responses
@@ -701,12 +750,13 @@ When migrating existing projects:
 4. **Test Thoroughly**: Ensure new architecture modules work correctly in your specific use case
 
 **Example Migration Path:**
+
 ```
 Old: react-native-async-storage (Bridge)
 ↓
 New: @react-native-async-storage/async-storage (TurboModule)
 
-Old: react-native-sqlite-storage (Bridge)  
+Old: react-native-sqlite-storage (Bridge)
 ↓
 New: react-native-nitro-sqlite (Nitro Module)
 ```
@@ -728,6 +778,7 @@ API_URL=""
 This template contains C++ scripts for **API code generation**. These scripts generate **React Query hooks** based on API definitions.
 
 🔹 Supported Platforms
+
 ```
 • Macos ✅
 • Linux ✅
@@ -750,15 +801,15 @@ yarn run api-codegen:run
 
 The scripts are located in **`scripts/api-codegen`**:
 
-| **Script**                  | **Description**                                        |
-|-----------------------------|--------------------------------------------------------|
-| `compile-all.sh`            | Compiles all C++ codegen scripts                       |
-| `run-codegen.sh`            | Runs the code generation process                       |
-| `builder-name-check.cpp`    | Checks builder names for API endpoints                 |
-| `check-generics.cpp`        | Ensures proper handling of generics in API requests    |
-| `merge-query-keys.cpp`      | Merges query keys for better cache management          |
-| `query-keys.cpp`            | Generates unique query keys for API hooks              |
-| `server-hooks.cpp`          | Generates server-side React Query hooks                |
+| **Script**               | **Description**                                     |
+| ------------------------ | --------------------------------------------------- |
+| `compile-all.sh`         | Compiles all C++ codegen scripts                    |
+| `run-codegen.sh`         | Runs the code generation process                    |
+| `builder-name-check.cpp` | Checks builder names for API endpoints              |
+| `check-generics.cpp`     | Ensures proper handling of generics in API requests |
+| `merge-query-keys.cpp`   | Merges query keys for better cache management       |
+| `query-keys.cpp`         | Generates unique query keys for API hooks           |
+| `server-hooks.cpp`       | Generates server-side React Query hooks             |
 
 ## 🔄 Rename Project
 
@@ -964,33 +1015,9 @@ Previously, we experienced inefficiencies with **Flipper** as a debugging tool i
 - **Runtime Dependencies**: It introduced dependencies that could affect the stability of the app.
 - **Poor Dev Experience**: The tool was often sluggish, and many developers reported issues with its usability.
 
-### Alternative: **Reactotron**
+### Alternative: **Rozenite**
 
-We recommend switching to **[Reactotron](https://github.com/infinitered/reactotron)**, which offers a smoother and more efficient experience for debugging React Native applications. Reactotron provides essential debugging tools without the performance hits associated with Flipper.
-
-#### Benefits of Reactotron:
-
-- **Lightweight and Fast**: Reactotron adds minimal overhead to the app, improving runtime performance during development.
-- **Better Developer Experience**: It provides easy-to-use features for inspecting network requests, state changes, actions, and more, all without causing the sluggish behavior of Flipper.
-- **No Extra Runtime Dependencies**: Unlike Flipper, Reactotron doesn't require additional runtime libraries, keeping your project cleaner and more stable.
-
-### How to Set Up Reactotron:
-
-1. **Install Reactotron**:
-
-   Follow the official setup guide [here](https://github.com/infinitered/reactotron/blob/master/docs/quick-start-react-native.md) to integrate Reactotron into your project.
-
-2. **Configure Reactotron in Your Project**:
-
-   Add the necessary configuration files and settings for Reactotron in your React Native project as described in their documentation.
-
-3. **Run Reactotron**:
-
-   Start Reactotron alongside your development server to begin debugging your app with improved performance and developer experience.
-
-For more insights into why switching from Flipper to Reactotron is beneficial, you can check out [this article](https://shift.infinite.red/why-you-dont-need-flipper-in-your-react-native-app-and-how-to-get-by-without-it-3af461955109) for a detailed comparison and explanation of the advantages Reactotron brings to the table.
-
-By switching to Reactotron, you’ll notice improved app performance during development and a more pleasant overall debugging experience.
+We recommend switching to **[Rozenite](https://www.rozenite.dev/docs/introduction)**, which offers a smoother and more efficient experience for debugging React Native applications. Rozenite provides essential debugging tools without the performance hits associated with Flipper.
 
 ### ✨ Commits format
 
