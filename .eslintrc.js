@@ -101,7 +101,15 @@ module.exports = {
     'import/no-extraneous-dependencies': [
       'error',
       {
-        devDependencies: false,
+        devDependencies: [
+          '**/*.test.*',
+          '**/*.spec.*',
+          '**/test/**',
+          '**/tests/**',
+          '**/__tests__/**',
+          '**/scripts/**',
+          '**/src/shared/hooks/useDebug.ts',
+        ],
         optionalDependencies: false,
         peerDependencies: false,
       },

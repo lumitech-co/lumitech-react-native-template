@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
+const { withRozenite } = require('@rozenite/metro');
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
 const defaultConfig = getDefaultConfig(__dirname);
@@ -23,4 +24,4 @@ const config = {
   },
 };
 
-module.exports = mergeConfig(defaultConfig, config);
+module.exports = withRozenite(mergeConfig(defaultConfig, config));
