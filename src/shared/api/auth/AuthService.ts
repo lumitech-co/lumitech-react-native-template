@@ -1,84 +1,43 @@
-import { createApi } from 'api/createApi';
-import { baseQuery } from '../baseQuery';
+import { createApi, Promisify } from '../createApi';
+import { axiosBaseQuery } from '../baseQuery';
 import { CreateAccountResponse, Test } from './models';
 
-export const AuthService = createApi({
-  baseQuery,
+interface AuthServiceAPI {
+  getUser: Promisify<Test, CreateAccountResponse[]>;
+  createUser: Promisify<Test, CreateAccountResponse>;
+  getUsersPaginated: Promisify<Test, CreateAccountResponse[]>;
+}
+
+export const AuthService = createApi<AuthServiceAPI>()({
+  baseQuery: axiosBaseQuery,
   endpoints: builder => ({
-    getUser: builder.get<CreateAccountResponse[], Test>({
-      query: ({ token }) => ({
-        url: `/v2/customer/`,
-        params: {
-          test: 'test12',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      disableGlobalErrorHandler: true,
+    getUser: builder.query(({ token }, { signal, client }) => {
+      return client.get(`/v2/customer/`, {
+        params: { test: 'test12' },
+        headers: { Authorization: `Bearer ${token}` },
+        signal,
+      });
     }),
-    getUserPrefetch: builder.getAsPrefetch<CreateAccountResponse, Test>({
-      query: ({ token }) => ({
-        url: `/v2/customer/`,
-        params: {
-          test: 'test12',
+
+    createUser: builder.mutation(async ({ token }, { client }) => {
+      const query = await client.post(
+        `/v2/customer/`,
+        { token },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      disableGlobalErrorHandler: true,
+      );
+
+      return query.data;
     }),
-    getUserPaginate: builder.paginate<CreateAccountResponse, Test>({
-      query: ({ token }) => ({
-        url: `/v2/customer/`,
-        params: {
-          test: 'test12',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      disableGlobalErrorHandler: true,
-    }),
-    getUserPrefetchPaginate: builder.paginateAsPrefetch<
-      CreateAccountResponse,
-      Test
-    >({
-      query: ({ token }) => ({
-        url: `/v2/customer/`,
-        params: {
-          test: 'test12',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      disableGlobalErrorHandler: true,
-    }),
-    getUserAsMutation: builder.getAsMutation<CreateAccountResponse, Test>({
-      query: ({ token }) => ({
-        url: `/v2/customer/`,
-        params: {
-          test: 'test12',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      disableGlobalErrorHandler: true,
-    }),
-    deleteUser: builder.delete<CreateAccountResponse, Test>({
-      query: ({ token }) => ({
-        url: `/v2/customer/`,
-        params: {
-          test: 'test12',
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-      disableGlobalErrorHandler: true,
-    }),
+
+    getUsersPaginated: builder.infiniteQuery(
+      ({ token }, { signal, client }) => {
+        return client.get(`/v2/customer/paginated`, {
+          params: { token },
+          signal,
+        });
+      },
+    ),
   }),
 });

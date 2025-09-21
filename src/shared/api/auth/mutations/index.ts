@@ -1,2 +1,1 @@
-export * from './useGetUserAsMutation.auth';
-export * from './useDeleteUser.auth';
+export * from './useCreateUser.Auth';

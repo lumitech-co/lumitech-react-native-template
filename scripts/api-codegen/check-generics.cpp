@@ -49,50 +49,33 @@ std::string readFileContent(const std::filesystem::path &filePath) {
   return buffer.str();
 }
 
-void validateEndpoints(const std::filesystem::path &filePath,
-                       const std::string &fileContent) {
-  std::regex endpointsBlockPattern(
-      R"(endpoints:\s*builder\s*=>\s*\(\{[^}]+\}\))");
-  std::regex endpointPattern(
-      R"(([a-zA-Z0-9_]+):\s*builder\.(get|getAsPrefetch|getAsMutation|post|postAsQuery|delete|put|patch|paginate|paginateAsPrefetch)\s*(<[^>]+>)?\s*\()");
+void validateCreateApiUsage(const std::filesystem::path &filePath,
+                            const std::string &fileContent) {
+  // Pattern to match createApi<SomeInterface>()
+  std::regex createApiPattern(
+      R"(createApi<([a-zA-Z0-9_]+)>\(\)\()");
 
-  std::smatch endpointsMatch;
-  if (!std::regex_search(fileContent, endpointsMatch, endpointsBlockPattern)) {
-    std::cout << "⚠️ No endpoints found in file: " << filePath << "\n";
+  std::smatch match;
+  if (!std::regex_search(fileContent, match, createApiPattern)) {
+    std::cout << "⚠️ No createApi usage found in file: " << filePath << "\n";
     return;
   }
 
-  std::sregex_iterator iter(fileContent.begin(), fileContent.end(),
-                            endpointPattern);
-  std::sregex_iterator end;
-
-  if (iter == end) {
-    std::cout << "⚠️ No endpoints found in file: " << filePath << "\n";
+  std::string interfaceName = match[1].str();
+  
+  // Check if the interface is defined in the same file
+  std::regex interfacePattern(
+      R"(interface\s+)" + interfaceName + R"(\s*\{)");
+  
+  if (!std::regex_search(fileContent, interfacePattern)) {
+    std::cerr << "❌ Error: Interface '" << interfaceName << "' used in createApi<" 
+              << interfaceName << "> is not defined in file '" << filePath << "'.\n";
+    std::cerr << "💡 Hint: Make sure to define the interface that describes all endpoints.\n";
+    ERROR_FOUND = true;
     return;
   }
 
-  while (iter != end) {
-    std::smatch match = *iter;
-    std::string endpointName = match[1].str();
-    std::string generics = match[3].str();
-
-    if (generics.empty()) {
-      std::cerr << "❌ Error: Endpoint '" << endpointName << "' in file '"
-                << filePath << "' is missing generics (no < >).\n";
-      ERROR_FOUND = true;
-    } else {
-      std::regex genericSplitPattern(R"(<([^,>]+),([^,>]+)>)");
-      std::smatch genericsMatch;
-      if (!std::regex_match(generics, genericsMatch, genericSplitPattern)) {
-        std::cerr << "❌ Error: Endpoint '" << endpointName << "' in file '"
-                  << filePath
-                  << "' has incorrect generics format (missing a comma or "
-                     "second generic).\n";
-        ERROR_FOUND = true;
-      }
-    }
-    ++iter;
-  }
+  std::cout << "✅ Found valid createApi<" << interfaceName << "> with interface definition.\n";
 }
 
 int main() {
@@ -123,7 +106,7 @@ int main() {
 
           std::cout << "⏳ Processing file: " << path << "\n";
           std::string fileContent = readFileContent(path);
-          validateEndpoints(path, fileContent);
+          validateCreateApiUsage(path, fileContent);
         }
       }
     }
@@ -138,8 +121,8 @@ int main() {
     return 1;
   }
 
-  std::cout << "\n🎉 No errors found. You passed all necessary generics!\n";
-  std::cout << "✅ Generics check completed.\n";
+  std::cout << "\n🎉 No errors found. All createApi interfaces are properly defined!\n";
+  std::cout << "✅ Interface validation completed.\n";
 
   return 0;
 }

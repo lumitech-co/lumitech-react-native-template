@@ -4,17 +4,17 @@ import { AuthService } from '../AuthService';
 
 import { Test, CreateAccountResponse } from '../models';
 
-export const deleteUserMutationFnAuthService = async (params: Test) => {
-  const response = await AuthService.deleteUser(params);
+export const createUserMutationFnAuthService = async (params: Test) => {
+  const response = await AuthService.createUser(params);
 
-  return response?.data;
+  return response;
 };
 
-const getMutationKey = () => queryKeys.deleteUserAuthService();
+const getMutationKey = () => queryKeys.createUserAuthService();
 
-export const useDeleteUserMutationAuthService = () => {
+export const useCreateUserMutationAuthService = () => {
   return useMutation<CreateAccountResponse, QueryError, Test>({
-    mutationFn: deleteUserMutationFnAuthService,
+    mutationFn: createUserMutationFnAuthService,
     mutationKey: getMutationKey(),
   });
 };

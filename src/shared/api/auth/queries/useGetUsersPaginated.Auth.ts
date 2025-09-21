@@ -17,14 +17,14 @@ type PageParam = string | number | unknown;
 interface InfiniteHookParams<TData, TPageParam = PageParam> extends Test {
   initialPageParam: TPageParam;
   getNextPageParam: UseInfiniteQueryWithOptionsParams<
-    CreateAccountResponse,
+    CreateAccountResponse[],
     QueryError,
     TData,
     QueryKeyType,
     TPageParam
   >['getNextPageParam'];
   options?: UseInfiniteQueryWithOptionsParams<
-    CreateAccountResponse,
+    CreateAccountResponse[],
     QueryError,
     TData,
     QueryKeyType,
@@ -35,7 +35,7 @@ interface InfiniteHookParams<TData, TPageParam = PageParam> extends Test {
 interface InfiniteFetchParams<TData, TPageParam = PageParam> extends Test {
   initialPageParam: TPageParam;
   getNextPageParam: InfiniteQueryFetchParams<
-    CreateAccountResponse,
+    CreateAccountResponse[],
     QueryError,
     InfiniteData<TData, TPageParam>,
     Test,
@@ -43,7 +43,7 @@ interface InfiniteFetchParams<TData, TPageParam = PageParam> extends Test {
     TPageParam
   >['getNextPageParam'];
   options?: InfiniteQueryFetchParams<
-    CreateAccountResponse,
+    CreateAccountResponse[],
     QueryError,
     InfiniteData<TData, TPageParam>,
     Test,
@@ -58,26 +58,26 @@ interface QueryFnParams<TPageParam> {
   signal: AbortSignal;
 }
 
-export const getUserPrefetchPaginateQueryFnAuthService = async <
+export const getUsersPaginatedQueryFnAuthService = async <
   TPageParam extends PageParam,
 >({
   params,
   pageParam,
   signal,
 }: QueryFnParams<TPageParam>) => {
-  const response = await AuthService.getUserPrefetchPaginate(
+  const response = await AuthService.getUsersPaginated(
     { ...params, pageParam },
     { signal },
   );
 
-  return response?.data;
+  return response;
 };
 
 const getQueryKey = (params: Test) =>
-  queryKeys.getUserPrefetchPaginateAuthService(params);
+  queryKeys.getUsersPaginatedAuthService(params);
 
-export const getUserPrefetchPaginateInfiniteQueryAuthService = <
-  TData = CreateAccountResponse,
+export const getUsersPaginatedInfiniteQueryAuthService = <
+  TData = CreateAccountResponse[],
   TPageParam = PageParam,
 >({
   initialPageParam,
@@ -88,14 +88,14 @@ export const getUserPrefetchPaginateInfiniteQueryAuthService = <
   const queryClient = getQueryClient();
 
   return queryClient.fetchInfiniteQuery<
-    CreateAccountResponse,
+    CreateAccountResponse[],
     QueryError,
     InfiniteData<TData, TPageParam>,
     QueryKeyType,
     TPageParam
   >({
     queryFn: ({ pageParam, signal }) =>
-      getUserPrefetchPaginateQueryFnAuthService({ pageParam, params, signal }),
+      getUsersPaginatedQueryFnAuthService({ pageParam, params, signal }),
     queryKey: getQueryKey(params),
     initialPageParam,
     getNextPageParam,
@@ -103,8 +103,8 @@ export const getUserPrefetchPaginateInfiniteQueryAuthService = <
   });
 };
 
-export const useGetUserPrefetchPaginateInfiniteQueryAuthService = <
-  TData = CreateAccountResponse,
+export const useGetUsersPaginatedInfiniteQueryAuthService = <
+  TData = CreateAccountResponse[],
   TPageParam = PageParam,
 >({
   options,
@@ -113,14 +113,14 @@ export const useGetUserPrefetchPaginateInfiniteQueryAuthService = <
   ...params
 }: InfiniteHookParams<TData, TPageParam>) => {
   return useInfiniteQueryWithOptions<
-    CreateAccountResponse,
+    CreateAccountResponse[],
     QueryError,
     TData,
     QueryKeyType,
     TPageParam
   >({
     queryFn: ({ pageParam, signal }) =>
-      getUserPrefetchPaginateQueryFnAuthService({ pageParam, params, signal }),
+      getUsersPaginatedQueryFnAuthService({ pageParam, params, signal }),
     queryKey: getQueryKey(params),
     initialPageParam,
     getNextPageParam,
@@ -128,7 +128,7 @@ export const useGetUserPrefetchPaginateInfiniteQueryAuthService = <
   });
 };
 
-export const invalidateGetUserPrefetchPaginateInfiniteQueryAuthService = (
+export const invalidateGetUsersPaginatedInfiniteQueryAuthService = (
   params: Test,
   options?: Omit<InvalidateQueryFilters, 'queryKey'>,
 ) => {
@@ -140,7 +140,7 @@ export const invalidateGetUserPrefetchPaginateInfiniteQueryAuthService = (
   });
 };
 
-export const resetGetUserPrefetchPaginateInfiniteQueryAuthService = async <
+export const resetGetUsersPaginatedInfiniteQueryAuthService = async <
   TPageParam = PageParam,
 >(
   params: Test,
@@ -150,7 +150,7 @@ export const resetGetUserPrefetchPaginateInfiniteQueryAuthService = async <
 
   queryClient.setQueryData(
     queryKey,
-    (oldData: InfiniteData<CreateAccountResponse[], TPageParam>) => {
+    (oldData: InfiniteData<CreateAccountResponse[][], TPageParam>) => {
       if (!oldData) {
         return undefined;
       }

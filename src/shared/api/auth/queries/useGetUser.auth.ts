@@ -58,7 +58,7 @@ export const getUserQueryFnAuthService = async ({
 }: QueryFnParams) => {
   const response = await AuthService.getUser(params, { signal });
 
-  return response?.data;
+  return response;
 };
 
 const getQueryKey = (params: Test) => queryKeys.getUserAuthService(params);

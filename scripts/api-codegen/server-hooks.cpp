@@ -7,67 +7,59 @@
 #include <unordered_set>
 #include <filesystem>
 
+
 const std::filesystem::path API_DIR = "./src/shared/api";
 const std::string QUERY_KEYS_FILE = "src/shared/api/models/QueryKeys.ts";
 const std::unordered_set<std::string> EXCLUDED_FOLDERS = {"models"};
 const std::string LOCK_FILE = "./codegen.lock";
 
-std::string toCamelCase(const std::string &input)
-{
-  std::stringstream ss(input);
-  std::string word, result;
-  bool first = true;
+std::string toCamelCase(const std::string& input) {
+    std::stringstream ss(input);
+    std::string word, result;
+    bool first = true;
 
-  while (std::getline(ss, word, '_'))
-  {
-    if (first)
-    {
-      result += std::tolower(word[0]);
-      result += word.substr(1);
-      first = false;
+    while (std::getline(ss, word, '_')) {
+        if (first) {
+            result += std::tolower(word[0]);
+            result += word.substr(1);
+            first = false;
+        } else {
+            word[0] = std::toupper(word[0]);
+            result += word;
+        }
     }
-    else
-    {
-      word[0] = std::toupper(word[0]);
-      result += word;
-    }
-  }
 
-  return result;
+    return result;
 }
 
-std::string toCapitalize(const std::string &input)
-{
-  if (input.empty())
-    return input;
-  std::string result = input;
-  result[0] = std::toupper(result[0]);
-  return result;
+std::string capitalizeFirstLetter(const std::string& input) {
+    if (input.empty()) return input;
+    std::string result = input;
+    result[0] = std::toupper(result[0]);
+    return result;
 }
 
-std::string extractServicePrefix(const std::string &serviceName)
-{
-  std::string prefix = serviceName;
-
-  if (prefix.find("Service") != std::string::npos)
-  {
-    prefix = prefix.substr(0, prefix.find("Service"));
-  }
-  return toCamelCase(prefix);
-}
-
-std::string toSnakeCase(const std::string &input)
-{
-  std::string result;
-  for (char c : input)
-  {
-    if (std::isupper(c) && !result.empty())
-    {
-      result += "_";
+std::string toSnakeCase(const std::string& input) {
+    std::string result;
+    for (size_t i = 0; i < input.length(); i++) {
+        if (std::isupper(input[i]) && i > 0) {
+            result += "_";
+        }
+        result += std::tolower(input[i]);
     }
-    result += std::toupper(c);
-  }
-  return result;
+    return result;
+}
+
+std::string toCapitalize(const std::string& input) {
+    return capitalizeFirstLetter(input);
+}
+
+std::string extractServicePrefix(const std::string& serviceName) {
+    std::string result = serviceName;
+    if (result.size() > 7 && result.substr(result.size() - 7) == "Service") {
+        result = result.substr(0, result.size() - 7);
+    }
+    return result;
 }
 
 std::string generateHash(const std::filesystem::path &filePath)
@@ -84,7 +76,7 @@ std::string generateHash(const std::filesystem::path &filePath)
   std::string fileContent = fileContentStream.str();
 
   std::regex methodPattern(
-      R"(([a-zA-Z0-9_]+):\s*builder\.(get|getAsPrefetch|getAsMutation|post|postAsQuery|delete|put|patch|paginate|paginateAsPrefetch)<\s*([^,]+),\s*([^>]+)>)");
+      R"(([a-zA-Z0-9_]+):\s*builder\.(query|prefetch|mutation|infiniteQuery|prefetchInfiniteQuery)\s*\()");
 
   std::sregex_iterator it(fileContent.begin(), fileContent.end(), methodPattern);
   std::sregex_iterator end;
@@ -110,27 +102,17 @@ std::string normalizeType(const std::string &type)
   return std::regex_replace(type, std::regex(R"(\[\]$)"), "");
 }
 
-std::string capitalizeFirstLetter(const std::string &str)
-{
-  if (str.empty())
-    return str;
-  std::string capitalized = str;
-  capitalized[0] = toupper(capitalized[0]);
-  return capitalized;
-}
 
-std::string readFile(const std::filesystem::path &filePath)
-{
-  std::ifstream file(filePath);
-  if (!file.is_open())
-  {
-    std::cerr << "❌ Error: Unable to open file: " << filePath << "\n";
-    return "";
-  }
+std::string readFileContent(const std::filesystem::path& filePath) {
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "❌ Error: Unable to open file: " << filePath << "\n";
+        return "";
+    }
 
-  std::ostringstream content;
-  content << file.rdbuf();
-  return content.str();
+    std::ostringstream fileContentStream;
+    fileContentStream << file.rdbuf();
+    return fileContentStream.str();
 }
 
 bool isExcludedFolder(const std::string &folderName,
@@ -315,7 +297,7 @@ void generateQueryHook(
             << " = async ({ params, signal }: QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params, { signal });\n"
-            << "  return response?.data;\n"
+            << "  return response;\n"
             << "};\n\n";
 
     outFile << "const getQueryKey = (params: " << requestType
@@ -437,7 +419,7 @@ void generateQueryHook(
             << " = async ({ signal }:QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(undefined, { signal });\n"
-            << "  return response?.data;\n"
+            << "  return response;\n"
             << "};\n\n";
 
     outFile << "const getQueryKey = () => queryKeys." << queryKeyName
@@ -598,7 +580,7 @@ void generatePrefetchQueryHook(
             << " = async ({ params, signal }: QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params, { signal });\n"
-            << "  return response?.data;\n"
+            << "  return response;\n"
             << "};\n\n";
 
     outFile << "const getQueryKey = (params: " << requestType
@@ -677,7 +659,7 @@ void generatePrefetchQueryHook(
             << " = async ({ signal }:QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(undefined, { signal });\n"
-            << "  return response?.data;\n"
+            << "  return response;\n"
             << "};\n\n";
 
     outFile << "const getQueryKey = () => queryKeys." << queryKeyName
@@ -848,7 +830,7 @@ void generateInfiniteQueryHook(
           << "}: QueryFnParams<TPageParam>) => {\n"
           << "  const response = await " << serviceName << "." << endpointName
           << "({ ...params, pageParam }, { signal });\n"
-          << "  return response?.data;\n"
+          << "  return response;\n"
           << "};\n\n";
 
   outFile << "const getQueryKey = (params: " << requestType << ") => queryKeys."
@@ -1058,7 +1040,7 @@ void generatePrefetchInfiniteQueryHook(
           << "}: QueryFnParams<TPageParam>) => {\n"
           << "  const response = await " << serviceName << "." << endpointName
           << "({ ...params, pageParam }, { signal });\n"
-          << "  return response?.data;\n"
+          << "  return response;\n"
           << "};\n\n";
 
   outFile << "const getQueryKey = (params: " << requestType << ") => queryKeys."
@@ -1215,7 +1197,7 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
             << " = async (params: " << inlineRequestType << ") => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params);\n"
-            << "  return response?.data;\n"
+            << "  return response;\n"
             << "};\n\n";
 
     outFile << "const getMutationKey = () => queryKeys." << queryKeyName
@@ -1305,65 +1287,117 @@ void generateHooks(const std::string &serviceName,
   std::filesystem::create_directories(hooksDir / "queries");
   std::filesystem::create_directories(hooksDir / "mutations");
 
-  std::string fileContent = readFile(serviceFile);
+  std::string fileContent = readFileContent(serviceFile);
   if (fileContent.empty())
   {
     return;
   }
 
-  std::regex methodPattern(
-      R"(([a-zA-Z0-9_]+):\s*builder\.(get|getAsPrefetch|getAsMutation|post|postAsQuery|delete|put|patch|paginate|paginateAsPrefetch)<\s*([^,]+),\s*([^>]+)>)");
-
+  // First, find the interface that defines the API
+  std::regex createApiPattern(R"(createApi<([a-zA-Z0-9_]+)>\(\))");
+  std::smatch createApiMatch;
+  
+  if (!std::regex_search(fileContent, createApiMatch, createApiPattern)) {
+    return; // No createApi found
+  }
+  
+  std::string interfaceName = createApiMatch[1].str();
+  
+  // Find the interface definition
+  std::regex interfacePattern(
+      R"(interface\s+)" + interfaceName + R"(\s*\{([^}]+)\})");
+  std::smatch interfaceMatch;
+  
+  if (!std::regex_search(fileContent, interfaceMatch, interfacePattern)) {
+    return; // Interface not found
+  }
+  
+  std::string interfaceContent = interfaceMatch[1].str();
+  
+  // Extract endpoint definitions from interface
+  std::regex endpointDefPattern(
+      R"(([a-zA-Z0-9_]+):\s*Promisify<([^,]+),\s*([^>]+)>)");
+  
+  std::sregex_iterator interfaceIter(interfaceContent.begin(), interfaceContent.end(), endpointDefPattern);
+  std::sregex_iterator interfaceEnd;
+  
   std::unordered_set<std::string> detectedQueries;
   std::unordered_set<std::string> detectedMutations;
 
   bool hasQueries = false;
   bool hasMutations = false;
 
-  std::sregex_iterator it(fileContent.begin(), fileContent.end(), methodPattern);
-  std::sregex_iterator end;
-
-  for (; it != end; ++it)
+  for (; interfaceIter != interfaceEnd; ++interfaceIter)
   {
-    std::smatch match = *it;
+    std::smatch match = *interfaceIter;
 
     std::string endpointName = match[1].str();
-    std::string method = match[2].str();
+    std::string requestType = match[2].str();
     std::string responseType = match[3].str();
-    std::string requestType = match[4].str();
+    
+    // Clean up whitespace
+    requestType.erase(
+        remove_if(requestType.begin(), requestType.end(), ::isspace),
+        requestType.end());
+    responseType.erase(
+        remove_if(responseType.begin(), responseType.end(), ::isspace),
+        responseType.end());
 
     std::string hookName = "use" + capitalizeFirstLetter(endpointName);
     std::string servicePrefix = extractServicePrefix(serviceName);
     std::string queryKeyName = toCamelCase(endpointName) + toCapitalize(serviceName);
 
     bool isVoidRequest = requestType == "void";
+    
+    // Check what method type this endpoint uses
+    std::regex mutationPattern(endpointName + R"(:\s*builder\.mutation\s*\()");
+    std::regex queryPattern(endpointName + R"(:\s*builder\.query\s*\()");
+    std::regex infiniteQueryPattern(endpointName + R"(:\s*builder\.infiniteQuery\s*\()");
+    std::regex prefetchPattern(endpointName + R"(:\s*builder\.prefetch\s*\()");
+    std::regex prefetchInfiniteQueryPattern(endpointName + R"(:\s*builder\.prefetchInfiniteQuery\s*\()");
+    
+    bool isMutation = std::regex_search(fileContent, mutationPattern);
+    bool isQuery = std::regex_search(fileContent, queryPattern);
+    bool isInfiniteQuery = std::regex_search(fileContent, infiniteQueryPattern);
+    bool isPrefetch = std::regex_search(fileContent, prefetchPattern);
+    bool isPrefetchInfiniteQuery = std::regex_search(fileContent, prefetchInfiniteQueryPattern);
 
-    if (method == "get" || method == "postAsQuery")
+    if (isMutation)
+    {
+      hasMutations = true;
+      generateMutationHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedMutations.insert(hookName);
+    }
+    else if (isQuery)
     {
       hasQueries = true;
       generateQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
       detectedQueries.insert(hookName);
     }
-    else if (method == "getAsPrefetch")
-    {
-      hasQueries = true;
-      generatePrefetchQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
-      detectedQueries.insert(hookName);
-    }
-    else if (method == "paginate" || method == "paginateAsPrefetch")
+    else if (isInfiniteQuery)
     {
       hasQueries = true;
       generateInfiniteQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
       detectedQueries.insert(hookName);
     }
-    else if (std::regex_match(
-                 method,
-                 std::regex(R"(post|getAsMutation|delete|put|patch)")))
+    else if (isPrefetch)
     {
-      hasMutations = true;
-      generateMutationHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
-
-      detectedMutations.insert(hookName);
+      hasQueries = true;
+      generatePrefetchQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedQueries.insert(hookName);
+    }
+    else if (isPrefetchInfiniteQuery)
+    {
+      hasQueries = true;
+      generatePrefetchInfiniteQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedQueries.insert(hookName);
+    }
+    else
+    {
+      // Default to query if method not recognized
+      hasQueries = true;
+      generateQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedQueries.insert(hookName);
     }
   }
 
@@ -1423,6 +1457,7 @@ int main()
         std::cout << "⚠️  Skipping excluded folder: " << serviceDir << "\n";
         continue;
       }
+
 
       std::cout << "🗑️ Removing old generated files...\n";
       removeGeneratedFiles(serviceDir);

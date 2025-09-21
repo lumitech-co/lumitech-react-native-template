@@ -4020,9 +4020,6 @@ __metadata:
     react-native-svg-transformer: "npm:^1.5.0"
     react-native-unistyles: "npm:3.0.10"
     react-native-vector-icons: "npm:10.2.0"
-    reactotron-react-native: "npm:^5.1.15"
-    reactotron-react-native-mmkv: "npm:^0.2.8"
-    reactotron-react-query: "npm:^2.0.2"
     sonner-native: "npm:0.21.1"
     ts-to-zod: "npm:3.8.5"
     typescript: "npm:5.0.4"
@@ -9384,13 +9381,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mitt@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "mitt@npm:3.0.1"
-  checksum: 10c0/3ab4fdecf3be8c5255536faa07064d05caa3dd332bd318ff02e04621f7b3069ca1de9106cfe8e7ced675abfc2bec2ce4c4ef321c4a1bb1fb29df8ae090741913
-  languageName: node
-  linkType: hard
-
 "mkdirp-classic@npm:^0.5.2, mkdirp-classic@npm:^0.5.3":
   version: 0.5.3
   resolution: "mkdirp-classic@npm:0.5.3"
@@ -10760,54 +10750,6 @@ __metadata:
   version: 19.0.0
   resolution: "react@npm:19.0.0"
   checksum: 10c0/9cad8f103e8e3a16d15cb18a0d8115d8bd9f9e1ce3420310aea381eb42aa0a4f812cf047bb5441349257a05fba8a291515691e3cb51267279b2d2c3253f38471
-  languageName: node
-  linkType: hard
-
-"reactotron-core-client@npm:2.9.7":
-  version: 2.9.7
-  resolution: "reactotron-core-client@npm:2.9.7"
-  dependencies:
-    reactotron-core-contract: "npm:0.2.5"
-  checksum: 10c0/c18f93761feeadd043461b59ad0dee748d8a6ab0ac01beecda9653fdd190e15ecccd55d246a8ac25058f2b74b4d62ff07861f3fb0856d1995418b45886170485
-  languageName: node
-  linkType: hard
-
-"reactotron-core-contract@npm:0.2.5":
-  version: 0.2.5
-  resolution: "reactotron-core-contract@npm:0.2.5"
-  checksum: 10c0/4cf35d9f5e442bbbd32346f9b9ae26e4dd2400ffb9abc618d039df3b3398eaef1fb59c9df04703d6da4e2786f2922454a454c5522c055c8300146da3d6754508
-  languageName: node
-  linkType: hard
-
-"reactotron-react-native-mmkv@npm:^0.2.8":
-  version: 0.2.8
-  resolution: "reactotron-react-native-mmkv@npm:0.2.8"
-  peerDependencies:
-    react-native-mmkv: "*"
-    reactotron-core-client: "*"
-  checksum: 10c0/77b81c2ad4b0856127a649ce9dab04b53cb0148f302309574abe27f4de5c1f63e289108454fa12d4f513064af19e54530ea86bff0d857fa40dbf629a22ccf8ed
-  languageName: node
-  linkType: hard
-
-"reactotron-react-native@npm:^5.1.15":
-  version: 5.1.15
-  resolution: "reactotron-react-native@npm:5.1.15"
-  dependencies:
-    mitt: "npm:^3.0.1"
-    reactotron-core-client: "npm:2.9.7"
-  peerDependencies:
-    react-native: ">=0.40.0"
-  checksum: 10c0/b3b5d9ef36ae194671e8e23de322a205c95f770cafea33019030bbb03098b110fc0267841f9165f3bccad4677b0fbc6514a8ac3bb9530fe7dece1ae9fbbd4338
-  languageName: node
-  linkType: hard
-
-"reactotron-react-query@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "reactotron-react-query@npm:2.0.2"
-  peerDependencies:
-    "@tanstack/react-query": ^5.80.10
-    reactotron-core-client: ^2.9.7
-  checksum: 10c0/8a69e449cb7efa9ac55f171260f92bde90a67e1db2279f1cda43533b53f415d091ed95dd63e676c9c11893cbd82e409a54289e5a8269daf232314a5445a87e65
   languageName: node
   linkType: hard
 

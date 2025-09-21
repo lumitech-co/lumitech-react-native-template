@@ -1,10 +1,13 @@
 import Config from 'react-native-config';
 import { ExceptionService, ToastService } from 'services';
 import { getAuthStoreInstance, resetAllStores } from 'stores';
+import axios from 'axios';
 import { Mutex } from 'async-mutex';
 import { createAxiosClient } from './http-client';
 
 export const refreshMutex = new Mutex();
+
+export const axiosBaseQuery = axios.create({ baseURL: '' });
 
 export const baseQuery = createAxiosClient({
   baseURL: Config.API_URL || '',
