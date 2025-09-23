@@ -13,6 +13,10 @@ type GenericApiBuilder<TClient> = {
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
+    options?: {
+      overrideBaseQuery?: boolean;
+      baseQuery?: any;
+    },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
   prefetch<TRequest = unknown, TResponse = any>(
@@ -24,6 +28,10 @@ type GenericApiBuilder<TClient> = {
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
+    options?: {
+      overrideBaseQuery?: boolean;
+      baseQuery?: any;
+    },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
   mutation<TRequest = unknown, TResponse = any>(
@@ -35,6 +43,10 @@ type GenericApiBuilder<TClient> = {
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
+    options?: {
+      overrideBaseQuery?: boolean;
+      baseQuery?: any;
+    },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
   infiniteQuery<TRequest = unknown, TResponse = any>(
@@ -46,6 +58,10 @@ type GenericApiBuilder<TClient> = {
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
+    options?: {
+      overrideBaseQuery?: boolean;
+      baseQuery?: any;
+    },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
   prefetchInfiniteQuery<TRequest = unknown, TResponse = any>(
@@ -57,6 +73,10 @@ type GenericApiBuilder<TClient> = {
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
+    options?: {
+      overrideBaseQuery?: boolean;
+      baseQuery?: any;
+    },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
   suspenseQuery<TRequest = unknown, TResponse = any>(
@@ -68,6 +88,10 @@ type GenericApiBuilder<TClient> = {
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
+    options?: {
+      overrideBaseQuery?: boolean;
+      baseQuery?: any;
+    },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
   suspenseInfiniteQuery<TRequest = unknown, TResponse = any>(
@@ -79,6 +103,10 @@ type GenericApiBuilder<TClient> = {
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
+    options?: {
+      overrideBaseQuery?: boolean;
+      baseQuery?: any;
+    },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
   queries<TRequest = unknown, TResponse = any>(
@@ -90,6 +118,10 @@ type GenericApiBuilder<TClient> = {
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
+    options?: {
+      overrideBaseQuery?: boolean;
+      baseQuery?: any;
+    },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 };
 
@@ -101,66 +133,106 @@ export const createApi =
   }): TServiceInterface => {
     const { baseQuery, endpoints } = config;
     const builder: GenericApiBuilder<TClient> = {
-      query: queryFn => (params, extra) => {
+      query: (queryFn, options) => (params, extra) => {
+        const clientToUse =
+          options?.overrideBaseQuery && options?.baseQuery
+            ? options.baseQuery
+            : baseQuery;
+
         return queryFn(params, {
           signal: extra?.signal,
-          client: baseQuery,
+          client: clientToUse as TClient,
           disableGlobalErrorHandler: false,
         });
       },
 
-      prefetch: queryFn => (params, extra) => {
+      prefetch: (queryFn, options) => (params, extra) => {
+        const clientToUse =
+          options?.overrideBaseQuery && options?.baseQuery
+            ? options.baseQuery
+            : baseQuery;
+
         return queryFn(params, {
           signal: extra?.signal,
-          client: baseQuery,
+          client: clientToUse as TClient,
           disableGlobalErrorHandler: false,
         });
       },
 
-      mutation: mutationFn => (params, extra) => {
+      mutation: (mutationFn, options) => (params, extra) => {
+        const clientToUse =
+          options?.overrideBaseQuery && options?.baseQuery
+            ? options.baseQuery
+            : baseQuery;
+
         return mutationFn(params, {
           signal: extra?.signal,
-          client: baseQuery,
+          client: clientToUse as TClient,
           disableGlobalErrorHandler: false,
         });
       },
 
-      infiniteQuery: queryFn => (params, extra) => {
+      infiniteQuery: (queryFn, options) => (params, extra) => {
+        const clientToUse =
+          options?.overrideBaseQuery && options?.baseQuery
+            ? options.baseQuery
+            : baseQuery;
+
         return queryFn(params, {
           signal: extra?.signal,
-          client: baseQuery,
+          client: clientToUse as TClient,
           disableGlobalErrorHandler: false,
         });
       },
 
-      prefetchInfiniteQuery: queryFn => (params, extra) => {
+      prefetchInfiniteQuery: (queryFn, options) => (params, extra) => {
+        const clientToUse =
+          options?.overrideBaseQuery && options?.baseQuery
+            ? options.baseQuery
+            : baseQuery;
+
         return queryFn(params, {
           signal: extra?.signal,
-          client: baseQuery,
+          client: clientToUse as TClient,
           disableGlobalErrorHandler: false,
         });
       },
 
-      suspenseQuery: queryFn => (params, extra) => {
+      suspenseQuery: (queryFn, options) => (params, extra) => {
+        const clientToUse =
+          options?.overrideBaseQuery && options?.baseQuery
+            ? options.baseQuery
+            : baseQuery;
+
         return queryFn(params, {
           signal: extra?.signal,
-          client: baseQuery,
+          client: clientToUse as TClient,
           disableGlobalErrorHandler: false,
         });
       },
 
-      suspenseInfiniteQuery: queryFn => (params, extra) => {
+      suspenseInfiniteQuery: (queryFn, options) => (params, extra) => {
+        const clientToUse =
+          options?.overrideBaseQuery && options?.baseQuery
+            ? options.baseQuery
+            : baseQuery;
+
         return queryFn(params, {
           signal: extra?.signal,
-          client: baseQuery,
+          client: clientToUse as TClient,
           disableGlobalErrorHandler: false,
         });
       },
 
-      queries: queryFn => (params, extra) => {
+      queries: (queryFn, options) => (params, extra) => {
+        const clientToUse =
+          options?.overrideBaseQuery && options?.baseQuery
+            ? options.baseQuery
+            : baseQuery;
+
         return queryFn(params, {
           signal: extra?.signal,
-          client: baseQuery,
+          client: clientToUse as TClient,
           disableGlobalErrorHandler: false,
         });
       },

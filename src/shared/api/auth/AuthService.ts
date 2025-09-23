@@ -1,5 +1,5 @@
 import { createApi, Promisify } from '../createApi';
-import { axiosBaseQuery } from '../baseQuery';
+import { axiosBaseQuery, baseQuery } from '../baseQuery';
 import { CreateAccountResponse, Test } from './models';
 
 interface AuthServiceAPI {
@@ -11,6 +11,8 @@ interface AuthServiceAPI {
   testQueries: Promisify<Test, CreateAccountResponse[]>;
   testPrefetch: Promisify<Test, CreateAccountResponse>;
   testPrefetchInfiniteQuery: Promisify<Test, CreateAccountResponse[]>;
+  testQueryWithCustomClient: Promisify<Test, CreateAccountResponse[]>;
+  testQueryWithFetch: Promisify<Test, CreateAccountResponse[]>;
 }
 
 export const AuthService = createApi<AuthServiceAPI>()({
@@ -86,6 +88,50 @@ export const AuthService = createApi<AuthServiceAPI>()({
           params: { token },
           signal,
         });
+      },
+    ),
+
+    testQueryWithCustomClient: builder.query(
+      ({ token }, { signal, client }) => {
+        return client.get(`/v2/customer/custom`, {
+          params: { test: 'custom-client' },
+          headers: { Authorization: `Bearer ${token}` },
+          signal,
+        });
+      },
+      {
+        overrideBaseQuery: true,
+        baseQuery,
+      },
+    ),
+
+    testQueryWithFetch: builder.query(
+      async ({ token }, { signal }) => {
+        const params = new URLSearchParams({ test: 'fetch-example' });
+
+        const response = await fetch(
+          `https://api.example.com/v2/customer?${params}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            signal,
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return data;
+      },
+      {
+        overrideBaseQuery: true,
+        baseQuery: null,
       },
     ),
   }),
