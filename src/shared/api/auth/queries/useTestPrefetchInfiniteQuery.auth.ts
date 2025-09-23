@@ -1,13 +1,17 @@
-import { InvalidateQueryFilters, InfiniteData } from '@tanstack/react-query';
+import {
+  InvalidateQueryFilters,
+  FetchInfiniteQueryOptions,
+  GetNextPageParamFunction,
+  InfiniteData,
+} from '@tanstack/react-query';
 import { getQueryClient } from '../../queryClient';
 import {
-  InfiniteQueryFetchParams,
   QueryError,
   QueryKeyType,
-  UseInfiniteQueryWithOptionsParams,
+  PrefetchInfiniteQueryFetchParams,
   queryKeys,
 } from '../../models';
-import { useInfiniteQueryWithOptions } from '../../hooks';
+import { usePrefetchInfiniteQueryWithOptions } from '../../hooks';
 import { AuthService } from '../AuthService';
 
 import { CreateAccountResponse, Test } from '../models';
@@ -16,25 +20,25 @@ type PageParam = string | number | unknown;
 
 interface InfiniteHookParams<TData, TPageParam = PageParam> extends Test {
   initialPageParam: TPageParam;
-  getNextPageParam: UseInfiniteQueryWithOptionsParams<
-    CreateAccountResponse[],
-    QueryError,
-    TData,
-    QueryKeyType,
-    TPageParam
-  >['getNextPageParam'];
-  options?: UseInfiniteQueryWithOptionsParams<
-    CreateAccountResponse[],
-    QueryError,
-    TData,
-    QueryKeyType,
-    TPageParam
-  >['options'];
+  getNextPageParam: GetNextPageParamFunction<
+    TPageParam,
+    CreateAccountResponse[]
+  >;
+  options?: Omit<
+    FetchInfiniteQueryOptions<
+      CreateAccountResponse[],
+      QueryError,
+      TData,
+      QueryKeyType,
+      TPageParam
+    >,
+    'queryFn' | 'queryKey' | 'initialPageParam' | 'getNextPageParam'
+  >;
 }
 
 interface InfiniteFetchParams<TData, TPageParam = PageParam> extends Test {
   initialPageParam: TPageParam;
-  getNextPageParam: InfiniteQueryFetchParams<
+  getNextPageParam: PrefetchInfiniteQueryFetchParams<
     CreateAccountResponse[],
     QueryError,
     InfiniteData<TData, TPageParam>,
@@ -42,7 +46,7 @@ interface InfiniteFetchParams<TData, TPageParam = PageParam> extends Test {
     QueryKeyType,
     TPageParam
   >['getNextPageParam'];
-  options?: InfiniteQueryFetchParams<
+  options?: PrefetchInfiniteQueryFetchParams<
     CreateAccountResponse[],
     QueryError,
     InfiniteData<TData, TPageParam>,
@@ -58,14 +62,14 @@ interface QueryFnParams<TPageParam> {
   signal: AbortSignal;
 }
 
-export const getUsersPaginatedQueryFnAuthService = async <
+export const testPrefetchInfiniteQueryQueryFnAuthService = async <
   TPageParam extends PageParam,
 >({
   params,
   pageParam,
   signal,
 }: QueryFnParams<TPageParam>) => {
-  const response = await AuthService.getUsersPaginated(
+  const response = await AuthService.testPrefetchInfiniteQuery(
     { ...params, pageParam },
     { signal },
   );
@@ -74,9 +78,9 @@ export const getUsersPaginatedQueryFnAuthService = async <
 };
 
 const getQueryKey = (params: Test) =>
-  queryKeys.getUsersPaginatedAuthService(params);
+  queryKeys.testPrefetchInfiniteQueryAuthService(params);
 
-export const getUsersPaginatedInfiniteQueryAuthService = <
+export const testPrefetchInfiniteQueryPrefetchInfiniteQueryAuthService = <
   TData = CreateAccountResponse[],
   TPageParam = PageParam,
 >({
@@ -87,7 +91,7 @@ export const getUsersPaginatedInfiniteQueryAuthService = <
 }: InfiniteFetchParams<TData, TPageParam>) => {
   const queryClient = getQueryClient();
 
-  return queryClient.fetchInfiniteQuery<
+  return queryClient.prefetchInfiniteQuery<
     CreateAccountResponse[],
     QueryError,
     InfiniteData<TData, TPageParam>,
@@ -95,7 +99,11 @@ export const getUsersPaginatedInfiniteQueryAuthService = <
     TPageParam
   >({
     queryFn: ({ pageParam, signal }) =>
-      getUsersPaginatedQueryFnAuthService({ pageParam, params, signal }),
+      testPrefetchInfiniteQueryQueryFnAuthService({
+        pageParam,
+        params,
+        signal,
+      }),
     queryKey: getQueryKey(params),
     initialPageParam,
     getNextPageParam,
@@ -103,7 +111,7 @@ export const getUsersPaginatedInfiniteQueryAuthService = <
   });
 };
 
-export const useGetUsersPaginatedInfiniteQueryAuthService = <
+export const useTestPrefetchInfiniteQueryPrefetchInfiniteQueryAuthService = <
   TData = CreateAccountResponse[],
   TPageParam = PageParam,
 >({
@@ -112,7 +120,7 @@ export const useGetUsersPaginatedInfiniteQueryAuthService = <
   getNextPageParam,
   ...params
 }: InfiniteHookParams<TData, TPageParam>) => {
-  return useInfiniteQueryWithOptions<
+  return usePrefetchInfiniteQueryWithOptions<
     CreateAccountResponse[],
     QueryError,
     TData,
@@ -120,7 +128,11 @@ export const useGetUsersPaginatedInfiniteQueryAuthService = <
     TPageParam
   >({
     queryFn: ({ pageParam, signal }) =>
-      getUsersPaginatedQueryFnAuthService({ pageParam, params, signal }),
+      testPrefetchInfiniteQueryQueryFnAuthService({
+        pageParam,
+        params,
+        signal,
+      }),
     queryKey: getQueryKey(params),
     initialPageParam,
     getNextPageParam,
@@ -128,7 +140,7 @@ export const useGetUsersPaginatedInfiniteQueryAuthService = <
   });
 };
 
-export const invalidateGetUsersPaginatedInfiniteQueryAuthService = (
+export const invalidateTestPrefetchInfiniteQueryInfiniteQueryAuthService = (
   params: Test,
   options?: Omit<InvalidateQueryFilters, 'queryKey'>,
 ) => {
@@ -140,7 +152,7 @@ export const invalidateGetUsersPaginatedInfiniteQueryAuthService = (
   });
 };
 
-export const resetGetUsersPaginatedInfiniteQueryAuthService = async <
+export const resetTestPrefetchInfiniteQueryInfiniteQueryAuthService = async <
   TPageParam = PageParam,
 >(
   params: Test,

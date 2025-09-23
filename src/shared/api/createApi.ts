@@ -58,6 +58,39 @@ type GenericApiBuilder<TClient> = {
       },
     ) => Promise<TResponse>,
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
+
+  suspenseQuery<TRequest = unknown, TResponse = any>(
+    queryFn: (
+      params: TRequest,
+      context: {
+        signal?: AbortSignal;
+        client: TClient;
+        disableGlobalErrorHandler?: boolean;
+      },
+    ) => Promise<TResponse>,
+  ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
+
+  suspenseInfiniteQuery<TRequest = unknown, TResponse = any>(
+    queryFn: (
+      params: TRequest,
+      context: {
+        signal?: AbortSignal;
+        client: TClient;
+        disableGlobalErrorHandler?: boolean;
+      },
+    ) => Promise<TResponse>,
+  ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
+
+  queries<TRequest = unknown, TResponse = any>(
+    queryFn: (
+      params: TRequest,
+      context: {
+        signal?: AbortSignal;
+        client: TClient;
+        disableGlobalErrorHandler?: boolean;
+      },
+    ) => Promise<TResponse>,
+  ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 };
 
 export const createApi =
@@ -101,6 +134,30 @@ export const createApi =
       },
 
       prefetchInfiniteQuery: queryFn => (params, extra) => {
+        return queryFn(params, {
+          signal: extra?.signal,
+          client: baseQuery,
+          disableGlobalErrorHandler: false,
+        });
+      },
+
+      suspenseQuery: queryFn => (params, extra) => {
+        return queryFn(params, {
+          signal: extra?.signal,
+          client: baseQuery,
+          disableGlobalErrorHandler: false,
+        });
+      },
+
+      suspenseInfiniteQuery: queryFn => (params, extra) => {
+        return queryFn(params, {
+          signal: extra?.signal,
+          client: baseQuery,
+          disableGlobalErrorHandler: false,
+        });
+      },
+
+      queries: queryFn => (params, extra) => {
         return queryFn(params, {
           signal: extra?.signal,
           client: baseQuery,

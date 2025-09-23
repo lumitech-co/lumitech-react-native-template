@@ -52,18 +52,18 @@ interface QueryFnParams {
   signal?: AbortSignal;
 }
 
-export const getUserQueryFnAuthService = async ({
+export const testQueryQueryFnAuthService = async ({
   params,
   signal,
 }: QueryFnParams) => {
-  const response = await AuthService.getUser(params, { signal });
+  const response = await AuthService.testQuery(params, { signal });
 
   return response;
 };
 
-const getQueryKey = (params: Test) => queryKeys.getUserAuthService(params);
+const getQueryKey = (params: Test) => queryKeys.testQueryAuthService(params);
 
-export const getUserQueryAuthService = <
+export const testQueryQueryAuthService = <
   TData = CreateAccountResponse[],
   TError = QueryError,
 >({
@@ -79,12 +79,12 @@ export const getUserQueryAuthService = <
     QueryKeyType
   >({
     queryKey: getQueryKey(params),
-    queryFn: ({ signal }) => getUserQueryFnAuthService({ params, signal }),
+    queryFn: ({ signal }) => testQueryQueryFnAuthService({ params, signal }),
     ...fetchOptions,
   });
 };
 
-export const useGetUserQueryAuthService = <TData = CreateAccountResponse[]>({
+export const useTestQueryQueryAuthService = <TData = CreateAccountResponse[]>({
   options,
   ...params
 }: HookParams<TData>) => {
@@ -94,13 +94,13 @@ export const useGetUserQueryAuthService = <TData = CreateAccountResponse[]>({
     TData,
     QueryKeyType
   >({
-    queryFn: ({ signal }) => getUserQueryFnAuthService({ params, signal }),
+    queryFn: ({ signal }) => testQueryQueryFnAuthService({ params, signal }),
     queryKey: getQueryKey(params),
     options,
   });
 };
 
-export const invalidateGetUserQueryAuthService = (
+export const invalidateTestQueryQueryAuthService = (
   params: Test,
   options?: Omit<InvalidateQueryFilters, 'queryKey'>,
 ) => {
@@ -112,7 +112,7 @@ export const invalidateGetUserQueryAuthService = (
   });
 };
 
-export const useGetUserAuthServiceObservable = <
+export const useTestQueryAuthServiceObservable = <
   TData = CreateAccountResponse[],
   TSelected = TData,
 >({
@@ -134,7 +134,7 @@ export const useGetUserAuthServiceObservable = <
     >({
       queryClient,
       queryFn: ({ signal }) =>
-        getUserQueryFnAuthService({ params: params$, signal }),
+        testQueryQueryFnAuthService({ params: params$, signal }),
       queryKey: queryKey$.get(),
       options,
       observableOptions,
