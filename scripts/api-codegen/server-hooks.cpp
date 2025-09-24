@@ -1852,30 +1852,27 @@ void generateHooks(const std::string &serviceName,
     return;
   }
 
-  // First, find the interface that defines the API
   std::regex createApiPattern(R"(createApi<([a-zA-Z0-9_]+)>\(\))");
   std::smatch createApiMatch;
 
   if (!std::regex_search(fileContent, createApiMatch, createApiPattern))
   {
-    return; // No createApi found
+    return;
   }
 
   std::string interfaceName = createApiMatch[1].str();
 
-  // Find the interface definition
   std::regex interfacePattern(
       R"(interface\s+)" + interfaceName + R"(\s*\{([^}]+)\})");
   std::smatch interfaceMatch;
 
   if (!std::regex_search(fileContent, interfaceMatch, interfacePattern))
   {
-    return; // Interface not found
+    return;
   }
 
   std::string interfaceContent = interfaceMatch[1].str();
 
-  // Extract endpoint definitions from interface
   std::regex endpointDefPattern(
       R"(([a-zA-Z0-9_]+):\s*Promisify<([^,]+),\s*([^>]+)>)");
 
@@ -1896,7 +1893,6 @@ void generateHooks(const std::string &serviceName,
     std::string requestType = match[2].str();
     std::string responseType = match[3].str();
 
-    // Clean up whitespace
     requestType.erase(
         remove_if(requestType.begin(), requestType.end(), ::isspace),
         requestType.end());
@@ -1910,7 +1906,6 @@ void generateHooks(const std::string &serviceName,
 
     bool isVoidRequest = requestType == "void";
 
-    // Check what method type this endpoint uses
     std::regex mutationPattern(endpointName + R"(:\s*builder\.mutation\s*\()");
     std::regex queryPattern(endpointName + R"(:\s*builder\.query\s*\()");
     std::regex infiniteQueryPattern(endpointName + R"(:\s*builder\.infiniteQuery\s*\()");

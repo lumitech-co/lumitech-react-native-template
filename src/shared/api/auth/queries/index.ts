@@ -5,3 +5,5 @@ export * from './useTestSuspenseInfiniteQuery.auth';
 export * from './useTestQueries.auth';
 export * from './useTestPrefetch.auth';
 export * from './useTestPrefetchInfiniteQuery.auth';
+export * from './useTestQueryWithCustomClient.auth';
+export * from './useTestQueryWithFetch.auth';
