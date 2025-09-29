@@ -1,9 +1,13 @@
 import React from 'react';
-import { StyleSheet as RnStylesheet } from 'react-native';
+import { StyleSheet as RNStylesheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { StyleSheet } from 'react-native-unistyles';
+import {
+  PortalProvider as TeleportProvider,
+  PortalHost,
+} from 'react-native-teleport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner-native';
 import { ReducedMotionConfig, ReduceMotion } from 'react-native-reanimated';
@@ -40,12 +44,17 @@ export const App: React.FC = () => {
           <SafeAreaProvider>
             <QueryClientProvider client={queryClient}>
               <ModalProvider stack={modalStack}>
-                <EventEmitterProvider>
-                  <RootNavigator />
-                </EventEmitterProvider>
+                <TeleportProvider>
+                  <EventEmitterProvider>
+                    <View style={styles.overlay} pointerEvents="box-none">
+                      <PortalHost name="overlay" />
+                    </View>
+                    <RootNavigator />
+                  </EventEmitterProvider>
+                </TeleportProvider>
               </ModalProvider>
             </QueryClientProvider>
-            <Toaster position="top-center" />
+            <Toaster position="top-center" visibleToasts={1} />
           </SafeAreaProvider>
         </GestureHandlerRootView>
       </KeyboardProvider>
@@ -53,8 +62,12 @@ export const App: React.FC = () => {
   );
 };
 
-const styles = RnStylesheet.create({
+const styles = RNStylesheet.create({
   layout: {
     flex: 1,
+  },
+  overlay: {
+    ...RNStylesheet.absoluteFillObject,
+    zIndex: 9999,
   },
 });

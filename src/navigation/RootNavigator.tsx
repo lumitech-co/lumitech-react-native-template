@@ -23,7 +23,7 @@ export const RootNavigator: React.FC = () => {
         uniProps={(theme, runtime) => ({
           barStyle:
             runtime.themeName === 'light' ? 'dark-content' : 'light-content',
-          backgroundColor: theme.colors.background,
+          backgroundColor: theme.colors.transparent,
         })}
         animated
         translucent
