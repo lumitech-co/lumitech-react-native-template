@@ -3,17 +3,17 @@ import { getQueryClient } from '../../queryClient';
 import {
   QueryError,
   QueryKeyType,
-  UsePrefetchQueryWithOptionsParams,
+  UseSuspenseQueryWithOptionsParams,
   QueryFetchParams,
   queryKeys,
 } from '../../models';
-import { usePrefetchQueryWithOptions } from '../../hooks';
+import { useSuspenseQueryWithOptions } from '../../hooks';
 import { AuthService } from '../AuthService';
 
 import { CreateAccountResponse, Test } from '../models';
 
 interface HookParams<TData> extends Test {
-  options?: UsePrefetchQueryWithOptionsParams<
+  options?: UseSuspenseQueryWithOptionsParams<
     CreateAccountResponse,
     QueryError,
     TData,
@@ -28,19 +28,19 @@ interface QueryFnParams {
   signal?: AbortSignal;
 }
 
-export const getUserPrefetchQueryFnAuthService = async ({
+export const testSuspenseQueryQueryFnAuthService = async ({
   params,
   signal,
 }: QueryFnParams) => {
-  const response = await AuthService.getUserPrefetch(params, { signal });
+  const response = await AuthService.testSuspenseQuery(params, { signal });
 
-  return response?.data;
+  return response;
 };
 
 const getQueryKey = (params: Test) =>
-  queryKeys.getUserPrefetchAuthService(params);
+  queryKeys.testSuspenseQueryAuthService(params);
 
-export const getUserPrefetchPrefetchQueryAuthService = <
+export const testSuspenseQuerySuspenseQueryAuthService = <
   TData = CreateAccountResponse,
   TError = QueryError,
 >({
@@ -49,7 +49,7 @@ export const getUserPrefetchPrefetchQueryAuthService = <
 }: QueryFetchParams<CreateAccountResponse, TError, TData, Test>) => {
   const queryClient = getQueryClient();
 
-  return queryClient.prefetchQuery<
+  return queryClient.fetchQuery<
     CreateAccountResponse,
     TError,
     TData,
@@ -57,31 +57,31 @@ export const getUserPrefetchPrefetchQueryAuthService = <
   >({
     queryKey: getQueryKey(params),
     queryFn: ({ signal }) =>
-      getUserPrefetchQueryFnAuthService({ params, signal }),
+      testSuspenseQueryQueryFnAuthService({ params, signal }),
     ...fetchOptions,
   });
 };
 
-export const useGetUserPrefetchPrefetchQueryAuthService = <
+export const useTestSuspenseQuerySuspenseQueryAuthService = <
   TData = CreateAccountResponse,
 >({
   options,
   ...params
 }: HookParams<TData>) => {
-  return usePrefetchQueryWithOptions<
+  return useSuspenseQueryWithOptions<
     CreateAccountResponse,
     QueryError,
     TData,
     QueryKeyType
   >({
     queryFn: ({ signal }) =>
-      getUserPrefetchQueryFnAuthService({ params, signal }),
+      testSuspenseQueryQueryFnAuthService({ params, signal }),
     queryKey: getQueryKey(params),
     options,
   });
 };
 
-export const invalidateGetUserPrefetchQueryAuthService = (
+export const invalidateTestSuspenseQuerySuspenseQueryAuthService = (
   params: Test,
   options?: Omit<InvalidateQueryFilters, 'queryKey'>,
 ) => {

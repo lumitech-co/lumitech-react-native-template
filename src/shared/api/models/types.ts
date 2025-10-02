@@ -4,10 +4,14 @@ import {
   InfiniteData,
   UseQueryOptions,
   UseInfiniteQueryOptions,
+  UseSuspenseQueryOptions,
+  UseSuspenseInfiniteQueryOptions,
   FetchQueryOptions,
   FetchInfiniteQueryOptions,
   GetNextPageParamFunction,
   QueryFunction,
+  QueriesOptions,
+  QueriesResults,
 } from '@tanstack/react-query';
 import { QueryKeyType } from './QueryKeys';
 
@@ -115,6 +119,36 @@ export interface InfiniteQueryFetchParams<
   ) => TPageParam | undefined;
 }
 
+export interface PrefetchInfiniteQueryFetchParams<
+  TQueryFnData,
+  TError = QueryError,
+  TData = InfiniteData<TQueryFnData>,
+  TParams = unknown,
+  TQueryKey extends QueryKeyType = QueryKeyType,
+  TPageParam = unknown,
+> {
+  params: TParams;
+  fetchOptions?: Omit<
+    FetchInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+    | 'queryFn'
+    | 'queryKey'
+    | 'initialPageParam'
+    | 'getNextPageParam'
+    | 'staleTime'
+  >;
+  initialPageParam: TPageParam;
+  getNextPageParam: (
+    lastPage: TQueryFnData,
+    allPages: TQueryFnData[],
+  ) => TPageParam | undefined;
+}
+
 export type FetchQueryOptionsWithoutKeyFn<
   TQueryFnData,
   TError,
@@ -133,4 +167,61 @@ export interface QueryFetchParams<TQueryFnData, TError, TData, TParams> {
     TData,
     QueryKeyType
   >;
+}
+
+export interface UseSuspenseQueryWithOptionsParams<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKeyType,
+> {
+  queryKey: TQueryKey;
+  queryFn: QueryFunction<TQueryFnData, TQueryKey>;
+  options?: Omit<
+    UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryFn' | 'queryKey'
+  >;
+}
+
+export interface UseSuspenseInfiniteQueryWithOptionsParams<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKeyType,
+  TPageParam,
+> {
+  queryKey: TQueryKey;
+  queryFn: UseSuspenseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >['queryFn'];
+  initialPageParam: TPageParam;
+  getNextPageParam: UseSuspenseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >['getNextPageParam'];
+  options?: Omit<
+    UseSuspenseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+    'queryFn' | 'queryKey' | 'initialPageParam' | 'getNextPageParam'
+  >;
+}
+
+export interface UseQueriesWithOptionsParams<T extends Array<any>> {
+  queries: readonly [...QueriesOptions<T>];
+  options?: {
+    combine?: (result: QueriesResults<T>) => any;
+    subscribed?: boolean;
+  };
 }

@@ -36,7 +36,7 @@ std::string toCamelCase(const std::string &input)
   return result;
 }
 
-std::string toCapitalize(const std::string &input)
+std::string capitalizeFirstLetter(const std::string &input)
 {
   if (input.empty())
     return input;
@@ -45,27 +45,31 @@ std::string toCapitalize(const std::string &input)
   return result;
 }
 
-std::string extractServicePrefix(const std::string &serviceName)
-{
-  std::string prefix = serviceName;
-
-  if (prefix.find("Service") != std::string::npos)
-  {
-    prefix = prefix.substr(0, prefix.find("Service"));
-  }
-  return toCamelCase(prefix);
-}
-
 std::string toSnakeCase(const std::string &input)
 {
   std::string result;
-  for (char c : input)
+  for (size_t i = 0; i < input.length(); i++)
   {
-    if (std::isupper(c) && !result.empty())
+    if (std::isupper(input[i]) && i > 0)
     {
       result += "_";
     }
-    result += std::toupper(c);
+    result += std::tolower(input[i]);
+  }
+  return result;
+}
+
+std::string toCapitalize(const std::string &input)
+{
+  return capitalizeFirstLetter(input);
+}
+
+std::string extractServicePrefix(const std::string &serviceName)
+{
+  std::string result = serviceName;
+  if (result.size() > 7 && result.substr(result.size() - 7) == "Service")
+  {
+    result = result.substr(0, result.size() - 7);
   }
   return result;
 }
@@ -84,7 +88,7 @@ std::string generateHash(const std::filesystem::path &filePath)
   std::string fileContent = fileContentStream.str();
 
   std::regex methodPattern(
-      R"(([a-zA-Z0-9_]+):\s*builder\.(get|getAsPrefetch|getAsMutation|post|postAsQuery|delete|put|patch|paginate|paginateAsPrefetch)<\s*([^,]+),\s*([^>]+)>)");
+      R"(([a-zA-Z0-9_]+):\s*builder\.(query|prefetch|mutation|infiniteQuery|prefetchInfiniteQuery|suspenseQuery|suspenseInfiniteQuery|queries)\s*\()");
 
   std::sregex_iterator it(fileContent.begin(), fileContent.end(), methodPattern);
   std::sregex_iterator end;
@@ -110,16 +114,7 @@ std::string normalizeType(const std::string &type)
   return std::regex_replace(type, std::regex(R"(\[\]$)"), "");
 }
 
-std::string capitalizeFirstLetter(const std::string &str)
-{
-  if (str.empty())
-    return str;
-  std::string capitalized = str;
-  capitalized[0] = toupper(capitalized[0]);
-  return capitalized;
-}
-
-std::string readFile(const std::filesystem::path &filePath)
+std::string readFileContent(const std::filesystem::path &filePath)
 {
   std::ifstream file(filePath);
   if (!file.is_open())
@@ -128,9 +123,9 @@ std::string readFile(const std::filesystem::path &filePath)
     return "";
   }
 
-  std::ostringstream content;
-  content << file.rdbuf();
-  return content.str();
+  std::ostringstream fileContentStream;
+  fileContentStream << file.rdbuf();
+  return fileContentStream.str();
 }
 
 bool isExcludedFolder(const std::string &folderName,
@@ -315,7 +310,7 @@ void generateQueryHook(
             << " = async ({ params, signal }: QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params, { signal });\n"
-            << "  return response?.data;\n"
+            << "  return response;\n"
             << "};\n\n";
 
     outFile << "const getQueryKey = (params: " << requestType
@@ -437,7 +432,7 @@ void generateQueryHook(
             << " = async ({ signal }:QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(undefined, { signal });\n"
-            << "  return response?.data;\n"
+            << "  return response;\n"
             << "};\n\n";
 
     outFile << "const getQueryKey = () => queryKeys." << queryKeyName
@@ -598,7 +593,7 @@ void generatePrefetchQueryHook(
             << " = async ({ params, signal }: QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params, { signal });\n"
-            << "  return response?.data;\n"
+            << "  return response;\n"
             << "};\n\n";
 
     outFile << "const getQueryKey = (params: " << requestType
@@ -677,7 +672,7 @@ void generatePrefetchQueryHook(
             << " = async ({ signal }:QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(undefined, { signal });\n"
-            << "  return response?.data;\n"
+            << "  return response;\n"
             << "};\n\n";
 
     outFile << "const getQueryKey = () => queryKeys." << queryKeyName
@@ -848,7 +843,7 @@ void generateInfiniteQueryHook(
           << "}: QueryFnParams<TPageParam>) => {\n"
           << "  const response = await " << serviceName << "." << endpointName
           << "({ ...params, pageParam }, { signal });\n"
-          << "  return response?.data;\n"
+          << "  return response;\n"
           << "};\n\n";
 
   outFile << "const getQueryKey = (params: " << requestType << ") => queryKeys."
@@ -978,18 +973,20 @@ void generatePrefetchInfiniteQueryHook(
     return;
   }
 
-  outFile << "import { getQueryClient } from '../../queryClient';\n"
-          << "import {\n"
-          << "  FetchInfiniteQueryOptions,\n"
-          << "  GetNextPageParamFunction,\n"
-          << "  InfiniteData,\n"
-          << "} from '@tanstack/react-query';\n"
-          << "import { QueryError, QueryKeyType, queryKeys } from "
-             "'../../models';\n"
-          << "import { usePrefetchInfiniteQueryWithOptions } from "
-             "'../../hooks';\n"
-          << "import { " << serviceName << " } from '../" << serviceName
-          << "';\n\n";
+  outFile
+      << "import { InvalidateQueryFilters } from '@tanstack/react-query';\n"
+      << "import { getQueryClient } from '../../queryClient';\n"
+      << "import {\n"
+      << "  FetchInfiniteQueryOptions,\n"
+      << "  GetNextPageParamFunction,\n"
+      << "  InfiniteData,\n"
+      << "} from '@tanstack/react-query';\n"
+      << "import { QueryError, QueryKeyType, PrefetchInfiniteQueryFetchParams, queryKeys } from "
+         "'../../models';\n"
+      << "import { usePrefetchInfiniteQueryWithOptions } from "
+         "'../../hooks';\n"
+      << "import { " << serviceName << " } from '../" << serviceName
+      << "';\n\n";
 
   if (!isSpecialType(responseType))
   {
@@ -1013,7 +1010,7 @@ void generatePrefetchInfiniteQueryHook(
           << "    FetchInfiniteQueryOptions<\n"
           << "      " << responseType << ",\n"
           << "      QueryError,\n"
-          << "      InfiniteData<TData, TPageParam>,\n"
+          << "      TData,\n"
           << "      QueryKeyType,\n"
           << "      TPageParam\n"
           << "    >,\n"
@@ -1026,7 +1023,7 @@ void generatePrefetchInfiniteQueryHook(
              "extends "
           << requestType << " {\n"
           << "  initialPageParam: TPageParam;\n"
-          << "  getNextPageParam: InfiniteQueryFetchParams<\n"
+          << "  getNextPageParam: PrefetchInfiniteQueryFetchParams<\n"
           << "    " << responseType << ",\n"
           << "    QueryError,\n"
           << "    InfiniteData<TData, TPageParam>,\n"
@@ -1034,7 +1031,7 @@ void generatePrefetchInfiniteQueryHook(
           << "    QueryKeyType,\n"
           << "    TPageParam\n"
           << "  >['getNextPageParam'];\n"
-          << "  options?: InfiniteQueryFetchParams<\n"
+          << "  options?: PrefetchInfiniteQueryFetchParams<\n"
           << "    " << responseType << ",\n"
           << "    QueryError,\n"
           << "    InfiniteData<TData, TPageParam>,\n"
@@ -1058,7 +1055,7 @@ void generatePrefetchInfiniteQueryHook(
           << "}: QueryFnParams<TPageParam>) => {\n"
           << "  const response = await " << serviceName << "." << endpointName
           << "({ ...params, pageParam }, { signal });\n"
-          << "  return response?.data;\n"
+          << "  return response;\n"
           << "};\n\n";
 
   outFile << "const getQueryKey = (params: " << requestType << ") => queryKeys."
@@ -1215,7 +1212,7 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
             << " = async (params: " << inlineRequestType << ") => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params);\n"
-            << "  return response?.data;\n"
+            << "  return response;\n"
             << "};\n\n";
 
     outFile << "const getMutationKey = () => queryKeys." << queryKeyName
@@ -1270,6 +1267,550 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
   std::cout << "✅ Mutation hook generated: " << mutationFile << "\n";
 }
 
+void generateSuspenseQueryHook(
+    const std::filesystem::path &hooksDir, const std::string &hookName,
+    const std::string &responseType, const std::string &requestType,
+    const std::string &queryKeyName, const std::string &serviceName,
+    const std::string &endpointName, const std::string &servicePrefix,
+    bool isVoidRequest, const std::string &servicePrefixHook)
+{
+  std::filesystem::path queryFile =
+      hooksDir / "queries" / (hookName + "." + servicePrefix + ".ts");
+
+  std::ofstream outFile(queryFile);
+  if (!outFile.is_open())
+  {
+    std::cerr << "❌ Error: Unable to create suspense query file: " << queryFile << "\n";
+    return;
+  }
+
+  outFile << "import { InvalidateQueryFilters } from '@tanstack/react-query';\n"
+          << "import { getQueryClient } from '../../queryClient';\n"
+          << "import {\n"
+          << "  QueryError,\n"
+          << "  QueryKeyType,\n"
+          << "  UseSuspenseQueryWithOptionsParams,\n"
+          << "  QueryFetchParams,\n"
+          << "  queryKeys,\n"
+          << "} from '../../models';\n"
+          << "import { useSuspenseQueryWithOptions } from '../../hooks';\n"
+          << "import { " << serviceName << " } from '../" << serviceName
+          << "';\n\n";
+
+  if (!isSpecialType(responseType))
+  {
+    outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
+  }
+
+  if (!isVoidRequest && !isSpecialType(requestType))
+  {
+    outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
+  }
+
+  if (!isVoidRequest)
+  {
+    outFile << "\ninterface HookParams<TData> extends " << requestType << " {\n"
+            << "  options?: UseSuspenseQueryWithOptionsParams<\n"
+            << "    " << responseType << ",\n"
+            << "    QueryError,\n"
+            << "    TData,\n"
+            << "    QueryKeyType\n"
+            << "  >['options'];\n"
+            << "}\n\n";
+
+    outFile << "interface QueryFnParams {\n"
+            << "  params: " << requestType << ";\n"
+            << "  meta?: Record<string, unknown> | undefined;\n"
+            << "  queryKey?: QueryKeyType;\n"
+            << "  signal?: AbortSignal;\n"
+            << "}\n\n";
+
+    outFile << "export const " << endpointName << "QueryFn" << serviceName
+            << " = async ({ params, signal }: QueryFnParams) => {\n"
+            << "  const response = await " << serviceName << "." << endpointName
+            << "(params, { signal });\n"
+            << "  return response;\n"
+            << "};\n\n";
+
+    outFile << "const getQueryKey = (params: " << requestType
+            << ") => queryKeys." << queryKeyName << "(params);\n\n";
+
+    outFile << "export const " << endpointName << "SuspenseQuery" << servicePrefixHook
+            << " = <\n"
+            << "  TData = " << responseType << ",\n"
+            << "  TError = QueryError,\n"
+            << ">({\n"
+            << "  params,\n"
+            << "  fetchOptions,\n"
+            << "}: QueryFetchParams<\n"
+            << "  " << responseType << ",\n"
+            << "  TError,\n"
+            << "  TData,\n"
+            << "  " << requestType << "\n"
+            << ">) => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  return queryClient.fetchQuery<\n"
+            << "    " << responseType << ",\n"
+            << "    TError,\n"
+            << "    TData,\n"
+            << "    QueryKeyType\n"
+            << "  >({\n"
+            << "    queryKey: getQueryKey(params),\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ params, signal }),\n"
+            << "    ...fetchOptions,\n"
+            << "  });\n"
+            << "};\n\n";
+
+    outFile << "export const " << hookName << "SuspenseQuery" << servicePrefixHook
+            << " = <TData = " << responseType << ">({\n"
+            << "  options,\n"
+            << "  ...params\n"
+            << "}: HookParams<TData>) => {\n"
+            << "  return useSuspenseQueryWithOptions<" << responseType
+            << ", QueryError, TData, QueryKeyType>({\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ params, signal }),\n"
+            << "    queryKey: getQueryKey(params),\n"
+            << "    options,\n"
+            << "  });\n"
+            << "};\n";
+  }
+  else
+  {
+    outFile << "\ninterface HookParams<TData> {\n"
+            << "  options?: UseSuspenseQueryWithOptionsParams<\n"
+            << "    " << responseType << ",\n"
+            << "    QueryError,\n"
+            << "    TData,\n"
+            << "    QueryKeyType\n"
+            << "  >['options'];\n"
+            << "}\n\n";
+
+    outFile << "interface QueryFnParams {\n"
+            << "  meta?: Record<string, unknown> | undefined;\n"
+            << "  queryKey?: QueryKeyType;\n"
+            << "  signal?: AbortSignal;\n"
+            << "}\n\n";
+
+    outFile << "export const " << endpointName << "QueryFn" << serviceName
+            << " = async ({ signal }:QueryFnParams) => {\n"
+            << "  const response = await " << serviceName << "." << endpointName
+            << "(undefined, { signal });\n"
+            << "  return response;\n"
+            << "};\n\n";
+
+    outFile << "const getQueryKey = () => queryKeys." << queryKeyName
+            << "();\n\n";
+
+    outFile << "export const " << endpointName << "SuspenseQuery" << servicePrefixHook
+            << " = <\n"
+            << "  TData = " << responseType << ",\n"
+            << "  TError = QueryError,\n"
+            << ">({ fetchOptions }: QueryFetchParams<\n"
+            << "  " << responseType << ",\n"
+            << "  TError,\n"
+            << "  TData,\n"
+            << "  " << requestType << "\n"
+            << ">) => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  return queryClient.fetchQuery<\n"
+            << "    " << responseType << ",\n"
+            << "    TError,\n"
+            << "    TData,\n"
+            << "    QueryKeyType\n"
+            << "  >({\n"
+            << "    queryKey: getQueryKey(),\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ signal }),\n"
+            << "    ...fetchOptions,\n"
+            << "  });\n"
+            << "};\n\n";
+
+    outFile << "export const " << hookName << "SuspenseQuery" << servicePrefixHook
+            << " = <TData = " << responseType << ">({\n"
+            << "  options,\n"
+            << "}: HookParams<TData>) => {\n"
+            << "  return useSuspenseQueryWithOptions<" << responseType
+            << ", QueryError, TData, QueryKeyType>({\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName
+            << "({ signal }),\n"
+            << "    queryKey: getQueryKey(),\n"
+            << "    options,\n"
+            << "  });\n"
+            << "};\n";
+  }
+
+  // Add invalidate function
+  if (!isVoidRequest)
+  {
+    outFile << "\nexport const invalidate" << capitalizeFirstLetter(endpointName)
+            << "SuspenseQuery" << servicePrefixHook << " = (\n"
+            << "  params: " << requestType << ",\n"
+            << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+            << ") => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  return queryClient.invalidateQueries({\n"
+            << "    queryKey: getQueryKey(params),\n"
+            << "    ...options,\n"
+            << "  });\n"
+            << "};\n";
+  }
+  else
+  {
+    outFile << "\nexport const invalidate" << capitalizeFirstLetter(endpointName)
+            << "SuspenseQuery" << servicePrefixHook << " = (\n"
+            << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+            << ") => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  return queryClient.invalidateQueries({\n"
+            << "    queryKey: getQueryKey(),\n"
+            << "    ...options,\n"
+            << "  });\n"
+            << "};\n";
+  }
+
+  std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
+  std::ofstream indexOutFile(indexFile, std::ios::app);
+  if (!indexOutFile.is_open())
+  {
+    std::cerr << "❌ Error: Unable to update queries index file: "
+              << indexFile << "\n";
+    return;
+  }
+
+  indexOutFile << "export * from './" << hookName << "." << servicePrefix
+               << "';\n";
+  indexOutFile.close();
+
+  outFile.close();
+  std::cout << "✅ Suspense query hook generated: " << queryFile << "\n";
+}
+
+void generateSuspenseInfiniteQueryHook(
+    const std::filesystem::path &hooksDir, const std::string &hookName,
+    const std::string &responseType, const std::string &requestType,
+    const std::string &queryKeyName, const std::string &serviceName,
+    const std::string &endpointName, const std::string &servicePrefix,
+    bool isVoidRequest, const std::string &servicePrefixHook)
+{
+  std::filesystem::path queryFile =
+      hooksDir / "queries" / (hookName + "." + servicePrefix + ".ts");
+
+  std::ofstream outFile(queryFile);
+  if (!outFile.is_open())
+  {
+    std::cerr << "❌ Error: Unable to create suspense infinite query file: " << queryFile
+              << "\n";
+    return;
+  }
+
+  outFile << "import { InfiniteData, InvalidateQueryFilters } from '@tanstack/react-query';\n"
+          << "import { getQueryClient } from '../../queryClient';\n"
+          << "import {\n"
+          << "  InfiniteQueryFetchParams,\n"
+          << "  QueryError,\n"
+          << "  QueryKeyType,\n"
+          << "  UseSuspenseInfiniteQueryWithOptionsParams,\n"
+          << "  queryKeys,\n"
+          << "} from '../../models';\n"
+          << "import { useSuspenseInfiniteQueryWithOptions } from '../../hooks';\n"
+          << "import { " << serviceName << " } from '../" << serviceName
+          << "';\n\n";
+
+  if (!isSpecialType(responseType))
+  {
+    outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
+  }
+
+  if (!isVoidRequest && !isSpecialType(requestType))
+  {
+    outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
+  }
+
+  outFile << "\ntype PageParam = string | number | unknown;\n\n";
+
+  outFile << "interface InfiniteHookParams<TData, TPageParam = PageParam> "
+             "extends "
+          << requestType << " {\n"
+          << "  initialPageParam: TPageParam;\n"
+          << "  getNextPageParam: UseSuspenseInfiniteQueryWithOptionsParams<\n"
+          << "    " << responseType << ",\n"
+          << "    QueryError,\n"
+          << "    TData,\n"
+          << "    QueryKeyType,\n"
+          << "    TPageParam\n"
+          << "  >['getNextPageParam'];\n"
+          << "  options?: UseSuspenseInfiniteQueryWithOptionsParams<\n"
+          << "    " << responseType << ",\n"
+          << "    QueryError,\n"
+          << "    TData,\n"
+          << "    QueryKeyType,\n"
+          << "    TPageParam\n"
+          << "  >['options'];\n"
+          << "}\n\n";
+
+  outFile << "interface InfiniteFetchParams<TData, TPageParam = PageParam> "
+             "extends "
+          << requestType << " {\n"
+          << "  initialPageParam: TPageParam;\n"
+          << "  getNextPageParam: InfiniteQueryFetchParams<\n"
+          << "    " << responseType << ",\n"
+          << "    QueryError,\n"
+          << "    InfiniteData<TData, TPageParam>,\n"
+          << "    " << requestType << ",\n"
+          << "    QueryKeyType,\n"
+          << "    TPageParam\n"
+          << "  >['getNextPageParam'];\n"
+          << "  options?: InfiniteQueryFetchParams<\n"
+          << "    " << responseType << ",\n"
+          << "    QueryError,\n"
+          << "    InfiniteData<TData, TPageParam>,\n"
+          << "    " << requestType << ",\n"
+          << "    QueryKeyType,\n"
+          << "    TPageParam\n"
+          << "  >['fetchOptions'];\n"
+          << "}\n\n";
+
+  outFile << "interface QueryFnParams<TPageParam> {\n"
+          << "  params: " << requestType << ";\n"
+          << "  pageParam: TPageParam;\n"
+          << "  signal: AbortSignal;\n"
+          << "}\n\n";
+
+  outFile << "export const " << endpointName << "QueryFn" << serviceName
+          << " = async <TPageParam extends PageParam>({\n"
+          << "  params,\n"
+          << "  pageParam,\n"
+          << "  signal,\n"
+          << "}: QueryFnParams<TPageParam>) => {\n"
+          << "  const response = await " << serviceName << "." << endpointName
+          << "({ ...params, pageParam }, { signal });\n"
+          << "  return response;\n"
+          << "};\n\n";
+
+  outFile << "const getQueryKey = (params: " << requestType << ") => queryKeys."
+          << queryKeyName << "(params);\n\n";
+
+  outFile << "export const " << endpointName << "SuspenseInfiniteQuery"
+          << servicePrefixHook << " = <\n"
+          << "  TData = " << responseType << ",\n"
+          << "  TPageParam = PageParam,\n"
+          << ">({\n"
+          << "  initialPageParam,\n"
+          << "  getNextPageParam,\n"
+          << "  options,\n"
+          << "  ...params\n"
+          << "}: InfiniteFetchParams<TData, TPageParam>) => {\n"
+          << "  const queryClient = getQueryClient();\n\n"
+          << "  return queryClient.fetchInfiniteQuery<\n"
+          << "    " << responseType << ",\n"
+          << "    QueryError,\n"
+          << "    InfiniteData<TData, TPageParam>,\n"
+          << "    QueryKeyType,\n"
+          << "    TPageParam\n"
+          << "  >({\n"
+          << "    queryFn: ({ pageParam, signal }) => " << endpointName << "QueryFn"
+          << serviceName << "({ pageParam, params, signal }),\n"
+          << "    queryKey: getQueryKey(params),\n"
+          << "    initialPageParam,\n"
+          << "    getNextPageParam,\n"
+          << "    ...options,\n"
+          << "  });\n"
+          << "};\n\n";
+
+  outFile << "export const " << hookName << "SuspenseInfiniteQuery" << servicePrefixHook
+          << " = <\n"
+          << "  TData = " << responseType << ",\n"
+          << "  TPageParam = PageParam,\n"
+          << ">({\n"
+          << "  options,\n"
+          << "  initialPageParam,\n"
+          << "  getNextPageParam,\n"
+          << "  ...params\n"
+          << "}: InfiniteHookParams<TData, TPageParam>) => {\n"
+          << "  return useSuspenseInfiniteQueryWithOptions<\n"
+          << "    " << responseType << ",\n"
+          << "    QueryError,\n"
+          << "    TData,\n"
+          << "    QueryKeyType,\n"
+          << "    TPageParam\n"
+          << "  >({\n"
+          << "    queryFn: ({ pageParam, signal }) => " << endpointName << "QueryFn"
+          << serviceName << "({ pageParam, params, signal }),\n"
+          << "    queryKey: getQueryKey(params),\n"
+          << "    initialPageParam,\n"
+          << "    getNextPageParam,\n"
+          << "    options,\n"
+          << "  });\n"
+          << "};\n";
+
+  // Add invalidate function
+  outFile << "\nexport const invalidate" << capitalizeFirstLetter(endpointName)
+          << "SuspenseInfiniteQuery" << servicePrefixHook << " = (\n"
+          << "  params: " << requestType << ",\n"
+          << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+          << ") => {\n"
+          << "  const queryClient = getQueryClient();\n\n"
+          << "  return queryClient.invalidateQueries({\n"
+          << "    queryKey: getQueryKey(params),\n"
+          << "    ...options,\n"
+          << "  });\n"
+          << "};\n";
+
+  std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
+  std::ofstream indexOutFile(indexFile, std::ios::app);
+  if (!indexOutFile.is_open())
+  {
+    std::cerr << "❌ Error: Unable to update queries index file: "
+              << indexFile << "\n";
+    return;
+  }
+
+  indexOutFile << "export * from './" << hookName << "." << servicePrefix
+               << "';\n";
+  indexOutFile.close();
+
+  outFile.close();
+  std::cout << "✅ Suspense infinite query hook generated: " << queryFile << "\n";
+}
+
+void generateQueriesHook(
+    const std::filesystem::path &hooksDir, const std::string &hookName,
+    const std::string &responseType, const std::string &requestType,
+    const std::string &queryKeyName, const std::string &serviceName,
+    const std::string &endpointName, const std::string &servicePrefix,
+    bool isVoidRequest, const std::string &servicePrefixHook)
+{
+  std::filesystem::path queryFile =
+      hooksDir / "queries" / (hookName + "." + servicePrefix + ".ts");
+
+  std::ofstream outFile(queryFile);
+  if (!outFile.is_open())
+  {
+    std::cerr << "❌ Error: Unable to create queries hook file: " << queryFile
+              << "\n";
+    return;
+  }
+
+  outFile
+      << "import {\n"
+      << "  QueryKeyType,\n"
+      << "  UseQueriesWithOptionsParams,\n"
+      << "  queryKeys,\n"
+      << "} from '../../models';\n"
+      << "import { useQueriesWithOptions } from '../../hooks';\n"
+      << "import { " << serviceName << " } from '../" << serviceName
+      << "';\n\n";
+
+  if (!isSpecialType(responseType))
+  {
+    outFile << "import { " << normalizeType(responseType) << " } from '../models';\n";
+  }
+
+  if (!isVoidRequest && !isSpecialType(requestType))
+  {
+    outFile << "import { " << normalizeType(requestType) << " } from '../models';\n";
+  }
+
+  if (!isVoidRequest)
+  {
+    outFile << "\ninterface QueryFnParams {\n"
+            << "  params: " << requestType << ";\n"
+            << "  meta?: Record<string, unknown> | undefined;\n"
+            << "  queryKey?: QueryKeyType;\n"
+            << "  signal?: AbortSignal;\n"
+            << "}\n\n";
+
+    outFile << "export const " << endpointName << "QueryFn" << serviceName
+            << " = async ({\n"
+            << "  params,\n"
+            << "  signal,\n"
+            << "}: QueryFnParams) => {\n"
+            << "  const response = await " << serviceName << "." << endpointName
+            << "(params, { signal });\n\n"
+            << "  return response;\n"
+            << "};\n\n";
+
+    outFile << "const getQueryKey = (params: " << requestType << ") => queryKeys."
+            << endpointName << serviceName << "(params);\n\n";
+
+    outFile << "interface HookParams {\n"
+            << "  params: " << requestType << "[];\n"
+            << "  options?: UseQueriesWithOptionsParams<Array<{\n"
+            << "    queryKey: QueryKeyType;\n"
+            << "    queryFn: () => Promise<" << responseType << ">;\n"
+            << "  }>>['options'];\n"
+            << "}\n\n";
+
+    outFile << "export const " << hookName << "Queries" << servicePrefixHook
+            << " = ({\n"
+            << "  params,\n"
+            << "  options,\n"
+            << "}: HookParams) => {\n"
+            << "  const queries = params.map((param) => ({\n"
+            << "    queryKey: getQueryKey(param),\n"
+            << "    queryFn: ({ signal }: { signal?: AbortSignal }) => " << endpointName << "QueryFn" << serviceName << "({ params: param, signal }),\n"
+            << "  }));\n\n"
+            << "  return useQueriesWithOptions({\n"
+            << "    queries,\n"
+            << "    options,\n"
+            << "  });\n"
+            << "};\n";
+  }
+  else
+  {
+    outFile << "\nexport const " << endpointName << "QueryFn" << serviceName
+            << " = async ({ signal }: { signal?: AbortSignal }) => {\n"
+            << "  const response = await " << serviceName << "." << endpointName
+            << "(undefined, { signal });\n\n"
+            << "  return response;\n"
+            << "};\n\n";
+
+    outFile << "const getQueryKey = () => queryKeys."
+            << endpointName << serviceName << "();\n\n";
+
+    outFile << "interface HookParams {\n"
+            << "  count: number;\n"
+            << "  options?: UseQueriesWithOptionsParams<Array<{\n"
+            << "    queryKey: QueryKeyType;\n"
+            << "    queryFn: () => Promise<" << responseType << ">;\n"
+            << "  }>>['options'];\n"
+            << "}\n\n";
+
+    outFile << "export const " << hookName << "Queries" << servicePrefixHook
+            << " = ({\n"
+            << "  count,\n"
+            << "  options,\n"
+            << "}: HookParams) => {\n"
+            << "  const queries = Array.from({ length: count }, (_, index) => ({\n"
+            << "    queryKey: [...getQueryKey(), index],\n"
+            << "    queryFn: ({ signal }: { signal?: AbortSignal }) => " << endpointName << "QueryFn" << serviceName << "({ signal }),\n"
+            << "  }));\n\n"
+            << "  return useQueriesWithOptions({\n"
+            << "    queries,\n"
+            << "    options,\n"
+            << "  });\n"
+            << "};\n";
+  }
+
+  std::filesystem::path indexFile = hooksDir / "queries" / "index.ts";
+  std::ofstream indexOutFile(indexFile, std::ios::app);
+  if (!indexOutFile.is_open())
+  {
+    std::cerr << "❌ Error: Unable to update queries index file: "
+              << indexFile << "\n";
+    return;
+  }
+
+  indexOutFile << "export * from './" << hookName << "." << servicePrefix
+               << "';\n";
+  indexOutFile.close();
+
+  outFile.close();
+  std::cout << "✅ Queries hook generated: " << queryFile << "\n";
+}
+
 void removeEmptyFolders(const std::filesystem::path &serviceDir)
 {
   std::filesystem::path queriesDir = serviceDir / "queries";
@@ -1305,14 +1846,38 @@ void generateHooks(const std::string &serviceName,
   std::filesystem::create_directories(hooksDir / "queries");
   std::filesystem::create_directories(hooksDir / "mutations");
 
-  std::string fileContent = readFile(serviceFile);
+  std::string fileContent = readFileContent(serviceFile);
   if (fileContent.empty())
   {
     return;
   }
 
-  std::regex methodPattern(
-      R"(([a-zA-Z0-9_]+):\s*builder\.(get|getAsPrefetch|getAsMutation|post|postAsQuery|delete|put|patch|paginate|paginateAsPrefetch)<\s*([^,]+),\s*([^>]+)>)");
+  std::regex createApiPattern(R"(createApi<([a-zA-Z0-9_]+)>\(\))");
+  std::smatch createApiMatch;
+
+  if (!std::regex_search(fileContent, createApiMatch, createApiPattern))
+  {
+    return;
+  }
+
+  std::string interfaceName = createApiMatch[1].str();
+
+  std::regex interfacePattern(
+      R"(interface\s+)" + interfaceName + R"(\s*\{([^}]+)\})");
+  std::smatch interfaceMatch;
+
+  if (!std::regex_search(fileContent, interfaceMatch, interfacePattern))
+  {
+    return;
+  }
+
+  std::string interfaceContent = interfaceMatch[1].str();
+
+  std::regex endpointDefPattern(
+      R"(([a-zA-Z0-9_]+):\s*Promisify<([^,]+),\s*([^>]+)>)");
+
+  std::sregex_iterator interfaceIter(interfaceContent.begin(), interfaceContent.end(), endpointDefPattern);
+  std::sregex_iterator interfaceEnd;
 
   std::unordered_set<std::string> detectedQueries;
   std::unordered_set<std::string> detectedMutations;
@@ -1320,50 +1885,98 @@ void generateHooks(const std::string &serviceName,
   bool hasQueries = false;
   bool hasMutations = false;
 
-  std::sregex_iterator it(fileContent.begin(), fileContent.end(), methodPattern);
-  std::sregex_iterator end;
-
-  for (; it != end; ++it)
+  for (; interfaceIter != interfaceEnd; ++interfaceIter)
   {
-    std::smatch match = *it;
+    std::smatch match = *interfaceIter;
 
     std::string endpointName = match[1].str();
-    std::string method = match[2].str();
+    std::string requestType = match[2].str();
     std::string responseType = match[3].str();
-    std::string requestType = match[4].str();
+
+    requestType.erase(
+        remove_if(requestType.begin(), requestType.end(), ::isspace),
+        requestType.end());
+    responseType.erase(
+        remove_if(responseType.begin(), responseType.end(), ::isspace),
+        responseType.end());
 
     std::string hookName = "use" + capitalizeFirstLetter(endpointName);
-    std::string servicePrefix = extractServicePrefix(serviceName);
+    std::string servicePrefix = toSnakeCase(extractServicePrefix(serviceName));
     std::string queryKeyName = toCamelCase(endpointName) + toCapitalize(serviceName);
 
     bool isVoidRequest = requestType == "void";
 
-    if (method == "get" || method == "postAsQuery")
+    std::regex mutationPattern(endpointName + R"(:\s*builder\.mutation\s*\()");
+    std::regex queryPattern(endpointName + R"(:\s*builder\.query\s*\()");
+    std::regex infiniteQueryPattern(endpointName + R"(:\s*builder\.infiniteQuery\s*\()");
+    std::regex prefetchPattern(endpointName + R"(:\s*builder\.prefetch\s*\()");
+    std::regex prefetchInfiniteQueryPattern(endpointName + R"(:\s*builder\.prefetchInfiniteQuery\s*\()");
+    std::regex suspenseQueryPattern(endpointName + R"(:\s*builder\.suspenseQuery\s*\()");
+    std::regex suspenseInfiniteQueryPattern(endpointName + R"(:\s*builder\.suspenseInfiniteQuery\s*\()");
+    std::regex queriesPattern(endpointName + R"(:\s*builder\.queries\s*\()");
+
+    bool isMutation = std::regex_search(fileContent, mutationPattern);
+    bool isQuery = std::regex_search(fileContent, queryPattern);
+    bool isInfiniteQuery = std::regex_search(fileContent, infiniteQueryPattern);
+    bool isPrefetch = std::regex_search(fileContent, prefetchPattern);
+    bool isPrefetchInfiniteQuery = std::regex_search(fileContent, prefetchInfiniteQueryPattern);
+    bool isSuspenseQuery = std::regex_search(fileContent, suspenseQueryPattern);
+    bool isSuspenseInfiniteQuery = std::regex_search(fileContent, suspenseInfiniteQueryPattern);
+    bool isQueries = std::regex_search(fileContent, queriesPattern);
+
+    if (isMutation)
+    {
+      hasMutations = true;
+      generateMutationHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedMutations.insert(hookName);
+    }
+    else if (isQuery)
     {
       hasQueries = true;
       generateQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
       detectedQueries.insert(hookName);
     }
-    else if (method == "getAsPrefetch")
-    {
-      hasQueries = true;
-      generatePrefetchQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
-      detectedQueries.insert(hookName);
-    }
-    else if (method == "paginate" || method == "paginateAsPrefetch")
+    else if (isInfiniteQuery)
     {
       hasQueries = true;
       generateInfiniteQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
       detectedQueries.insert(hookName);
     }
-    else if (std::regex_match(
-                 method,
-                 std::regex(R"(post|getAsMutation|delete|put|patch)")))
+    else if (isPrefetch)
     {
-      hasMutations = true;
-      generateMutationHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
-
-      detectedMutations.insert(hookName);
+      hasQueries = true;
+      generatePrefetchQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedQueries.insert(hookName);
+    }
+    else if (isPrefetchInfiniteQuery)
+    {
+      hasQueries = true;
+      generatePrefetchInfiniteQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedQueries.insert(hookName);
+    }
+    else if (isSuspenseQuery)
+    {
+      hasQueries = true;
+      generateSuspenseQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedQueries.insert(hookName);
+    }
+    else if (isSuspenseInfiniteQuery)
+    {
+      hasQueries = true;
+      generateSuspenseInfiniteQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedQueries.insert(hookName);
+    }
+    else if (isQueries)
+    {
+      hasQueries = true;
+      generateQueriesHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedQueries.insert(hookName);
+    }
+    else
+    {
+      hasQueries = true;
+      generateQueryHook(hooksDir, hookName, responseType, requestType, queryKeyName, serviceName, endpointName, servicePrefix, isVoidRequest, serviceName);
+      detectedQueries.insert(hookName);
     }
   }
 

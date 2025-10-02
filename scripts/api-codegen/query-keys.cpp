@@ -70,33 +70,52 @@ void extractEndpoints(
     std::vector<std::pair<std::string, std::string>> &queryEndpoints,
     std::vector<std::string> &mutationEndpoints) {
 
-  std::regex endpointPattern(
-      R"(([a-zA-Z0-9_]+):\s*builder\.(get|getAsPrefetch|paginate|paginateAsPrefetch|post|postAsQuery|delete|put|patch|getAsMutation)<([^>]+)>\([^)]*\))");
-
-  std::sregex_iterator iter(fileContent.begin(), fileContent.end(), endpointPattern);
+  // First, find the interface that defines the API
+  std::regex createApiPattern(R"(createApi<([a-zA-Z0-9_]+)>\(\))");
+  std::smatch createApiMatch;
+  
+  if (!std::regex_search(fileContent, createApiMatch, createApiPattern)) {
+    return; // No createApi found
+  }
+  
+  std::string interfaceName = createApiMatch[1].str();
+  
+  // Find the interface definition
+  std::regex interfacePattern(
+      R"(interface\s+)" + interfaceName + R"(\s*\{([^}]+)\})");
+  std::smatch interfaceMatch;
+  
+  if (!std::regex_search(fileContent, interfaceMatch, interfacePattern)) {
+    return; // Interface not found
+  }
+  
+  std::string interfaceContent = interfaceMatch[1].str();
+  
+  // Extract endpoint definitions from interface (e.g., "getUser: Promisify<Test, CreateAccountResponse[]>;")
+  std::regex endpointDefPattern(
+      R"(([a-zA-Z0-9_]+):\s*Promisify<([^,]+),\s*([^>]+)>)");
+  
+  std::sregex_iterator iter(interfaceContent.begin(), interfaceContent.end(), endpointDefPattern);
   std::sregex_iterator end;
-
+  
   while (iter != end) {
     std::smatch match = *iter;
     std::string endpointName = match[1].str();
-    std::string method = match[2].str();
-    std::string fullGeneric = match[3].str();
-
-    std::stringstream ss(fullGeneric);
-    std::string responseType, requestType;
-    std::getline(ss, responseType, ',');
-    std::getline(ss, requestType, ',');
-
-    responseType.erase(
-        remove_if(responseType.begin(), responseType.end(), ::isspace),
-        responseType.end());
+    std::string requestType = match[2].str();
+    std::string responseType = match[3].str();
+    
+    // Clean up whitespace
     requestType.erase(
         remove_if(requestType.begin(), requestType.end(), ::isspace),
         requestType.end());
-
-    bool isMutation = method == "post" || method == "postAsQuery" || method == "delete" ||
-                      method == "put" || method == "patch" || method == "getAsMutation";
-
+    responseType.erase(
+        remove_if(responseType.begin(), responseType.end(), ::isspace),
+        responseType.end());
+    
+    // Check if it's a mutation by looking at the actual builder usage
+    std::regex mutationPattern(endpointName + R"(:\s*builder\.mutation\s*\()");
+    bool isMutation = std::regex_search(fileContent, mutationPattern);
+    
     if (!requestType.empty() && requestType != "void" &&
         requestType != "unknown" && requestType != "null" &&
         requestType != "any" && requestType != "boolean" &&
@@ -104,17 +123,17 @@ void extractEndpoints(
         requestType != "false" && requestType != "Object" &&
         requestType != "{}" && requestType != "0" && requestType != "1" &&
         requestType != "BigInt" && requestType != "[]") {
-      if (!isMutation && std::find(usedInterfaces.begin(), usedInterfaces.end(), requestType) == usedInterfaces.end()) {
+      if (std::find(usedInterfaces.begin(), usedInterfaces.end(), requestType) == usedInterfaces.end()) {
         usedInterfaces.push_back(requestType);
       }
     }
-
+    
     if (isMutation) {
       mutationEndpoints.push_back(endpointName);
     } else {
       queryEndpoints.push_back({endpointName, requestType});
     }
-
+    
     ++iter;
   }
 }

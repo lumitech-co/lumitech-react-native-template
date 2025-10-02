@@ -1,25 +1,40 @@
 import { Test } from './models';
 
 const QUERY_KEYS = {
-  GET_USER_AUTH_SERVICE: 'GET_USER_AUTH_SERVICE',
-  GET_USER_PREFETCH_AUTH_SERVICE: 'GET_USER_PREFETCH_AUTH_SERVICE',
-  GET_USER_PAGINATE_AUTH_SERVICE: 'GET_USER_PAGINATE_AUTH_SERVICE',
-  GET_USER_PREFETCH_PAGINATE_AUTH_SERVICE:
-    'GET_USER_PREFETCH_PAGINATE_AUTH_SERVICE',
-  GET_USER_AS_MUTATION_AUTH_SERVICE: 'GET_USER_AS_MUTATION_AUTH_SERVICE',
-  DELETE_USER_AUTH_SERVICE: 'DELETE_USER_AUTH_SERVICE',
+  TEST_QUERY_AUTH_SERVICE: 'TEST_QUERY_AUTH_SERVICE',
+  TEST_INFINITE_QUERY_AUTH_SERVICE: 'TEST_INFINITE_QUERY_AUTH_SERVICE',
+  TEST_SUSPENSE_QUERY_AUTH_SERVICE: 'TEST_SUSPENSE_QUERY_AUTH_SERVICE',
+  TEST_SUSPENSE_INFINITE_QUERY_AUTH_SERVICE:
+    'TEST_SUSPENSE_INFINITE_QUERY_AUTH_SERVICE',
+  TEST_QUERIES_AUTH_SERVICE: 'TEST_QUERIES_AUTH_SERVICE',
+  TEST_PREFETCH_AUTH_SERVICE: 'TEST_PREFETCH_AUTH_SERVICE',
+  TEST_PREFETCH_INFINITE_QUERY_AUTH_SERVICE:
+    'TEST_PREFETCH_INFINITE_QUERY_AUTH_SERVICE',
+  TEST_QUERY_WITH_CUSTOM_CLIENT_AUTH_SERVICE:
+    'TEST_QUERY_WITH_CUSTOM_CLIENT_AUTH_SERVICE',
+  TEST_QUERY_WITH_FETCH_AUTH_SERVICE: 'TEST_QUERY_WITH_FETCH_AUTH_SERVICE',
+  TEST_MUTATION_AUTH_SERVICE: 'TEST_MUTATION_AUTH_SERVICE',
 } as const;
 
 export const AUTH_QUERY_KEYS = {
-  getUserAuthService: (params: Test) =>
-    [QUERY_KEYS.GET_USER_AUTH_SERVICE, params] as const,
-  getUserPrefetchAuthService: (params: Test) =>
-    [QUERY_KEYS.GET_USER_PREFETCH_AUTH_SERVICE, params] as const,
-  getUserPaginateAuthService: (params: Test) =>
-    [QUERY_KEYS.GET_USER_PAGINATE_AUTH_SERVICE, params] as const,
-  getUserPrefetchPaginateAuthService: (params: Test) =>
-    [QUERY_KEYS.GET_USER_PREFETCH_PAGINATE_AUTH_SERVICE, params] as const,
-  getUserAsMutationAuthService: () =>
-    [QUERY_KEYS.GET_USER_AS_MUTATION_AUTH_SERVICE] as const,
-  deleteUserAuthService: () => [QUERY_KEYS.DELETE_USER_AUTH_SERVICE] as const,
+  testQueryAuthService: (params: Test) =>
+    [QUERY_KEYS.TEST_QUERY_AUTH_SERVICE, params] as const,
+  testInfiniteQueryAuthService: (params: Test) =>
+    [QUERY_KEYS.TEST_INFINITE_QUERY_AUTH_SERVICE, params] as const,
+  testSuspenseQueryAuthService: (params: Test) =>
+    [QUERY_KEYS.TEST_SUSPENSE_QUERY_AUTH_SERVICE, params] as const,
+  testSuspenseInfiniteQueryAuthService: (params: Test) =>
+    [QUERY_KEYS.TEST_SUSPENSE_INFINITE_QUERY_AUTH_SERVICE, params] as const,
+  testQueriesAuthService: (params: Test) =>
+    [QUERY_KEYS.TEST_QUERIES_AUTH_SERVICE, params] as const,
+  testPrefetchAuthService: (params: Test) =>
+    [QUERY_KEYS.TEST_PREFETCH_AUTH_SERVICE, params] as const,
+  testPrefetchInfiniteQueryAuthService: (params: Test) =>
+    [QUERY_KEYS.TEST_PREFETCH_INFINITE_QUERY_AUTH_SERVICE, params] as const,
+  testQueryWithCustomClientAuthService: (params: Test) =>
+    [QUERY_KEYS.TEST_QUERY_WITH_CUSTOM_CLIENT_AUTH_SERVICE, params] as const,
+  testQueryWithFetchAuthService: (params: Test) =>
+    [QUERY_KEYS.TEST_QUERY_WITH_FETCH_AUTH_SERVICE, params] as const,
+  testMutationAuthService: () =>
+    [QUERY_KEYS.TEST_MUTATION_AUTH_SERVICE] as const,
 };

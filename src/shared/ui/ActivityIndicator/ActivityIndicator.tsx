@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActivityIndicator as BaseIndicator, View } from 'react-native';
+import { Portal } from 'react-native-teleport';
 import { StyleSheet, withUnistyles } from 'react-native-unistyles';
 import { AnimatedBackdrop } from '../AnimatedBackDrop';
 
@@ -13,7 +14,7 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
   isVisible,
 }) => {
   return (
-    <>
+    <Portal hostName="overlay">
       <AnimatedBackdrop isVisible={isVisible} />
 
       {isVisible && (
@@ -24,7 +25,7 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
           />
         </View>
       )}
-    </>
+    </Portal>
   );
 };
 
