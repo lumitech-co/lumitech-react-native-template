@@ -3,7 +3,7 @@ name: Deploy to Production (Android)
 on:
   push:
     branches:
-      - 'release/**'
+      - "release/**"
 
 jobs:
   build-develop-android:
@@ -20,7 +20,7 @@ jobs:
       - name: Set up NODE
         uses: actions/setup-node@v3
         with:
-          node-version: 20.13.1
+          node-version-file: ".nvmrc"
 
       - name: Cache Gradle Wrapper
         uses: actions/cache@v3
@@ -82,10 +82,10 @@ jobs:
       - name: Build and Upload to Play Store
         uses: maierj/fastlane-action@v3.0.0
         with:
-          lane: 'deploy_to_play_store'
-          subdirectory: 'android'
+          lane: "deploy_to_play_store"
+          subdirectory: "android"
         env:
-          ANDROID_KEYSTORE_FILE: '${{ github.workspace }}/android/app/release.keystore'
+          ANDROID_KEYSTORE_FILE: "${{ github.workspace }}/android/app/release.keystore"
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
