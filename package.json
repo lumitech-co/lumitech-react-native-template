@@ -39,7 +39,6 @@
     "dayjs": "1.11.13",
     "eventemitter3": "^5.0.1",
     "i18next": "23.15.1",
-    "moti": "^0.30.0",
     "react": "19.0.0",
     "react-i18next": "15.0.2",
     "react-native": "0.79.0",
