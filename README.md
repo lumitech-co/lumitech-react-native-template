@@ -43,7 +43,7 @@ If you're working on an existing project and want to upgrade to Yarn 3, you can 
 
 ```bash
 $ yarn --help
-━━━ Yarn Package Manager - 4.6.0 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━ Yarn Package Manager - 4.10.3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   $ yarn <command>
 ```
@@ -53,7 +53,7 @@ Enable corepack and prepare Yarn 3 for your project:
 ```sh
 - corepack enable
 - corepack prepare yarn@latest --activate
-- yarn set version 4.6.0
+- yarn set version 4.10.3
 - yarn --version
 - yarn install
 ```

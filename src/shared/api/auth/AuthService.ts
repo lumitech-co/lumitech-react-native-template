@@ -1,6 +1,12 @@
 import { createApi, Promisify } from '../createApi';
-import { axiosBaseQuery, baseQuery } from '../baseQuery';
-import { CreateAccountResponse, Test } from './models';
+import { axiosBaseQuery } from '../baseQuery';
+import {
+  CreateAccountResponse,
+  SpecialResponse,
+  Test,
+  testEndpointMutation,
+  testEndpointQuery,
+} from './models';
 
 interface AuthServiceAPI {
   testQuery: Promisify<Test, CreateAccountResponse[]>;
@@ -13,6 +19,10 @@ interface AuthServiceAPI {
   testPrefetchInfiniteQuery: Promisify<Test, CreateAccountResponse[]>;
   testQueryWithCustomClient: Promisify<Test, CreateAccountResponse[]>;
   testQueryWithFetch: Promisify<Test, CreateAccountResponse[]>;
+  testVoidRequest: Promisify<void, void>;
+  testSpecialRequest: Promisify<void, SpecialResponse>;
+  testEndpointMutation: Promisify<testEndpointMutation, testEndpointMutation>;
+  testEndpointQuery: Promisify<testEndpointQuery, testEndpointQuery>;
 }
 
 export const AuthService = createApi<AuthServiceAPI>()({
@@ -99,10 +109,6 @@ export const AuthService = createApi<AuthServiceAPI>()({
           signal,
         });
       },
-      {
-        overrideBaseQuery: true,
-        baseQuery,
-      },
     ),
 
     testQueryWithFetch: builder.query(
@@ -134,5 +140,39 @@ export const AuthService = createApi<AuthServiceAPI>()({
         baseQuery: null,
       },
     ),
+
+    testVoidRequest: builder.query(async (_, { signal }) => {
+      await fetch(`/v2/customer/void`, {
+        headers: { Authorization: `Bearer` },
+        signal,
+      });
+    }),
+
+    testSpecialRequest: builder.query(async (_, { signal }) => {
+      const data = await fetch(`/v2/customer/special`, {
+        headers: { Authorization: `Bearer` },
+        signal,
+      });
+
+      return data.json();
+    }),
+
+    testEndpointMutation: builder.mutation(async (_, { signal }) => {
+      const data = await fetch(`/v2/customer/endpoint`, {
+        headers: { Authorization: `Bearer` },
+        signal,
+      });
+
+      return data.json();
+    }),
+
+    testEndpointQuery: builder.query(async (_, { signal }) => {
+      const data = await fetch(`/v2/customer/endpoint`, {
+        headers: { Authorization: `Bearer` },
+        signal,
+      });
+
+      return data.json();
+    }),
   }),
 });

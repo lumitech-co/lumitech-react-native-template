@@ -104,7 +104,7 @@
     "typescript": "5.0.4"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.10.3"
 }

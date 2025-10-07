@@ -4,123 +4,131 @@ export type Promisify<TRequest, TResponse> = (
 ) => Promise<TResponse>;
 
 type GenericApiBuilder<TClient> = {
-  query<TRequest = unknown, TResponse = any>(
+  query<TRequest = unknown, TResponse = any, TOverrideClient = TClient>(
     queryFn: (
       params: TRequest,
       context: {
         signal?: AbortSignal;
-        client: TClient;
+        client: TOverrideClient;
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
     options?: {
       overrideBaseQuery?: boolean;
-      baseQuery?: any;
+      baseQuery?: TOverrideClient;
     },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
-  prefetch<TRequest = unknown, TResponse = any>(
+  prefetch<TRequest = unknown, TResponse = any, TOverrideClient = TClient>(
     queryFn: (
       params: TRequest,
       context: {
         signal?: AbortSignal;
-        client: TClient;
+        client: TOverrideClient;
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
     options?: {
       overrideBaseQuery?: boolean;
-      baseQuery?: any;
+      baseQuery?: TOverrideClient;
     },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
-  mutation<TRequest = unknown, TResponse = any>(
+  mutation<TRequest = unknown, TResponse = any, TOverrideClient = TClient>(
     mutationFn: (
       params: TRequest,
       context: {
         signal?: AbortSignal;
-        client: TClient;
+        client: TOverrideClient;
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
     options?: {
       overrideBaseQuery?: boolean;
-      baseQuery?: any;
+      baseQuery?: TOverrideClient;
     },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
-  infiniteQuery<TRequest = unknown, TResponse = any>(
+  infiniteQuery<TRequest = unknown, TResponse = any, TOverrideClient = TClient>(
     queryFn: (
       params: TRequest,
       context: {
         signal?: AbortSignal;
-        client: TClient;
+        client: TOverrideClient;
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
     options?: {
       overrideBaseQuery?: boolean;
-      baseQuery?: any;
+      baseQuery?: TOverrideClient;
     },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
-  prefetchInfiniteQuery<TRequest = unknown, TResponse = any>(
+  prefetchInfiniteQuery<
+    TRequest = unknown,
+    TResponse = any,
+    TOverrideClient = TClient,
+  >(
     queryFn: (
       params: TRequest,
       context: {
         signal?: AbortSignal;
-        client: TClient;
+        client: TOverrideClient;
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
     options?: {
       overrideBaseQuery?: boolean;
-      baseQuery?: any;
+      baseQuery?: TOverrideClient;
     },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
-  suspenseQuery<TRequest = unknown, TResponse = any>(
+  suspenseQuery<TRequest = unknown, TResponse = any, TOverrideClient = TClient>(
     queryFn: (
       params: TRequest,
       context: {
         signal?: AbortSignal;
-        client: TClient;
+        client: TOverrideClient;
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
     options?: {
       overrideBaseQuery?: boolean;
-      baseQuery?: any;
+      baseQuery?: TOverrideClient;
     },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
-  suspenseInfiniteQuery<TRequest = unknown, TResponse = any>(
+  suspenseInfiniteQuery<
+    TRequest = unknown,
+    TResponse = any,
+    TOverrideClient = TClient,
+  >(
     queryFn: (
       params: TRequest,
       context: {
         signal?: AbortSignal;
-        client: TClient;
+        client: TOverrideClient;
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
     options?: {
       overrideBaseQuery?: boolean;
-      baseQuery?: any;
+      baseQuery?: TOverrideClient;
     },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 
-  queries<TRequest = unknown, TResponse = any>(
+  queries<TRequest = unknown, TResponse = any, TOverrideClient = TClient>(
     queryFn: (
       params: TRequest,
       context: {
         signal?: AbortSignal;
-        client: TClient;
+        client: TOverrideClient;
         disableGlobalErrorHandler?: boolean;
       },
     ) => Promise<TResponse>,
     options?: {
       overrideBaseQuery?: boolean;
-      baseQuery?: any;
+      baseQuery?: TOverrideClient;
     },
   ): (params: TRequest, extra?: { signal?: AbortSignal }) => Promise<TResponse>;
 };
@@ -141,7 +149,7 @@ export const createApi =
 
         return queryFn(params, {
           signal: extra?.signal,
-          client: clientToUse as TClient,
+          client: clientToUse as any,
           disableGlobalErrorHandler: false,
         });
       },
@@ -154,7 +162,7 @@ export const createApi =
 
         return queryFn(params, {
           signal: extra?.signal,
-          client: clientToUse as TClient,
+          client: clientToUse as any,
           disableGlobalErrorHandler: false,
         });
       },
@@ -167,7 +175,7 @@ export const createApi =
 
         return mutationFn(params, {
           signal: extra?.signal,
-          client: clientToUse as TClient,
+          client: clientToUse as any,
           disableGlobalErrorHandler: false,
         });
       },
@@ -180,7 +188,7 @@ export const createApi =
 
         return queryFn(params, {
           signal: extra?.signal,
-          client: clientToUse as TClient,
+          client: clientToUse as any,
           disableGlobalErrorHandler: false,
         });
       },
@@ -193,7 +201,7 @@ export const createApi =
 
         return queryFn(params, {
           signal: extra?.signal,
-          client: clientToUse as TClient,
+          client: clientToUse as any,
           disableGlobalErrorHandler: false,
         });
       },
@@ -206,7 +214,7 @@ export const createApi =
 
         return queryFn(params, {
           signal: extra?.signal,
-          client: clientToUse as TClient,
+          client: clientToUse as any,
           disableGlobalErrorHandler: false,
         });
       },
@@ -219,7 +227,7 @@ export const createApi =
 
         return queryFn(params, {
           signal: extra?.signal,
-          client: clientToUse as TClient,
+          client: clientToUse as any,
           disableGlobalErrorHandler: false,
         });
       },
@@ -232,7 +240,7 @@ export const createApi =
 
         return queryFn(params, {
           signal: extra?.signal,
-          client: clientToUse as TClient,
+          client: clientToUse as any,
           disableGlobalErrorHandler: false,
         });
       },

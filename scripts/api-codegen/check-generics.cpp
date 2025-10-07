@@ -11,23 +11,27 @@ const std::filesystem::path API_PATH =
 const std::vector<std::string> EXCLUDED_FOLDERS = {"models"};
 bool ERROR_FOUND = false;
 
-bool isExcludedFolder(const std::filesystem::path &folderPath) {
+bool isExcludedFolder(const std::filesystem::path &folderPath)
+{
   return std::find(EXCLUDED_FOLDERS.begin(), EXCLUDED_FOLDERS.end(),
                    folderPath.filename()) != EXCLUDED_FOLDERS.end();
 }
 
-std::string toLowerCase(const std::string &str) {
+std::string toLowerCase(const std::string &str)
+{
   std::string lower = str;
   std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
   return lower;
 }
 
-bool validateServiceFileName(const std::filesystem::path &filePath) {
+bool validateServiceFileName(const std::filesystem::path &filePath)
+{
   std::string folderName = filePath.parent_path().filename().string();
   std::string expectedFileName = toLowerCase(folderName) + "service.ts";
   std::string actualFileName = toLowerCase(filePath.filename().string());
 
-  if (actualFileName != expectedFileName) {
+  if (actualFileName != expectedFileName)
+  {
     std::cerr << "❌ Error: File '" << filePath
               << "' does not match expected naming convention. Expected: '"
               << expectedFileName << "'\n";
@@ -37,9 +41,11 @@ bool validateServiceFileName(const std::filesystem::path &filePath) {
   return true;
 }
 
-std::string readFileContent(const std::filesystem::path &filePath) {
+std::string readFileContent(const std::filesystem::path &filePath)
+{
   std::ifstream file(filePath);
-  if (!file.is_open()) {
+  if (!file.is_open())
+  {
     std::cerr << "❌ Error: Unable to open file: " << filePath << "\n";
     ERROR_FOUND = true;
     return "";
@@ -50,25 +56,26 @@ std::string readFileContent(const std::filesystem::path &filePath) {
 }
 
 void validateCreateApiUsage(const std::filesystem::path &filePath,
-                            const std::string &fileContent) {
-  // Pattern to match createApi<SomeInterface>()
+                            const std::string &fileContent)
+{
   std::regex createApiPattern(
       R"(createApi<([a-zA-Z0-9_]+)>\(\)\()");
 
   std::smatch match;
-  if (!std::regex_search(fileContent, match, createApiPattern)) {
+  if (!std::regex_search(fileContent, match, createApiPattern))
+  {
     std::cout << "⚠️ No createApi usage found in file: " << filePath << "\n";
     return;
   }
 
   std::string interfaceName = match[1].str();
-  
-  // Check if the interface is defined in the same file
+
   std::regex interfacePattern(
       R"(interface\s+)" + interfaceName + R"(\s*\{)");
-  
-  if (!std::regex_search(fileContent, interfacePattern)) {
-    std::cerr << "❌ Error: Interface '" << interfaceName << "' used in createApi<" 
+
+  if (!std::regex_search(fileContent, interfacePattern))
+  {
+    std::cerr << "❌ Error: Interface '" << interfaceName << "' used in createApi<"
               << interfaceName << "> is not defined in file '" << filePath << "'.\n";
     std::cerr << "💡 Hint: Make sure to define the interface that describes all endpoints.\n";
     ERROR_FOUND = true;
@@ -78,29 +85,37 @@ void validateCreateApiUsage(const std::filesystem::path &filePath,
   std::cout << "✅ Found valid createApi<" << interfaceName << "> with interface definition.\n";
 }
 
-int main() {
+int main()
+{
   std::cout << "\n🔍 Initializing generics check...\n";
   std::cout << "📂 Searching for service files in: " << API_PATH << "\n\n";
 
-  try {
+  try
+  {
     if (!std::filesystem::exists(API_PATH) ||
-        !std::filesystem::is_directory(API_PATH)) {
+        !std::filesystem::is_directory(API_PATH))
+    {
       std::cerr << "❌ Error: Directory does not exist: " << API_PATH << "\n";
       return 1;
     }
 
     for (const auto &dirEntry :
-         std::filesystem::recursive_directory_iterator(API_PATH)) {
+         std::filesystem::recursive_directory_iterator(API_PATH))
+    {
       const auto &path = dirEntry.path();
 
-      if (std::filesystem::is_directory(path) && isExcludedFolder(path)) {
+      if (std::filesystem::is_directory(path) && isExcludedFolder(path))
+      {
         std::cout << "⚠️  Skipping excluded folder: " << path << "\n";
         continue;
       }
 
-      if (std::filesystem::is_regular_file(path) && path.extension() == ".ts") {
-        if (path.filename().string().find("Service.ts") != std::string::npos) {
-          if (!validateServiceFileName(path)) {
+      if (std::filesystem::is_regular_file(path) && path.extension() == ".ts")
+      {
+        if (path.filename().string().find("Service.ts") != std::string::npos)
+        {
+          if (!validateServiceFileName(path))
+          {
             continue;
           }
 
@@ -110,12 +125,15 @@ int main() {
         }
       }
     }
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e)
+  {
     std::cerr << "❌ Exception: " << e.what() << "\n";
     return 1;
   }
 
-  if (ERROR_FOUND) {
+  if (ERROR_FOUND)
+  {
     std::cerr << "\n❌ Errors found during the generics check. Please fix them "
                  "before proceeding.\n";
     return 1;
