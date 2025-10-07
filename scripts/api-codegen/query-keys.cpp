@@ -73,37 +73,37 @@ void extractEndpoints(
   // First, find the interface that defines the API
   std::regex createApiPattern(R"(createApi<([a-zA-Z0-9_]+)>\(\))");
   std::smatch createApiMatch;
-  
+
   if (!std::regex_search(fileContent, createApiMatch, createApiPattern)) {
     return; // No createApi found
   }
-  
+
   std::string interfaceName = createApiMatch[1].str();
-  
+
   // Find the interface definition
   std::regex interfacePattern(
       R"(interface\s+)" + interfaceName + R"(\s*\{([^}]+)\})");
   std::smatch interfaceMatch;
-  
+
   if (!std::regex_search(fileContent, interfaceMatch, interfacePattern)) {
     return; // Interface not found
   }
-  
+
   std::string interfaceContent = interfaceMatch[1].str();
-  
+
   // Extract endpoint definitions from interface (e.g., "getUser: Promisify<Test, CreateAccountResponse[]>;")
   std::regex endpointDefPattern(
       R"(([a-zA-Z0-9_]+):\s*Promisify<([^,]+),\s*([^>]+)>)");
-  
+
   std::sregex_iterator iter(interfaceContent.begin(), interfaceContent.end(), endpointDefPattern);
   std::sregex_iterator end;
-  
+
   while (iter != end) {
     std::smatch match = *iter;
     std::string endpointName = match[1].str();
     std::string requestType = match[2].str();
     std::string responseType = match[3].str();
-    
+
     // Clean up whitespace
     requestType.erase(
         remove_if(requestType.begin(), requestType.end(), ::isspace),
@@ -111,12 +111,13 @@ void extractEndpoints(
     responseType.erase(
         remove_if(responseType.begin(), responseType.end(), ::isspace),
         responseType.end());
-    
+
     // Check if it's a mutation by looking at the actual builder usage
     std::regex mutationPattern(endpointName + R"(:\s*builder\.mutation\s*\()");
     bool isMutation = std::regex_search(fileContent, mutationPattern);
-    
-    if (!requestType.empty() && requestType != "void" &&
+
+    // Only add requestType to usedInterfaces for queries (not mutations)
+    if (!isMutation && !requestType.empty() && requestType != "void" &&
         requestType != "unknown" && requestType != "null" &&
         requestType != "any" && requestType != "boolean" &&
         requestType != "string" && requestType != "true" &&
@@ -127,13 +128,13 @@ void extractEndpoints(
         usedInterfaces.push_back(requestType);
       }
     }
-    
+
     if (isMutation) {
       mutationEndpoints.push_back(endpointName);
     } else {
       queryEndpoints.push_back({endpointName, requestType});
     }
-    
+
     ++iter;
   }
 }
@@ -187,8 +188,14 @@ void generateQueryKeys(const std::filesystem::path &serviceFile) {
   for (const auto &[endpoint, requestType] : queryEndpoints) {
     std::string queryKeyName = toCamelCase(endpoint) + servicePrefixPascalCase + "Service";
     std::string keyName = toSnakeCase(endpoint) + "_" + servicePrefixSnakeCase + "_SERVICE";
-    outFile << "  " << queryKeyName << ": (params: " << requestType
-            << ") => [QUERY_KEYS." << keyName << ", params] as const,\n";
+
+    if (requestType == "void") {
+      outFile << "  " << queryKeyName << ": () => [QUERY_KEYS." << keyName
+              << "] as const,\n";
+    } else {
+      outFile << "  " << queryKeyName << ": (params: " << requestType
+              << ") => [QUERY_KEYS." << keyName << ", params] as const,\n";
+    }
   }
   for (const auto &endpoint : mutationEndpoints) {
     std::string queryKeyName = toCamelCase(endpoint) + servicePrefixPascalCase + "Service";

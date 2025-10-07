@@ -406,18 +406,18 @@ void generateQueryHook(
             << "}\n\n";
 
     outFile << "interface ObservableHookParams<TData, TSelected = TData> {\n"
-            << "  params$: " << requestType << ";\n"
             << "  options?: Omit<\n"
             << "    QueryObserverOptions<\n"
             << "      " << responseType << ",\n"
             << "    QueryError,\n"
-            << "    " << responseType << ",\n"
+            << "    TData,\n"
+            << "    TSelected,\n"
             << "    QueryKeyType\n"
             << "  >,\n"
             << "    'queryFn' | 'queryKey'\n"
             << "  >;\n"
             << "  observableOptions?: Omit<\n"
-            << "    SyncedOptions<QueryObserverResult<" << responseType << ", QueryError>>,\n"
+            << "    SyncedOptions<QueryObserverResult<TData, QueryError>>,\n"
             << "    'get' | 'set' | 'retry'\n"
             << "  >;\n"
             << "}\n\n";
@@ -429,11 +429,21 @@ void generateQueryHook(
             << "}\n\n";
 
     outFile << "export const " << endpointName << "QueryFn" << serviceName
-            << " = async ({ signal }:QueryFnParams) => {\n"
-            << "  const response = await " << serviceName << "." << endpointName
-            << "(undefined, { signal });\n"
-            << "  return response;\n"
-            << "};\n\n";
+            << " = async ({ signal }:QueryFnParams) => {\n";
+
+    if (responseType == "void" || isSpecialType(responseType))
+    {
+      outFile << "  await " << serviceName << "." << endpointName
+              << "(undefined, { signal });\n";
+    }
+    else
+    {
+      outFile << "  const response = await " << serviceName << "." << endpointName
+              << "(undefined, { signal });\n"
+              << "  return response;\n";
+    }
+
+    outFile << "};\n\n";
 
     outFile << "const getQueryKey = () => queryKeys." << queryKeyName
             << "();\n\n";
@@ -489,12 +499,11 @@ void generateQueryHook(
             << "  TData = " << responseType << ",\n"
             << "  TSelected = TData,\n"
             << ">({\n"
-            << "  params$,\n"
             << "  options,\n"
             << "  observableOptions,\n"
             << "}: ObservableHookParams<TData, TSelected>) => {\n"
             << "  const queryClient = getQueryClient();\n\n"
-            << "  const queryKey$ = useComputed(() => getQueryKey(params$));\n"
+            << "  const queryKey$ = useComputed(() => getQueryKey());\n"
             << "  return useObservable(\n"
             << "    syncedQuery<\n"
             << "    " << responseType << ",\n"
@@ -504,7 +513,7 @@ void generateQueryHook(
             << "    QueryKeyType\n"
             << "  >({\n"
             << "    queryClient,\n"
-            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName << "({ params: params$, signal }),\n"
+            << "    queryFn: ({ signal }) => " << endpointName << "QueryFn" << serviceName << "({ signal }),\n"
             << "    queryKey: queryKey$.get(),\n"
             << "    options,\n"
             << "    observableOptions,\n"
@@ -669,11 +678,21 @@ void generatePrefetchQueryHook(
             << "}\n\n";
 
     outFile << "export const " << endpointName << "QueryFn" << serviceName
-            << " = async ({ signal }:QueryFnParams) => {\n"
-            << "  const response = await " << serviceName << "." << endpointName
-            << "(undefined, { signal });\n"
-            << "  return response;\n"
-            << "};\n\n";
+            << " = async ({ signal }:QueryFnParams) => {\n";
+
+    if (responseType == "void" || isSpecialType(responseType))
+    {
+      outFile << "  await " << serviceName << "." << endpointName
+              << "(undefined, { signal });\n";
+    }
+    else
+    {
+      outFile << "  const response = await " << serviceName << "." << endpointName
+              << "(undefined, { signal });\n"
+              << "  return response;\n";
+    }
+
+    outFile << "};\n\n";
 
     outFile << "const getQueryKey = () => queryKeys." << queryKeyName
             << "();\n\n";
@@ -1394,11 +1413,21 @@ void generateSuspenseQueryHook(
             << "}\n\n";
 
     outFile << "export const " << endpointName << "QueryFn" << serviceName
-            << " = async ({ signal }:QueryFnParams) => {\n"
-            << "  const response = await " << serviceName << "." << endpointName
-            << "(undefined, { signal });\n"
-            << "  return response;\n"
-            << "};\n\n";
+            << " = async ({ signal }:QueryFnParams) => {\n";
+
+    if (responseType == "void" || isSpecialType(responseType))
+    {
+      outFile << "  await " << serviceName << "." << endpointName
+              << "(undefined, { signal });\n";
+    }
+    else
+    {
+      outFile << "  const response = await " << serviceName << "." << endpointName
+              << "(undefined, { signal });\n"
+              << "  return response;\n";
+    }
+
+    outFile << "};\n\n";
 
     outFile << "const getQueryKey = () => queryKeys." << queryKeyName
             << "();\n\n";
@@ -1441,7 +1470,6 @@ void generateSuspenseQueryHook(
             << "};\n";
   }
 
-  // Add invalidate function
   if (!isVoidRequest)
   {
     outFile << "\nexport const invalidate" << capitalizeFirstLetter(endpointName)

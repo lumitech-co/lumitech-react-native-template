@@ -7,3 +7,6 @@ export * from './useTestPrefetch.auth';
 export * from './useTestPrefetchInfiniteQuery.auth';
 export * from './useTestQueryWithCustomClient.auth';
 export * from './useTestQueryWithFetch.auth';
+export * from './useTestVoidRequest.auth';
+export * from './useTestSpecialRequest.auth';
+export * from './useTestEndpointQuery.auth';

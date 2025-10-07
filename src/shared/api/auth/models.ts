@@ -38,3 +38,14 @@ export interface Test {
   pageParam: string | number | unknown;
   token: string;
 }
+
+export type SpecialRequest = number;
+
+export type SpecialResponse = number;
+
+export interface testEndpointMutation {
+  test: string;
+}
+export interface testEndpointQuery {
+  test: string;
+}
