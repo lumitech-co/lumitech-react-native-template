@@ -42,9 +42,7 @@ interface QueryFnParams {
   signal?: AbortSignal;
 }
 
-export const testVoidRequestQueryFnAuthService = async ({
-  signal,
-}: QueryFnParams) => {
+const testVoidRequestQueryFnAuthService = async ({ signal }: QueryFnParams) => {
   await AuthService.testVoidRequest(undefined, { signal });
 };
 
@@ -75,17 +73,6 @@ export const useTestVoidRequestQueryAuthService = <TData = void>({
   });
 };
 
-export const invalidateTestVoidRequestQueryAuthService = (
-  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
-) => {
-  const queryClient = getQueryClient();
-
-  return queryClient.invalidateQueries({
-    queryKey: getQueryKey(),
-    ...options,
-  });
-};
-
 export const useTestVoidRequestAuthServiceObservable = <
   TData = void,
   TSelected = TData,
@@ -106,4 +93,15 @@ export const useTestVoidRequestAuthServiceObservable = <
       observableOptions,
     }),
   );
+};
+
+export const invalidateTestVoidRequestQueryAuthService = (
+  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
+) => {
+  const queryClient = getQueryClient();
+
+  return queryClient.invalidateQueries({
+    queryKey: getQueryKey(),
+    ...options,
+  });
 };

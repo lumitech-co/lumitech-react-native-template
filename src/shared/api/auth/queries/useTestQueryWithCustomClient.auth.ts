@@ -52,7 +52,7 @@ interface QueryFnParams {
   signal?: AbortSignal;
 }
 
-export const testQueryWithCustomClientQueryFnAuthService = async ({
+const testQueryWithCustomClientQueryFnAuthService = async ({
   params,
   signal,
 }: QueryFnParams) => {
@@ -107,18 +107,6 @@ export const useTestQueryWithCustomClientQueryAuthService = <
   });
 };
 
-export const invalidateTestQueryWithCustomClientQueryAuthService = (
-  params: Test,
-  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
-) => {
-  const queryClient = getQueryClient();
-
-  return queryClient.invalidateQueries({
-    queryKey: getQueryKey(params),
-    ...options,
-  });
-};
-
 export const useTestQueryWithCustomClientAuthServiceObservable = <
   TData = CreateAccountResponse[],
   TSelected = TData,
@@ -150,4 +138,16 @@ export const useTestQueryWithCustomClientAuthServiceObservable = <
       observableOptions,
     }),
   );
+};
+
+export const invalidateTestQueryWithCustomClientQueryAuthService = (
+  params: Test,
+  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
+) => {
+  const queryClient = getQueryClient();
+
+  return queryClient.invalidateQueries({
+    queryKey: getQueryKey(params),
+    ...options,
+  });
 };

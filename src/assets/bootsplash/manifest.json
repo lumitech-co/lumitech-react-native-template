@@ -1,7 +1,8 @@
 {
   "background": "#ffffff",
+  "darkBackground": "#000000",
   "logo": {
-    "width": 184,
-    "height": 164
+    "width": 264,
+    "height": 48
   }
 }

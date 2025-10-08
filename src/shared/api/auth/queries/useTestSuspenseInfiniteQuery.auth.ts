@@ -58,7 +58,7 @@ interface QueryFnParams<TPageParam> {
   signal: AbortSignal;
 }
 
-export const testSuspenseInfiniteQueryQueryFnAuthService = async <
+const testSuspenseInfiniteQueryQueryFnAuthService = async <
   TPageParam extends PageParam,
 >({
   params,

@@ -5,6 +5,7 @@ import { isDev } from './General';
 
 export const envSchema = z.object({
   API_URL: z.string(),
+  LICENSE_KEY: z.string().optional(),
 });
 
 export const parseEnv = () => {

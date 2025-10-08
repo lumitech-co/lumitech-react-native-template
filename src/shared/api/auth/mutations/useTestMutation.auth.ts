@@ -4,7 +4,7 @@ import { AuthService } from '../AuthService';
 
 import { Test, CreateAccountResponse } from '../models';
 
-export const testMutationMutationFnAuthService = async (params: Test) => {
+const testMutationMutationFnAuthService = async (params: Test) => {
   const response = await AuthService.testMutation(params);
 
   return response;

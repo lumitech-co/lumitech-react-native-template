@@ -15,7 +15,7 @@ interface QueryFnParams {
   signal?: AbortSignal;
 }
 
-export const testQueriesQueryFnAuthService = async ({
+const testQueriesQueryFnAuthService = async ({
   params,
   signal,
 }: QueryFnParams) => {

@@ -4,7 +4,7 @@ import { AuthService } from '../AuthService';
 
 import { testEndpointMutation } from '../models';
 
-export const testEndpointMutationMutationFnAuthService = async (
+const testEndpointMutationMutationFnAuthService = async (
   params: testEndpointMutation,
 ) => {
   const response = await AuthService.testEndpointMutation(params);

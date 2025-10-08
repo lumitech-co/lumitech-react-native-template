@@ -3,7 +3,11 @@
 import React, { useEffect } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 import { StyleSheet, useUnistyles } from 'react-native-unistyles';
-import { motify, useAnimationState } from 'moti';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { InputProps } from './types';
 import { ErrorMessage } from '../ErrorMessage';
 import {
@@ -12,7 +16,7 @@ import {
   constructPaddingRight,
 } from './lib';
 
-const MotiInput = motify(TextInput)();
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 export const Input = React.forwardRef<TextInput, InputProps>(
   (
@@ -41,35 +45,34 @@ export const Input = React.forwardRef<TextInput, InputProps>(
       type,
     });
 
-    const animatedState = useAnimationState({
-      focused: {
-        borderColor: theme.colors.tifanny_blue,
-      },
-      unfocused: {
-        borderColor: theme.colors.transparent,
-      },
-      error: {
-        borderColor: theme.colors.danger_500,
-      },
-    });
+    const borderColor = useSharedValue(theme.colors.transparent);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      borderColor: borderColor.value,
+    }));
 
     useEffect(() => {
       if (isError) {
-        animatedState.transitionTo('error');
+        borderColor.value = withTiming(theme.colors.danger_500, {
+          duration: 200,
+        });
       } else {
-        animatedState.transitionTo('unfocused');
+        borderColor.value = withTiming(theme.colors.transparent, {
+          duration: 200,
+        });
       }
     }, [isError]);
 
     return (
       <View>
         <View style={styles.inputWrapper}>
-          <MotiInput
-            state={animatedState}
+          <AnimatedTextInput
             ref={ref}
             onFocus={event => {
               if (!isError) {
-                animatedState.transitionTo('focused');
+                borderColor.value = withTiming(theme.colors.tifanny_blue, {
+                  duration: 200,
+                });
               }
 
               rest?.onFocus?.(event);
@@ -77,12 +80,17 @@ export const Input = React.forwardRef<TextInput, InputProps>(
             }}
             onBlur={event => {
               if (!isError) {
-                animatedState.transitionTo('unfocused');
+                borderColor.value = withTiming(theme.colors.transparent, {
+                  duration: 200,
+                });
               }
 
               rest?.onBlur?.(event);
             }}
-            style={styles.input({ isRightIconShown, isLeftIconShown })}
+            style={[
+              styles.input({ isRightIconShown, isLeftIconShown }),
+              animatedStyle,
+            ]}
             placeholderTextColor={theme.colors.mens_night}
             editable={editable}
             multiline={multiline}
