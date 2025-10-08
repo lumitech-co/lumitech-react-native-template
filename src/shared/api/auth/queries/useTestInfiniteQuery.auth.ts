@@ -58,7 +58,7 @@ interface QueryFnParams<TPageParam> {
   signal: AbortSignal;
 }
 
-export const testInfiniteQueryQueryFnAuthService = async <
+const testInfiniteQueryQueryFnAuthService = async <
   TPageParam extends PageParam,
 >({
   params,
@@ -128,18 +128,6 @@ export const useTestInfiniteQueryInfiniteQueryAuthService = <
   });
 };
 
-export const invalidateTestInfiniteQueryInfiniteQueryAuthService = (
-  params: Test,
-  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
-) => {
-  const queryClient = getQueryClient();
-
-  return queryClient.invalidateQueries({
-    queryKey: getQueryKey(params),
-    ...options,
-  });
-};
-
 export const resetTestInfiniteQueryInfiniteQueryAuthService = async <
   TPageParam = PageParam,
 >(
@@ -164,5 +152,17 @@ export const resetTestInfiniteQueryInfiniteQueryAuthService = async <
 
   await queryClient.invalidateQueries({
     queryKey: getQueryKey(params),
+  });
+};
+
+export const invalidateTestInfiniteQueryInfiniteQueryAuthService = (
+  params: Test,
+  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
+) => {
+  const queryClient = getQueryClient();
+
+  return queryClient.invalidateQueries({
+    queryKey: getQueryKey(params),
+    ...options,
   });
 };

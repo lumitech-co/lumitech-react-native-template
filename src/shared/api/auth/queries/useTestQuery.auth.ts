@@ -52,7 +52,7 @@ interface QueryFnParams {
   signal?: AbortSignal;
 }
 
-export const testQueryQueryFnAuthService = async ({
+const testQueryQueryFnAuthService = async ({
   params,
   signal,
 }: QueryFnParams) => {
@@ -100,18 +100,6 @@ export const useTestQueryQueryAuthService = <TData = CreateAccountResponse[]>({
   });
 };
 
-export const invalidateTestQueryQueryAuthService = (
-  params: Test,
-  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
-) => {
-  const queryClient = getQueryClient();
-
-  return queryClient.invalidateQueries({
-    queryKey: getQueryKey(params),
-    ...options,
-  });
-};
-
 export const useTestQueryAuthServiceObservable = <
   TData = CreateAccountResponse[],
   TSelected = TData,
@@ -140,4 +128,16 @@ export const useTestQueryAuthServiceObservable = <
       observableOptions,
     }),
   );
+};
+
+export const invalidateTestQueryQueryAuthService = (
+  params: Test,
+  options?: Omit<InvalidateQueryFilters, 'queryKey'>,
+) => {
+  const queryClient = getQueryClient();
+
+  return queryClient.invalidateQueries({
+    queryKey: getQueryKey(params),
+    ...options,
+  });
 };

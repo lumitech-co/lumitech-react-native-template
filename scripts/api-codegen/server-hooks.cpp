@@ -306,7 +306,7 @@ void generateQueryHook(
             << "  signal?: AbortSignal;\n"
             << "}\n\n";
 
-    outFile << "export const " << endpointName << "QueryFn" << serviceName
+    outFile << "const " << endpointName << "QueryFn" << serviceName
             << " = async ({ params, signal }: QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params, { signal });\n"
@@ -357,17 +357,6 @@ void generateQueryHook(
             << "  });\n"
             << "};\n";
 
-    outFile << "\n export const invalidate" << toCapitalize(endpointName) << "Query" << servicePrefixHook << " = (\n"
-            << "  params: " << requestType << ",\n"
-            << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
-            << ") => {\n"
-            << "  const queryClient = getQueryClient();\n\n"
-            << "  return queryClient.invalidateQueries({\n"
-            << "    queryKey: getQueryKey(params),\n"
-            << "    ...options,\n"
-            << "  });\n"
-            << "};\n";
-
     outFile << "\nexport const " << hookName << servicePrefixHook << "Observable" << " = <\n"
             << "  TData = " << responseType << ",\n"
             << "  TSelected = TData,\n"
@@ -392,6 +381,17 @@ void generateQueryHook(
             << "    options,\n"
             << "    observableOptions,\n"
             << "  }));\n"
+            << "};\n";
+
+    outFile << "\n export const invalidate" << toCapitalize(endpointName) << "Query" << servicePrefixHook << " = (\n"
+            << "  params: " << requestType << ",\n"
+            << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+            << ") => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  return queryClient.invalidateQueries({\n"
+            << "    queryKey: getQueryKey(params),\n"
+            << "    ...options,\n"
+            << "  });\n"
             << "};\n";
   }
   else
@@ -428,7 +428,7 @@ void generateQueryHook(
             << "  signal?: AbortSignal;\n"
             << "}\n\n";
 
-    outFile << "export const " << endpointName << "QueryFn" << serviceName
+    outFile << "const " << endpointName << "QueryFn" << serviceName
             << " = async ({ signal }:QueryFnParams) => {\n";
 
     if (responseType == "void" || isSpecialType(responseType))
@@ -485,16 +485,6 @@ void generateQueryHook(
             << "  });\n"
             << "};\n";
 
-    outFile << "\n export const invalidate" << toCapitalize(endpointName) << "Query" << servicePrefixHook << " = (\n"
-            << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
-            << ") => {\n"
-            << "  const queryClient = getQueryClient();\n\n"
-            << "  return queryClient.invalidateQueries({\n"
-            << "    queryKey: getQueryKey(),\n"
-            << "    ...options,\n"
-            << "  });\n"
-            << "};\n";
-
     outFile << "\nexport const " << hookName << servicePrefixHook << "Observable" << " = <\n"
             << "  TData = " << responseType << ",\n"
             << "  TSelected = TData,\n"
@@ -518,6 +508,16 @@ void generateQueryHook(
             << "    options,\n"
             << "    observableOptions,\n"
             << "  }));\n"
+            << "};\n";
+
+    outFile << "\n export const invalidate" << toCapitalize(endpointName) << "Query" << servicePrefixHook << " = (\n"
+            << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+            << ") => {\n"
+            << "  const queryClient = getQueryClient();\n\n"
+            << "  return queryClient.invalidateQueries({\n"
+            << "    queryKey: getQueryKey(),\n"
+            << "    ...options,\n"
+            << "  });\n"
             << "};\n";
   }
 
@@ -598,7 +598,7 @@ void generatePrefetchQueryHook(
             << "  signal?: AbortSignal;\n"
             << "}\n\n";
 
-    outFile << "export const " << endpointName << "QueryFn" << serviceName
+    outFile << "const " << endpointName << "QueryFn" << serviceName
             << " = async ({ params, signal }: QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params, { signal });\n"
@@ -854,7 +854,7 @@ void generateInfiniteQueryHook(
           << "  signal: AbortSignal;\n"
           << "}\n\n";
 
-  outFile << "export const " << endpointName << "QueryFn" << serviceName
+  outFile << "const " << endpointName << "QueryFn" << serviceName
           << " = async <TPageParam extends PageParam>({\n"
           << "  params,\n"
           << "  pageParam,\n"
@@ -921,17 +921,6 @@ void generateInfiniteQueryHook(
           << "  });\n"
           << "};\n";
 
-  outFile << "\n export const invalidate" << toCapitalize(endpointName) << "InfiniteQuery" << servicePrefixHook << " = (\n"
-          << "  params: " << requestType << ",\n"
-          << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
-          << ") => {\n"
-          << "  const queryClient = getQueryClient();\n\n"
-          << "  return queryClient.invalidateQueries({\n"
-          << "    queryKey: getQueryKey(params),\n"
-          << "    ...options,\n"
-          << "  });\n"
-          << "};\n";
-
   outFile << "\nexport const reset" << toCapitalize(endpointName) << "InfiniteQuery" << servicePrefixHook << " = async <TPageParam = PageParam>(\n"
           << "  params: " << requestType << ",\n"
           << "): Promise<void> => {\n"
@@ -954,6 +943,17 @@ void generateInfiniteQueryHook(
 
           << "  await queryClient.invalidateQueries({\n"
           << "    queryKey: getQueryKey(params),\n"
+          << "  });\n"
+          << "};\n";
+
+  outFile << "\n export const invalidate" << toCapitalize(endpointName) << "InfiniteQuery" << servicePrefixHook << " = (\n"
+          << "  params: " << requestType << ",\n"
+          << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+          << ") => {\n"
+          << "  const queryClient = getQueryClient();\n\n"
+          << "  return queryClient.invalidateQueries({\n"
+          << "    queryKey: getQueryKey(params),\n"
+          << "    ...options,\n"
           << "  });\n"
           << "};\n";
 
@@ -1066,7 +1066,7 @@ void generatePrefetchInfiniteQueryHook(
           << "  signal: AbortSignal;\n"
           << "}\n\n";
 
-  outFile << "export const " << endpointName << "QueryFn" << serviceName
+  outFile << "const " << endpointName << "QueryFn" << serviceName
           << " = async <TPageParam extends PageParam>({\n"
           << "  params,\n"
           << "  pageParam,\n"
@@ -1133,17 +1133,6 @@ void generatePrefetchInfiniteQueryHook(
           << "  });\n"
           << "};\n";
 
-  outFile << "\n export const invalidate" << toCapitalize(endpointName) << "InfiniteQuery" << servicePrefixHook << " = (\n"
-          << "  params: " << requestType << ",\n"
-          << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
-          << ") => {\n"
-          << "  const queryClient = getQueryClient();\n\n"
-          << "  return queryClient.invalidateQueries({\n"
-          << "    queryKey: getQueryKey(params),\n"
-          << "    ...options,\n"
-          << "  });\n"
-          << "};\n";
-
   outFile << "\nexport const reset" << toCapitalize(endpointName) << "InfiniteQuery" << servicePrefixHook << " = async <TPageParam = PageParam>(\n"
           << "  params: " << requestType << ",\n"
           << "): Promise<void> => {\n"
@@ -1166,6 +1155,17 @@ void generatePrefetchInfiniteQueryHook(
 
           << "  await queryClient.invalidateQueries({\n"
           << "    queryKey: getQueryKey(params),\n"
+          << "  });\n"
+          << "};\n";
+
+  outFile << "\n export const invalidate" << toCapitalize(endpointName) << "InfiniteQuery" << servicePrefixHook << " = (\n"
+          << "  params: " << requestType << ",\n"
+          << "  options?: Omit<InvalidateQueryFilters, 'queryKey'>\n"
+          << ") => {\n"
+          << "  const queryClient = getQueryClient();\n\n"
+          << "  return queryClient.invalidateQueries({\n"
+          << "    queryKey: getQueryKey(params),\n"
+          << "    ...options,\n"
           << "  });\n"
           << "};\n";
 
@@ -1227,7 +1227,7 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
 
   if (!isVoidRequest)
   {
-    outFile << "\nexport const " << endpointName << "MutationFn" << serviceName
+    outFile << "\nconst " << endpointName << "MutationFn" << serviceName
             << " = async (params: " << inlineRequestType << ") => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params);\n"
@@ -1249,7 +1249,7 @@ void generateMutationHook(const std::filesystem::path &hooksDir,
   }
   else
   {
-    outFile << "\nexport const " << endpointName << "MutationFn" << serviceName
+    outFile << "\nconst " << endpointName << "MutationFn" << serviceName
             << " = async () => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "();\n"
@@ -1344,7 +1344,7 @@ void generateSuspenseQueryHook(
             << "  signal?: AbortSignal;\n"
             << "}\n\n";
 
-    outFile << "export const " << endpointName << "QueryFn" << serviceName
+    outFile << "const " << endpointName << "QueryFn" << serviceName
             << " = async ({ params, signal }: QueryFnParams) => {\n"
             << "  const response = await " << serviceName << "." << endpointName
             << "(params, { signal });\n"
@@ -1412,7 +1412,7 @@ void generateSuspenseQueryHook(
             << "  signal?: AbortSignal;\n"
             << "}\n\n";
 
-    outFile << "export const " << endpointName << "QueryFn" << serviceName
+    outFile << "const " << endpointName << "QueryFn" << serviceName
             << " = async ({ signal }:QueryFnParams) => {\n";
 
     if (responseType == "void" || isSpecialType(responseType))
@@ -1606,7 +1606,7 @@ void generateSuspenseInfiniteQueryHook(
           << "  signal: AbortSignal;\n"
           << "}\n\n";
 
-  outFile << "export const " << endpointName << "QueryFn" << serviceName
+  outFile << "const " << endpointName << "QueryFn" << serviceName
           << " = async <TPageParam extends PageParam>({\n"
           << "  params,\n"
           << "  pageParam,\n"
@@ -1673,7 +1673,6 @@ void generateSuspenseInfiniteQueryHook(
           << "  });\n"
           << "};\n";
 
-  // Add invalidate function
   outFile << "\nexport const invalidate" << capitalizeFirstLetter(endpointName)
           << "SuspenseInfiniteQuery" << servicePrefixHook << " = (\n"
           << "  params: " << requestType << ",\n"
@@ -1750,7 +1749,7 @@ void generateQueriesHook(
             << "  signal?: AbortSignal;\n"
             << "}\n\n";
 
-    outFile << "export const " << endpointName << "QueryFn" << serviceName
+    outFile << "const " << endpointName << "QueryFn" << serviceName
             << " = async ({\n"
             << "  params,\n"
             << "  signal,\n"

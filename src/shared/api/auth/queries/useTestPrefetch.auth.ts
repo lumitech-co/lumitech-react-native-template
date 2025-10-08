@@ -28,7 +28,7 @@ interface QueryFnParams {
   signal?: AbortSignal;
 }
 
-export const testPrefetchQueryFnAuthService = async ({
+const testPrefetchQueryFnAuthService = async ({
   params,
   signal,
 }: QueryFnParams) => {
