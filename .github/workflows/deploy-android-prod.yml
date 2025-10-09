@@ -39,7 +39,7 @@ jobs:
         run: |
           corepack enable
           corepack prepare yarn@latest --activate
-          yarn set version 4.6.0
+          yarn set version 4.10.3
           yarn --version
 
       - name: Install node modules
