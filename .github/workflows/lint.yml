@@ -41,7 +41,7 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install Dependencies
-        run: yarn install --immutable
+        run: yarn install
 
       - name: Code Linting
         run: yarn run lint
