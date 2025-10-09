@@ -1055,3 +1055,7 @@ Common types according to [commitlint-config-conventional](https://github.com/co
 - revert
 - style
 - test
+
+---
+
+Made with ❤️ by [Lumitech](https://github.com/lumitech-co)
