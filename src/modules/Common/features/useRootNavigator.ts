@@ -1,11 +1,15 @@
 import { DefaultTheme, Theme } from '@react-navigation/native';
+import { useEventEmitter } from 'providers';
+import { useEffect } from 'react';
 import { useUnistyles } from 'react-native-unistyles';
-import { useCurrentTheme, useToken } from 'stores';
+import { resetAllStores, useCurrentTheme, useToken } from 'stores';
 
 export const useRootNavigator = () => {
   const token = useToken();
 
   const currentTheme = useCurrentTheme();
+
+  const eventEmitter = useEventEmitter();
 
   const { theme } = useUnistyles();
 
@@ -25,6 +29,16 @@ export const useRootNavigator = () => {
       ...theme.fonts,
     },
   } satisfies Theme;
+
+  useEffect(() => {
+    const listener = eventEmitter.addListener('LOGOUT', () => {
+      resetAllStores();
+    });
+
+    return () => {
+      listener.removeListener('LOGOUT');
+    };
+  }, []);
 
   return {
     currentTheme,

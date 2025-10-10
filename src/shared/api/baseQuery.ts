@@ -1,5 +1,5 @@
 import Config from 'react-native-config';
-import { ExceptionService, ToastService } from 'services';
+import { eventEmitter, ExceptionService, ToastService } from 'services';
 import { getAuthStoreInstance, resetAllStores } from 'stores';
 import axios from 'axios';
 import { Mutex } from 'async-mutex';
@@ -33,6 +33,9 @@ export const baseQuery = createAxiosClient({
         ToastService.onDanger({
           title: ExceptionService.errorResolver(error),
         });
+
+        eventEmitter.emit('LOGOUT');
+
         resetAllStores();
       } finally {
         release();
