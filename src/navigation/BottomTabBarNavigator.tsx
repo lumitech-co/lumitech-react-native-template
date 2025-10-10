@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Text } from 'react-native';
-import { IconName } from 'react-native-vector-icons';
+import { IconName } from '@react-native-vector-icons/icomoon';
 import { StyleSheet, useUnistyles } from 'react-native-unistyles';
 import { Icon } from 'ui';
 import { RouteService, RouteType, Routes } from 'services';
@@ -18,13 +18,10 @@ export const BottomTabBarNavigator: React.FC = () => {
 
   const { t } = useTranslation();
 
-  const titles: Record<string, string> = useMemo(
-    () => ({
-      [Routes.ALERTS_NAVIGATOR]: t('screens.alerts'),
-      [Routes.PROFILE_NAVIGATOR]: t('screens.account'),
-    }),
-    [t],
-  );
+  const titles: Record<string, string> = {
+    [Routes.ALERTS_NAVIGATOR]: t('screens.alerts'),
+    [Routes.PROFILE_NAVIGATOR]: t('screens.account'),
+  };
 
   const handleLongPress = (routeName: RouteType) => {
     RouteService.navigate(routeName);

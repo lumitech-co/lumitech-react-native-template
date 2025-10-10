@@ -21,7 +21,7 @@ export const useEventEmitter = () => {
   const context = useContext(EventContext);
 
   if (!context) {
-    throw new Error('useEventEmiiter must be used within an EventProvider');
+    throw new Error('useEventEmitter must be used within an EventProvider');
   }
 
   return context;

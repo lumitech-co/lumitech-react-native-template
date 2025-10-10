@@ -5,5 +5,5 @@ export * from './useLatest';
 export * from './useAppStateEvent';
 export * from './useCombinedRef';
 export * from './useDebounce';
-export * from './useTypedRoute';
 export * from './useDebug';
+export * from './useTypedRoute';
