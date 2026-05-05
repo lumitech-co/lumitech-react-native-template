@@ -28,19 +28,19 @@ For more information about what’s new in React Native 0.79.0, you can check ou
 
 By using this template, you’re laying a solid foundation for your project, ready to embrace the future improvements of React Native!
 
-## Yarn 3 for New Projects 🧶
+## Yarn 4 for New Projects 🧶
 
-Starting with this template, **Yarn 3** is now the default JavaScript package manager for projects initialized with the React Native Community CLI. This upgrade brings enhanced performance and improved workflows for managing your dependencies.
+Starting with this template, **Yarn 4** is now the default JavaScript package manager for projects initialized with the React Native Community CLI. This upgrade brings enhanced performance and improved workflows for managing your dependencies.
 
-### Why Yarn 3?
+### Why Yarn 4?
 
-- **Yarn 3.x** is used with the `nodeLinker: node-modules` setting, ensuring compatibility with React Native libraries.
+- **Yarn 4.x** is used with the `nodeLinker: node-modules` setting, ensuring compatibility with React Native libraries.
 - It replaces **Yarn Classic (1.x)**, which is now deprecated, and offers faster installs and better dependency management.
 - The new Yarn version simplifies package management and reduces potential conflicts in your project.
 
-### How to Upgrade to Yarn 3
+### How to Upgrade to Yarn 4
 
-If you're working on an existing project and want to upgrade to Yarn 3, you can follow the official Yarn [documentation](https://yarnpkg.com/migration/guide) for a smooth transition.
+If you're working on an existing project and want to upgrade to Yarn 4, you can follow the official Yarn [documentation](https://yarnpkg.com/migration/guide) for a smooth transition.
 
 ```bash
 $ yarn --help
@@ -49,7 +49,7 @@ $ yarn --help
   $ yarn <command>
 ```
 
-Enable corepack and prepare Yarn 3 for your project:
+Enable corepack and prepare Yarn 4 for your project:
 
 ```sh
 - corepack enable
