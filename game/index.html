@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- iOS Safari: lock viewport, cover the notch/safe areas, disable user zoom for a stable game canvas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0f1020" />
+  <title>Bubble Pop — Tap Rush</title>
+  <style>
+    :root {
+      --bg-1: #0f1020;
+      --bg-2: #1b1b3a;
+      --accent: #6c5ce7;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent; /* no grey flash on tap in Safari */
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none; /* no long-press menu */
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none; /* stop pull-to-refresh / bounce */
+      touch-action: manipulation; /* kill double-tap zoom delay */
+      background: var(--bg-1);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      color: #fff;
+    }
+
+    #app {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at 30% 20%, var(--bg-2), var(--bg-1) 70%);
+    }
+
+    /* ---- HUD ---- */
+    #hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: calc(var(--safe-top) + 14px) 20px 10px;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.3px;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .stat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .stat .label { font-size: 11px; opacity: 0.55; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .stat .value { font-size: 22px; font-variant-numeric: tabular-nums; }
+
+    /* ---- timer bar ---- */
+    #timerbar-wrap { height: 6px; margin: 0 20px; border-radius: 99px; background: rgba(255,255,255,0.08); overflow: hidden; }
+    #timerbar { height: 100%; width: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, #00d2ff, #6c5ce7);
+      transform-origin: left center; transition: transform 0.1s linear; }
+
+    /* ---- play field ---- */
+    #field { position: relative; flex: 1; overflow: hidden; }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: inset 0 -6px 14px rgba(0,0,0,0.25), 0 6px 18px rgba(0,0,0,0.35);
+      will-change: transform, opacity;
+      animation: pop-in 0.12s ease-out;
+      cursor: pointer;
+    }
+    .bubble::after { /* glossy highlight */
+      content: ""; position: absolute; top: 14%; left: 18%;
+      width: 32%; height: 32%; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.85), rgba(255,255,255,0) 70%);
+    }
+    .bubble.bomb { background: radial-gradient(circle at 35% 30%, #4a4a55, #16161d); }
+    .bubble.bomb::before { content: "💣"; font-size: 1.4em; }
+
+    @keyframes pop-in { from { transform: scale(0.3); } to { transform: scale(1); } }
+    .burst { animation: burst 0.25s ease-out forwards; pointer-events: none; }
+    @keyframes burst { to { transform: scale(1.6); opacity: 0; } }
+
+    .float-score {
+      position: absolute; font-weight: 800; font-size: 20px; pointer-events: none;
+      animation: floatup 0.6s ease-out forwards; text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    @keyframes floatup { to { transform: translateY(-44px); opacity: 0; } }
+
+    /* ---- overlays ---- */
+    .overlay {
+      position: absolute; inset: 0; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 18px; text-align: center; padding: 24px;
+      background: rgba(10, 10, 24, 0.82);
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    }
+    .overlay.hidden { display: none; }
+    .overlay h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #00d2ff, #6c5ce7); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .overlay h2 { font-size: 30px; font-weight: 800; }
+    .overlay p { opacity: 0.7; font-size: 15px; line-height: 1.5; max-width: 300px; }
+    .big-score { font-size: 56px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .best { opacity: 0.6; font-size: 15px; }
+
+    .btn {
+      -webkit-appearance: none; appearance: none; border: none; cursor: pointer;
+      padding: 16px 44px; border-radius: 99px; font-size: 19px; font-weight: 800; color: #fff;
+      background: linear-gradient(90deg, #00d2ff, #6c5ce7);
+      box-shadow: 0 8px 22px rgba(108, 92, 231, 0.45);
+      transition: transform 0.08s ease;
+      margin-bottom: var(--safe-bottom);
+    }
+    .btn:active { transform: scale(0.94); }
+    .legend { display: flex; gap: 22px; opacity: 0.8; font-size: 13px; }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="hud">
+      <div class="stat"><span class="label">Score</span><span class="value" id="score">0</span></div>
+      <div class="stat"><span class="label">Lives</span><span class="value" id="lives">❤️❤️❤️</span></div>
+      <div class="stat"><span class="label">Best</span><span class="value" id="best">0</span></div>
+    </div>
+    <div id="timerbar-wrap"><div id="timerbar"></div></div>
+
+    <div id="field">
+      <!-- Start screen -->
+      <div class="overlay" id="start">
+        <h1>Bubble Pop</h1>
+        <p>Tap the bubbles before they vanish. Don't let three slip away — and never tap a 💣.</p>
+        <div class="legend">
+          <span><i class="dot" style="background:#00d2ff"></i>+1</span>
+          <span><i class="dot" style="background:#ffd166"></i>+3 fast</span>
+          <span><i class="dot" style="background:#2d2d35"></i>bomb!</span>
+        </div>
+        <button class="btn" id="startBtn">Play</button>
+      </div>
+
+      <!-- Game over screen -->
+      <div class="overlay hidden" id="gameover">
+        <h2>Game Over</h2>
+        <div class="big-score" id="finalScore">0</div>
+        <div class="best" id="bestLine">Best: 0</div>
+        <button class="btn" id="againBtn">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var field = document.getElementById("field");
+    var scoreEl = document.getElementById("score");
+    var livesEl = document.getElementById("lives");
+    var bestEl = document.getElementById("best");
+    var timerbar = document.getElementById("timerbar");
+    var startScreen = document.getElementById("start");
+    var gameoverScreen = document.getElementById("gameover");
+    var finalScoreEl = document.getElementById("finalScore");
+    var bestLineEl = document.getElementById("bestLine");
+
+    var BEST_KEY = "bubblePopBest";
+    var best = parseInt(localStorage.getItem(BEST_KEY) || "0", 10) || 0;
+    bestEl.textContent = best;
+
+    var state = {
+      running: false,
+      score: 0,
+      lives: 3,
+      spawnTimer: null,
+      bubbles: [],          // { el, dieAt, lifespan, isBomb, points }
+      spawnInterval: 1100,  // ms between spawns, shrinks over time
+      elapsed: 0,
+      rafId: 0,
+      lastFrame: 0
+    };
+
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+
+    function hapticTry() {
+      // Works on some Android browsers; harmless no-op on iOS Safari.
+      if (navigator.vibrate) { try { navigator.vibrate(12); } catch (e) {} }
+    }
+
+    function setLives(n) {
+      state.lives = n;
+      livesEl.textContent = n > 0 ? "❤️".repeat(n) : "💀";
+    }
+
+    function addScore(n, x, y, color) {
+      state.score += n;
+      scoreEl.textContent = state.score;
+      var f = document.createElement("div");
+      f.className = "float-score";
+      f.textContent = (n > 0 ? "+" : "") + n;
+      f.style.color = color || (n > 0 ? "#7CFC9A" : "#ff6b6b");
+      f.style.left = x + "px";
+      f.style.top = y + "px";
+      field.appendChild(f);
+      setTimeout(function () { f.remove(); }, 600);
+    }
+
+    function spawnBubble() {
+      if (!state.running) return;
+
+      var rect = field.getBoundingClientRect();
+      var isBomb = Math.random() < 0.16;
+      var fast = !isBomb && Math.random() < 0.28;
+
+      var size = isBomb ? rand(56, 70) : rand(58, 84);
+      // Lifespan shrinks as the game speeds up; fast bubbles live shorter for +3.
+      var baseLife = Math.max(900, 2100 - state.elapsed / 30);
+      var lifespan = isBomb ? rand(1400, 2000) : (fast ? baseLife * 0.6 : baseLife);
+
+      var maxX = Math.max(0, rect.width - size);
+      var maxY = Math.max(0, rect.height - size);
+
+      var el = document.createElement("div");
+      el.className = "bubble" + (isBomb ? " bomb" : "");
+      el.style.width = el.style.height = size + "px";
+      el.style.left = rand(0, maxX) + "px";
+      el.style.top = rand(0, maxY) + "px";
+
+      if (!isBomb) {
+        el.style.background = fast
+          ? "radial-gradient(circle at 35% 30%, #ffe48a, #f7a000)"
+          : "radial-gradient(circle at 35% 30%, #8be9ff, #0096c7)";
+      }
+
+      var bubble = {
+        el: el,
+        dieAt: performance.now() + lifespan,
+        isBomb: isBomb,
+        points: isBomb ? 0 : (fast ? 3 : 1)
+      };
+
+      var onTap = function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (!state.running) return;
+
+        var br = el.getBoundingClientRect();
+        var fx = br.left - rect.left + br.width / 2 - 14;
+        var fy = br.top - rect.top;
+
+        if (bubble.isBomb) {
+          hapticTry();
+          loseLife();
+          addScore(0, fx, fy, "#ff6b6b");
+          flash("#ff3b3b");
+        } else {
+          hapticTry();
+          addScore(bubble.points, fx, fy, "#7CFC9A");
+        }
+        burstAndRemove(bubble);
+      };
+
+      // Use touchstart for instant response on iOS; click as desktop fallback.
+      el.addEventListener("touchstart", onTap, { passive: false });
+      el.addEventListener("click", onTap);
+
+      field.appendChild(el);
+      state.bubbles.push(bubble);
+    }
+
+    function burstAndRemove(bubble) {
+      var i = state.bubbles.indexOf(bubble);
+      if (i !== -1) state.bubbles.splice(i, 1);
+      var el = bubble.el;
+      el.classList.add("burst");
+      setTimeout(function () { el.remove(); }, 250);
+    }
+
+    function flash(color) {
+      field.style.boxShadow = "inset 0 0 120px " + color;
+      setTimeout(function () { field.style.boxShadow = ""; }, 140);
+    }
+
+    function loseLife() {
+      setLives(state.lives - 1);
+      if (state.lives <= 0) endGame();
+    }
+
+    function loop(now) {
+      if (!state.running) return;
+      var dt = now - state.lastFrame;
+      state.lastFrame = now;
+      state.elapsed += dt;
+
+      // Expire bubbles that timed out. Missing a normal bubble costs a life.
+      for (var i = state.bubbles.length - 1; i >= 0; i--) {
+        var b = state.bubbles[i];
+        if (now >= b.dieAt) {
+          state.bubbles.splice(i, 1);
+          b.el.remove();
+          if (!b.isBomb) loseLife();
+        }
+      }
+
+      // Drain a per-spawn timer bar so the player can read the rhythm.
+      var frac = 1 - (now % state.spawnInterval) / state.spawnInterval;
+      timerbar.style.transform = "scaleX(" + frac + ")";
+
+      if (state.running) state.rafId = requestAnimationFrame(loop);
+    }
+
+    function scheduleSpawns() {
+      if (!state.running) return;
+      spawnBubble();
+      // Difficulty ramp: spawn faster the longer you survive (floor 480ms).
+      state.spawnInterval = Math.max(480, 1100 - state.elapsed / 40);
+      state.spawnTimer = setTimeout(scheduleSpawns, state.spawnInterval);
+    }
+
+    function clearField() {
+      state.bubbles.forEach(function (b) { b.el.remove(); });
+      state.bubbles = [];
+    }
+
+    function startGame() {
+      clearField();
+      state.running = true;
+      state.score = 0;
+      state.elapsed = 0;
+      state.spawnInterval = 1100;
+      state.lastFrame = performance.now();
+      setLives(3);
+      scoreEl.textContent = "0";
+      startScreen.classList.add("hidden");
+      gameoverScreen.classList.add("hidden");
+      scheduleSpawns();
+      state.rafId = requestAnimationFrame(loop);
+    }
+
+    function endGame() {
+      state.running = false;
+      clearTimeout(state.spawnTimer);
+      cancelAnimationFrame(state.rafId);
+      clearField();
+      timerbar.style.transform = "scaleX(0)";
+
+      if (state.score > best) {
+        best = state.score;
+        localStorage.setItem(BEST_KEY, String(best));
+        bestEl.textContent = best;
+      }
+      finalScoreEl.textContent = state.score;
+      bestLineEl.textContent = (state.score >= best && state.score > 0 ? "🏆 New Best!  " : "Best: ") + best;
+      gameoverScreen.classList.remove("hidden");
+    }
+
+    document.getElementById("startBtn").addEventListener("click", startGame);
+    document.getElementById("againBtn").addEventListener("click", startGame);
+
+    // Prevent the whole page from scrolling/zooming during play.
+    document.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
+    document.addEventListener("gesturestart", function (e) { e.preventDefault(); });
+    // Pause if the tab is backgrounded (e.g. user switches apps) to avoid a death pile-up.
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden && state.running) endGame();
+    });
+  })();
+  </script>
+</body>
+</html>
